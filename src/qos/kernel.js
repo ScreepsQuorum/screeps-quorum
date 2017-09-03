@@ -22,6 +22,7 @@ class QosKernel {
 
   start () {
     // Announce new uploads
+    Logger.log('Initializing Kernel for tick ' + Game.time, LOG_INFO, 'kernel')
     if(!Memory.qos.script_version || Memory.qos.script_version != SCRIPT_VERSION) {
       Logger.log('new script upload detected: ' + SCRIPT_VERSION, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
@@ -60,6 +61,7 @@ class QosKernel {
       }
       Logger.defaultLogGroup = runningProcess.name
       try {
+        Logger.log('Running ' + runningProcess.name + ' (pid ' + runningProcess.pid + ')', LOG_INFO, 'kernel')
         runningProcess.run()
       } catch (err) {
         Logger.log('program error occurred', LOG_ERROR)
