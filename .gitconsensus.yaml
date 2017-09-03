@@ -1,0 +1,34 @@
+# See https://github.com/tedivm/GitConsensus for more information about this file.
+
+#
+# Consensus Rules
+#
+
+# Minimum number of voters
+quorum: 2
+
+# Required percentage of "yes" votes (ignoring abstentions)
+threshold: 0.65
+
+# Number of days after last action (commit or opening the pull request) before issue can be merged
+mergedelay: 1
+
+# Number of days after last action (commit or opening the pull request) before issue is autoclosed
+timeout: 30
+
+# Don't count any vote from a user who votes for multiple options
+prevent_doubles: true
+
+
+#
+# Disabled Consensus Rules
+#
+
+# Add extra labels for the vote counts and age when merging
+extra_labels: false
+
+# Only process votes by contributors
+contributors_only: false
+
+# Only process votes by collaborators
+collaborators_only: false
