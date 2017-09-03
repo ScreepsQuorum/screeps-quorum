@@ -49,6 +49,24 @@ class Process {
     return this.data.processes[label]
   }
 
+  launchCreepProcess (label, role, room, quantity=1, options={}) {
+    var room = Game.rooms[room]
+    if(!room) {
+      return false
+    }
+    if(!this.data.children) {
+      this.data.children = {}
+    }
+    for (var x = 0; x < quantity; x++) {
+      var specificLabel = label + x
+      if(!!this.data.children[specificLabel]) {
+        continue
+      }
+      var creepName = room.queueCreep(role, options)
+      this.launchChildProcess(specificLabel, 'creep', {'creep': creepName})
+    }
+  }
+
   suicide () {
     return kernel.scheduler.kill(this.pid)
   }
