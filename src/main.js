@@ -22,6 +22,9 @@ global.sos_lib = require('thirdparty_sos_lib')
 var language = require('thirdparty_creeptalk_emoji')
 require('thirdparty_creeptalk')({'public': true, 'language': language})
 
+require('extends_creep')
+require('extends_room')
+
 var QosKernel = require('qos_kernel')
 
 module.exports.loop = function () {
