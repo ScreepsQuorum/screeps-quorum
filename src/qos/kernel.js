@@ -12,7 +12,7 @@ class QosKernel {
   constructor () {
     global.kernel = this
 
-    if(!Memory.qos) {
+    if (!Memory.qos) {
       Memory.qos = {}
     }
     this.simulation = !!Game.rooms['sim']
@@ -23,7 +23,7 @@ class QosKernel {
   start () {
     // Announce new uploads
     Logger.log('Initializing Kernel for tick ' + Game.time, LOG_INFO, 'kernel')
-    if(!Memory.qos.script_version || Memory.qos.script_version != SCRIPT_VERSION) {
+    if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
       Logger.log('new script upload detected: ' + SCRIPT_VERSION, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
       Memory.qos.script_upload = Game.time
@@ -32,13 +32,13 @@ class QosKernel {
     sos.lib.segments.moveToGlobalCache()
     sos.lib.stormtracker.track()
 
-    if(Game.time % 7 == 0) {
+    if (Game.time % 7 === 0) {
       this.cleanMemory()
     }
 
     this.scheduler.shift()
 
-    if(this.scheduler.getProcessCount() <= 0) {
+    if (this.scheduler.getProcessCount() <= 0) {
       this.scheduler.launchProcess('player')
     }
   }
@@ -54,9 +54,9 @@ class QosKernel {
   }
 
   run () {
-    while(this.shouldContinue()) {
+    while (this.shouldContinue()) {
       var runningProcess = this.scheduler.getNextProcess()
-      if(!runningProcess) {
+      if (!runningProcess) {
         return
       }
       Logger.defaultLogGroup = runningProcess.name

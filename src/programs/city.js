@@ -1,7 +1,7 @@
 
 class City extends kernel.process {
   main () {
-    if(!Game.rooms[this.data.room]) {
+    if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
     this.launchChildProcess('spawns', 'spawns', {'room': this.data.room})

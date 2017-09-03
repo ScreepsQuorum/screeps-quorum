@@ -89,6 +89,8 @@
 
     // Custom Globals
     "globals"       : {
+      "_": false,
+      "Creep": true,
       "Empire": true,
       "Game": false,
       "kernel": true,
@@ -96,6 +98,35 @@
       "Memory": false,
       "PathCache": true,
       "PathFinder": false,
-      "RawMemory": false
+      "RawMemory": false,
+      "Room": true,
+      "SCRIPT_VERSION": false,
+      "sos": true,
+
+      "LOG_FATAL": false,
+      "LOG_ERROR": false,
+      "LOG_WARN": false,
+      "LOG_INFO": false,
+      "LOG_DEBUG": false,
+      "LOG_TRACE": false,
+
+
+      "BODYPART_COST": false,
+      "MOVE": false,
+      "WORK": false,
+      "CARRY": false,
+      "ATTACK": false,
+      "RANGED_ATTACK": false,
+      "HEAL": false,
+      "TOUGH": false,
+      "CLAIM": false,
+
+      "RESOURCE_ENERGY": false,
+
+      "FIND_MY_SPAWNS": false,
+      "FIND_SOURCES_ACTIVE": false,
+
+      "OK": false
+
     }
 }

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 global.LOG_FATAL = 5
 global.LOG_ERROR = 4
@@ -17,32 +17,30 @@ const ERROR_COLORS = {
   'highlight': '#ffff00'
 }
 
-
 class Logger {
   constructor () {
     this.defaultLogGroup = 'default'
   }
 
-  log (message, severity=3, group=false, tags =[]) {
-
+  log (message, severity = 3, group = false, tags = []) {
     if (!group) {
       group = this.defaultLogGroup
     }
 
-    if(group != 'default') {
+    if (group !== 'default') {
       message = group + ': ' + message
     }
 
     var attributes = ''
-    if(!!tags) {
-      for(var tag in tags) {
+    if (tags) {
+      for (var tag in tags) {
         attributes += ' ' + tag + '="' + tags[tag] + '"'
       }
     }
     attributes += ' group="' + group + '"'
     attributes += ' severity="' + severity + '"'
     attributes += ' tick="' + Game.time + '"'
-    message = '<font color="' + ERROR_COLORS[severity] + '" ' + attributes + '>' + message + "</font>"
+    message = '<font color="' + ERROR_COLORS[severity] + '" ' + attributes + '>' + message + '</font>'
     console.log(message)
   }
 

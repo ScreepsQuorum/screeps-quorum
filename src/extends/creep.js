@@ -1,22 +1,18 @@
 'use strict'
 
 Creep.getRole = function (roleName) {
-  var role = require('roles_' + roleName)
-  return new role()
+  var Role = require('roles_' + roleName)
+  return new Role()
 }
 
 Creep.prototype.getRole = function () {
   // If the creep role isn't in memory grab it based off of the name
-  if (!this.memory.role) {
-    var role_type = this.name.split('_')[0]
-  } else {
-    var role_type = this.memory.role
-  }
-  return Creep.getRole(role_type)
+  var roleType = this.memory.role ? this.memory.role : this.name.split('_')[0]
+  return Creep.getRole(roleType)
 }
 
 Creep.getCost = function (parts) {
-  if (typeof parts == 'string') {
+  if (typeof parts === 'string') {
     if (BODYPART_COST[parts]) {
       return BODYPART_COST[parts]
     }
@@ -30,9 +26,9 @@ Creep.getCost = function (parts) {
 
 Creep.buildFromTemplate = function (template, energy) {
   var parts = []
-  while(energy > 0 && parts.length < 50) {
+  while (energy > 0 && parts.length < 50) {
     var next = template[parts.length % template.length]
-    if(BODYPART_COST[next] > energy) {
+    if (BODYPART_COST[next] > energy) {
       break
     }
     energy -= BODYPART_COST[next]

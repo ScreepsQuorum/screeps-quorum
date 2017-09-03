@@ -4,7 +4,6 @@
 
 class ProgramCreep extends kernel.process {
   main () {
-
     // See if creep is dead and if so close this process
     if (!Game.creeps[this.data.creep]) {
       if (!Room.isQueued(this.data.creep)) {
@@ -15,7 +14,7 @@ class ProgramCreep extends kernel.process {
 
     // Get creep
     var creep = Game.creeps[this.data.creep]
-    if(!!creep.spawning) {
+    if (creep.spawning) {
       return
     }
 
