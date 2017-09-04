@@ -7,7 +7,7 @@ Creep.getRole = function (roleName) {
 
 Creep.prototype.getRole = function () {
   // If the creep role isn't in memory grab it based off of the name
-  var roleType = this.memory.role ? this.memory.role : this.name.split('_')[0]
+  var roleType = this.memory.role ? this.memory.role : this.name.split('_', 1)[0]
   return Creep.getRole(roleType)
 }
 
