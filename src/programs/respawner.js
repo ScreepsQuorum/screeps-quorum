@@ -9,16 +9,13 @@ class Respawn extends kernel.process {
   }
 
   main () {
-
     // As long as there are active spawns or creeps do not respawn
-    if(Object.keys(Game.spawns).length > 0 || Object.keys(Game.creeps).length > 0) {
+    if (Object.keys(Game.spawns).length > 0 || Object.keys(Game.creeps).length > 0) {
       return
     }
-
     Logger.log('Dead code detected, initiating despawn', LOG_FATAL)
-
+    /* Check all rooms for player owned controllers and unclaim them */
     for (var roomname of Object.keys(Game.rooms)) {
-      /* Launch a "City" program for any room owned by this player */
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
         Logger.log('Unclaiming room ' + roomname)
         Game.rooms[roomname].controller.unclaim()
