@@ -4,6 +4,9 @@
 
 class Player extends kernel.process {
   main () {
+
+    this.launchChildProcess('respawner', 'respawner')
+
     for (var roomname of Object.keys(Game.rooms)) {
       /* Launch a "City" program for any room owned by this player */
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
