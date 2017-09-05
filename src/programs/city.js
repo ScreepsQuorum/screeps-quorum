@@ -5,6 +5,7 @@ class City extends kernel.process {
       return this.suicide()
     }
     this.launchChildProcess('spawns', 'spawns', {'room': this.data.room})
+    this.launchChildProcess('defense', 'city_defense', {'room': this.data.room})
 
     // Launch upgraders
     this.launchCreepProcess('upgraders', 'upgrader', this.data.room, 5)
