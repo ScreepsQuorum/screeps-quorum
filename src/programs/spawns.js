@@ -16,7 +16,7 @@ class Spawns extends kernel.process {
         break
       }
       var ret = spawn.createCreep(creep.build, creep.name, creep.memory)
-      if (ret !== OK) {
+      if (Number.isInteger(ret)) {
         Logger.log('Error ' + ret + ' while spawning creep ' + creep.name, LOG_ERROR)
       }
     }
