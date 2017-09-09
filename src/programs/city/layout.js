@@ -82,7 +82,7 @@ class CityLayout extends kernel.process {
    * the core structures as can be managed.
    */
   nearController () {
-    var baseMatrix = distance_transform.walkablePixelsForRoom(this.data.room)
+    var baseMatrix = this.getBaseMatrix()
     var dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
@@ -122,7 +122,7 @@ class CityLayout extends kernel.process {
    * be managed.
    */
   randomCore () {
-    var baseMatrix = distance_transform.walkablePixelsForRoom(this.data.room)
+    var baseMatrix = this.getBaseMatrix()
     var dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
@@ -159,7 +159,7 @@ class CityLayout extends kernel.process {
    * Place core structures and flower structures anywhere they will fit.
    */
   randomAll () {
-    var baseMatrix = distance_transform.walkablePixelsForRoom(this.data.room)
+    var baseMatrix = this.getBaseMatrix()
     var dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
@@ -278,6 +278,22 @@ class CityLayout extends kernel.process {
       }
     }
     return matrix
+  }
+
+  getBaseMatrix () {
+    var costMatrix = new PathFinder.CostMatrix();
+    for (var y = 1; y < 49; ++y) {
+      for (var x = 1; x < 49; ++x) {
+        var pos = new RoomPosition(x, y, this.data.room)
+        if(pos.inFrontOfExit()) {
+          continue
+        }
+        if (pos.getTerrainAt() != 'wall') {
+          costMatrix.set(x, y, 1);
+        }
+      }
+    }
+    return costMatrix;
   }
 
   displayMatrix (matrix) {

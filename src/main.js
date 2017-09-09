@@ -29,6 +29,7 @@ require('thirdparty_creeptalk')({'public': true, 'language': language})
 require('extends_creep')
 require('extends_room')
 require('extends_room_construction')
+require('extends_roomposition')
 
 var QosKernel = require('qos_kernel')
 
