@@ -92,11 +92,13 @@ var sos_lib_segments = {
         var data = JSON.parse(stringdata)
         var parseTime = Game.cpu.getUsed() - start
         console.log('Segment ' + label + ' parse time: ' + parseTime + ' with length ' + stringdata.length)
-        Stats.addStat('segments.' + label, {
-          'label': label,
-          'parseTime': parseTime,
-          'length': stringdata.length
-        }, true)
+        if(typeof Stats != 'undefined') {
+          Stats.addStat('segments.' + label, {
+            'label': label,
+            'parseTime': parseTime,
+            'length': stringdata.length
+          }, true)
+        }
         return data
       }
     }
