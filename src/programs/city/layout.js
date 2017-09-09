@@ -293,6 +293,27 @@ class CityLayout extends kernel.process {
         }
       }
     }
+    if(!!this.room.controller) {
+      var poses = this.room.controller.pos.getAdjacent()
+      for (var pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0);
+      }
+    }
+    var sources = this.room.find(FIND_SOURCES)
+    for(var source of sources) {
+      var poses = source.pos.getAdjacent()
+      for (var pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0);
+      }
+    }
+    var minerals = this.room.find(FIND_MINERALS)
+    for(var mineral of minerals) {
+      var poses = mineral.pos.getAdjacent()
+      for (var pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0);
+      }
+    }
+
     return costMatrix;
   }
 
