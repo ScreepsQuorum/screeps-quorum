@@ -18,12 +18,18 @@ global.Logger = new QosLogger()
 global.SOS_LIB_PREFIX = 'thirdparty_'
 global.sos_lib = require('thirdparty_sos_lib')
 
+/* Add additional room visualizations - https://github.com/screepers/RoomVisual */
+require('thirdparty_roomvisual')
+
 /* Add "creep talk" library - https://github.com/screepers/creeptalk */
 var language = require('thirdparty_creeptalk_emoji')
 require('thirdparty_creeptalk')({'public': true, 'language': language})
 
+/* Extend built in objects */
 require('extends_creep')
 require('extends_room')
+require('extends_room_construction')
+require('extends_roomposition')
 
 var QosKernel = require('qos_kernel')
 
