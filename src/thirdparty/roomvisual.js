@@ -220,13 +220,30 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       })
       break;
     case STRUCTURE_STORAGE:
-      this.circle(x, y, {
-        fill: colors.energy,
-        radius: 0.35,
-        stroke: colors.dark,
-        strokeWidth: 0.20,
+      let outer = [
+        [-0.6, -.7],
+        [0, -.8],
+        [0.6, -.7],
+        [0.65, 0],
+        [0.6, .7],
+        [0, .8],
+        [-0.6, .7],
+        [-0.65, 0],
+      ];
+      outer = relPoly(x, y, outer);
+      outer.push(outer[0]);
+      this.poly(outer, {
+        fill: colors.dark,
+        stroke: colors.outline,
+        strokeWidth: 0.05,
         opacity: opts.opacity
-      })
+      });
+      this.rect(x - .5, y - 0.6, 1, 1.2, {
+        fill: colors.gray,
+        stroke: colors.dark,
+        strokeWidth: 0.1,
+        opacity: opts.opacity
+      });
       break;
     case STRUCTURE_OBSERVER:
       this.circle(x, y, {
