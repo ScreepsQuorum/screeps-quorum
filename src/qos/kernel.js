@@ -61,7 +61,14 @@ class QosKernel {
       }
       Logger.defaultLogGroup = runningProcess.name
       try {
-        Logger.log('Running ' + runningProcess.name + ' (pid ' + runningProcess.pid + ')', LOG_INFO, 'kernel')
+
+        var processName = runningProcess.name
+        var descriptor = runningProcess.getDescriptor()
+        if(descriptor) {
+          processName += ' ' + descriptor
+        }
+
+        Logger.log('Running ' + processName + ' (pid ' + runningProcess.pid + ')', LOG_INFO, 'kernel')
         runningProcess.run()
       } catch (err) {
         Logger.log('program error occurred', LOG_ERROR)

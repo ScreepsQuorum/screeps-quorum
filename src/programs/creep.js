@@ -3,6 +3,10 @@
  */
 
 class ProgramCreep extends kernel.process {
+  getDescriptor () {
+    return this.data.creep
+  }
+
   main () {
     // See if creep is dead and if so close this process
     if (!Game.creeps[this.data.creep]) {
