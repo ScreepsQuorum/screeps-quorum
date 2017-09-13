@@ -1,6 +1,6 @@
 const MetaRole = require('roles_meta')
 
-class Builder extends MetaRole {
+class Filler extends MetaRole {
   getBuild (options) {
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
@@ -36,4 +36,4 @@ class Builder extends MetaRole {
   }
 }
 
-module.exports = Builder
+module.exports = Filler
