@@ -27,8 +27,9 @@ require('thirdparty_creeptalk')({'public': true, 'language': language})
 
 /* Extend built in objects */
 require('extends_creep')
-require('extends_room')
 require('extends_room_construction')
+require('extends_room_logistics')
+require('extends_room_spawning')
 require('extends_roomposition')
 
 var QosKernel = require('qos_kernel')

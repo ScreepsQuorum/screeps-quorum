@@ -1,7 +1,14 @@
 'use strict'
 
+const SPAWN_DEFAULT_PRIORITY = 4
+
 Room.prototype.queueCreep = function (role, options = {}) {
   var name = role + '_' + sos.lib.counter.get(role).toString(36)
+
+  if (!options.priority) {
+    options.priority = 3
+  }
+
   if (!Memory.spawnqueue) {
     Memory.spawnqueue = {}
   }
@@ -11,7 +18,7 @@ Room.prototype.queueCreep = function (role, options = {}) {
   if (!Memory.spawnqueue.index[this.name]) {
     Memory.spawnqueue.index[this.name] = {}
   }
-  if (!options.energy) {
+  if (!options.energy || options.energy > this.energyCapacityAvailable) {
     options.energy = this.energyCapacityAvailable
   }
   options.role = role
@@ -36,8 +43,8 @@ Room.prototype.getQueuedCreep = function () {
   }
   var that = this
   creeps.sort(function (a, b) {
-    var aP = Memory.spawnqueue.index[that.name][a].priority ? Memory.spawnqueue.index[that.name][a].priority : 3
-    var bP = Memory.spawnqueue.index[that.name][b].priority ? Memory.spawnqueue.index[that.name][b].priority : 3
+    var aP = Memory.spawnqueue.index[that.name][a].priority ? Memory.spawnqueue.index[that.name][a].priority : SPAWN_DEFAULT_PRIORITY
+    var bP = Memory.spawnqueue.index[that.name][b].priority ? Memory.spawnqueue.index[that.name][b].priority : SPAWN_DEFAULT_PRIORITY
     return aP - bP
   })
 

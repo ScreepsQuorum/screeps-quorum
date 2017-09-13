@@ -63,3 +63,7 @@ RoomPosition.prototype.inFrontOfExit = function () {
 RoomPosition.prototype.getTerrainAt = function () {
   return Game.map.getTerrainAt(this)
 }
+
+RoomPosition.prototype.getManhattanDistance = function (pos) {
+  return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y)
+}
