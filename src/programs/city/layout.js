@@ -34,6 +34,10 @@ var LAYOUT_FLOWER = [
 
 
 class CityLayout extends kernel.process {
+  getDescriptor () {
+    return this.data.room
+  }
+
   main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()

@@ -25,6 +25,10 @@ class Process {
     }
   }
 
+  getDescriptor () {
+    return false
+  }
+
   launchChildProcess (label, name, data = {}) {
     if (!this.data.children) {
       this.data.children = {}
