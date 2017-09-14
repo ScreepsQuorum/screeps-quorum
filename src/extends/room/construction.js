@@ -30,6 +30,134 @@ var structureMap = [
 ]
 
 
+var structures = Object.keys(CONTROLLER_STRUCTURES)
+var skipStructures = [
+  STRUCTURE_ROAD,
+  STRUCTURE_WALL,
+  STRUCTURE_RAMPART,
+  STRUCTURE_CONTAINER
+]
+global.LEVEL_BREAKDOWN = {}
+for (var structure of structures) {
+  if (skipStructures.indexOf(structure) !== -1) {
+    continue
+  }
+  var levels = Object.keys(CONTROLLER_STRUCTURES[structure])
+  for (var level of levels) {
+    if(!LEVEL_BREAKDOWN[level]) {
+      LEVEL_BREAKDOWN[level] = {}
+    }
+    LEVEL_BREAKDOWN[level][structure] = CONTROLLER_STRUCTURES[structure][level]
+  }
+}
+
+Room.prototype.constructNextMissingStructure = function () {
+  var structureType = this.getNextMissingStructureType()
+  if (!structureType) {
+    return false
+  }
+
+  // Extractors are always built in minerals and thus aren't planned.
+  if (structureType === STRUCTURE_EXTRACTOR) {
+    var minerals = this.find(FIND_MINERALS)
+    if(minerals.length <= 0) {
+      return false
+    }
+    return this.createConstructionSite(minerals[0].pos, STRUCTURE_EXTRACTOR)
+  }
+
+  // Get room layout, if it exists, and use that to get structure positions.
+  var layout = this.getLayout()
+  if (!layout.isPlanned()) {
+    return false
+  }
+  var allStructurePositions = layout.getAllStructures()
+  if (!allStructurePositions[structureType]) {
+    return false
+  }
+
+  var structurePositions = _.filter(allStructurePositions[structureType], function (position) {
+    var structures = position.lookFor(LOOK_STRUCTURES)
+    if (!structures || structures.length <= 0) {
+      return true
+    }
+    for (var structure of structures) {
+      if(structure.structureType == structureType) {
+        return false
+      }
+    }
+    return true
+  })
+
+  // Prioritize structures based on distance to storage- closer ones get built first.
+  if (allStructurePositions[STRUCTURE_STORAGE]) {
+    var storagePosition = allStructurePositions[STRUCTURE_STORAGE][0]
+    structurePositions.sort(function (a,b) {
+      return a.getManhattanDistance(storagePosition) - b.getManhattanDistance(storagePosition)
+    })
+  }
+  return this.createConstructionSite(structurePositions[0], structureType)
+}
+
+Room.prototype.getNextMissingStructureType = function () {
+  if (!this.isMissingStructures()) {
+    return false
+  }
+  var structureCount = this.getStructureCount()
+  var nextLevel = this.getPracticalRoomLevel()+1
+  var nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
+  var structures = Object.keys(nextLevelStructureCount)
+  for (var structureType of structures) {
+    if (skipStructures.indexOf(structureType) !== -1 || structureType == STRUCTURE_LINK) {
+      continue
+    }
+    if (!structureCount[structureType] || structureCount[structureType] < nextLevelStructureCount[structureType]) {
+      return structureType
+    }
+  }
+  return false
+}
+
+Room.prototype.isMissingStructures = function () {
+  return this.getPracticalRoomLevel() < this.controller.level
+}
+
+Room.prototype.getStructureCount = function () {
+  var structures = this.find(FIND_MY_STRUCTURES)
+  var counts = {}
+  for (var structure of structures) {
+    if(!counts[structure.structureType]) {
+      counts[structure.structureType] = 0
+    }
+    counts[structure.structureType]++
+  }
+  return counts
+}
+
+Room.prototype.getPracticalRoomLevel = function () {
+  if(this.__level) {
+    return this.__level
+  }
+  var structureCount = this.getStructureCount()
+  for (var level = 1; level < 8; level++) {
+    var neededStructures = Object.keys(LEVEL_BREAKDOWN[level+1])
+    for (var structureType of neededStructures) {
+      if (structureType === STRUCTURE_LINK) {
+        continue
+      }
+      if (LEVEL_BREAKDOWN[level+1][structureType] > 0) {
+        if (!structureCount[structureType] || structureCount[structureType] < LEVEL_BREAKDOWN[level+1][structureType]) {
+          this.__level = level
+          return level
+        }
+      }
+    }
+  }
+  this.__level = 8
+  return 8
+}
+
+
 Room.getLayout = function (roomname) {
   return new RoomLayout(roomname)
 }
