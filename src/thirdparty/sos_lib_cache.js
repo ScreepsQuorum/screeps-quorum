@@ -191,7 +191,18 @@ cache.__cleankey = function (object, key) {
   }
 }
 
+cache.getOrUpdate = function (label, opts, updateFunc) {
+  let result = cache.get(label, opts)
+  if (result === undefined) {
+    result = updateFunc()
+  }
 
+  if (result !== undefined) {
+    cache.set(label, opts, result)
+  }
+
+  return result
+}
 
 cache.__compress = function (value) {
   var LZString = require('lib_lzstring')

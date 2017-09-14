@@ -12,10 +12,72 @@ class CityDefense extends kernel.process {
       return this.suicide()
     }
 
-    this.safeMode()
+    const room = Game.rooms[this.data.room]
+
+    let towers = sos.lib.cache.getOrUpdate(
+      [this.data.room, 'towers'],
+      { persist: true, maxttl: 5000, chance: 0.01 },
+      () => room.find(FIND_MY_STRUCTURES, s => s.structureType === STRUCTURE_TOWER))
+
+    const hostiles = room.find(FIND_HOSTILE_CREEPS)
+
+    if (towers && towers.length > 0) {
+      this.fireTowers(towers, hostiles)
+    }
+
+    if (hostiles.some(c => c.owner.username === 'Invader')) {
+      this.safeMode(hostiles)
+    }
   }
 
-  safeMode () {
+  fireTowers (towers, hostiles) {
+    if (hostiles.length > 0) {
+      // for now, just shoot closest for each tower
+      for (let tower of towers) {
+        if (tower.energy < TOWER_ENERGY_COST) {
+          continue
+        }
+        const closest = _.min(hostiles, c => c.pos.getRangeTo(tower.pos))
+        tower.attack(closest)
+      }
+      return
+    }
+
+    const healFunc = (healTarget) => {
+      // TODO: clever calculations to avoid overheals
+      for (let tower of towers) {
+        tower.heal(healTarget)
+      }
+    }
+
+    if (this.data.healTarget !== undefined) {
+      const healTarget = Game.getObjectById(this.data.healTarget)
+      if (healTarget &&
+          (healTarget.pos.room.name === this.data.room) &&
+          (healTarget.hits < healTarget.hitsMax)) {
+        healFunc(healTarget)
+        return
+      }
+
+      // heal target no longer valid
+      delete this.data.healTarget
+    }
+
+    // look for a heal target every healFrequency ticks
+    const healFrequency = 5
+    if (Game.time % healFrequency === 0) {
+      const myCreeps = towers[0].pos.room.find(FIND_MY_CREEPS)
+      const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax)
+      if (!_.isNumber(lowestCreep) &&
+          (lowestCreep.hits < lowestCreep.hitsMax)) {
+        this.data.healTarget = lowestCreep.id
+        healFunc(lowestCreep)
+        return
+      }
+    }
+  }
+
+  safeMode (hostiles) {
     var room = Game.rooms[this.data.room]
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true
@@ -24,13 +86,6 @@ class CityDefense extends kernel.process {
       return false
     }
     if (room.controller.safeModeCooldown) {
-      return false
-    }
-
-    var creeps = room.find(FIND_HOSTILE_CREEPS, {filter: function (creep) {
-      return true; creep.owner.username !== 'Invader'
-    }})
-    if(creeps.length <= 0) {
       return false
     }
 
