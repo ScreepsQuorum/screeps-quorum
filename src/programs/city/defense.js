@@ -93,7 +93,7 @@ class CityDefense extends kernel.process {
 
     var spawns = room.find(FIND_MY_SPAWNS)
     for(var spawn of spawns) {
-      var closest = spawn.pos.findClosestByRange(creeps)
+      var closest = spawn.pos.findClosestByRange(hostiles)
       if(spawn.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
         Logger.log('Activating safemode in ' + this.data.room, LOG_ERROR)
