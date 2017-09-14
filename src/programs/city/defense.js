@@ -27,6 +27,7 @@ class CityDefense extends kernel.process {
 
     const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader')
     if (playerHostiles.length > 0) {
+      Logger.log(`Hostile creep owned by ${c.owner.username} detected in room ${this.data.room}.`, LOG_WARN)
       this.safeMode(playerHostiles)
     }
   }
@@ -66,7 +67,7 @@ class CityDefense extends kernel.process {
 
     // look for a heal target every healFrequency ticks
     const healFrequency = 5
-    if (Game.time % healFrequency === 0) {
+    if (this.period(healFrequency, "healTargetSelection")) {
       const myCreeps = towers[0].pos.room.find(FIND_MY_CREEPS)
       const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax)
       if (!_.isNumber(lowestCreep) &&
