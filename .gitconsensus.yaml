@@ -10,11 +10,11 @@ quorum: 2
 # Required percentage of "yes" votes (ignoring abstentions)
 threshold: 0.65
 
-# Number of days after last action (commit or opening the pull request) before issue can be merged
-mergedelay: 0.5
+# Number of hours after last action (commit or opening the pull request) before issue can be merged
+mergedelay: 12
 
-# Number of days after last action (commit or opening the pull request) before issue is autoclosed
-timeout: 30
+# Number of hours after last action (commit or opening the pull request) before issue is autoclosed
+timeout: 720
 
 # Don't count any vote from a user who votes for multiple options
 prevent_doubles: true
