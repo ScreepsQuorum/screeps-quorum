@@ -25,8 +25,9 @@ class CityDefense extends kernel.process {
       this.fireTowers(towers, hostiles)
     }
 
-    if (hostiles.some(c => c.owner.username === 'Invader')) {
-      this.safeMode(hostiles)
+    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader')
+    if (playerHostiles.length > 0) {
+      this.safeMode(playerHostiles)
     }
   }
 
