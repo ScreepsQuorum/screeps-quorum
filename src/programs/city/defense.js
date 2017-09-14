@@ -28,7 +28,7 @@ class CityDefense extends kernel.process {
     }
 
     var creeps = room.find(FIND_HOSTILE_CREEPS, {filter: function (creep) {
-      return true; creep.owner.username !== 'Invader'
+      return creep.owner.username !== 'Invader'
     }})
     if(creeps.length <= 0) {
       return false
