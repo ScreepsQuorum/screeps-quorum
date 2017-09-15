@@ -6,7 +6,7 @@ Room.prototype.queueCreep = function (role, options = {}) {
   var name = role + '_' + sos.lib.counter.get(role).toString(36)
 
   if (!options.priority) {
-    options.priority = 3
+    options.priority = SPAWN_DEFAULT_PRIORITY
   }
 
   if (!Memory.spawnqueue) {
