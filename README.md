@@ -51,7 +51,7 @@ This codebase uses `Grunt` to deploy to the screeps server. It uses a configurat
 By default `Grunt` will deploy to the `main` server, but this can be changed with the `server` flag.
 
 ```
-grunt --server 127.0.0.1
+grunt --server=127.0.0.1
 ```
 
 By default grunt will push to the `sim` branch. This can be changed in the configuration file or by passing the `branch` option to grunt.
