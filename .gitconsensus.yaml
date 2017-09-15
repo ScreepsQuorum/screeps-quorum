@@ -5,7 +5,7 @@ version: 2
 #
 
 # Minimum number of voters
-quorum: 2
+quorum: 3
 
 # Required percentage of "yes" votes (ignoring abstentions)
 threshold: 0.65
