@@ -12,7 +12,7 @@ module.exports = function (grunt) {
   var screeps_options = {}
 
   var server = grunt.option('server') || 'main';
-  grunt.log.writeln('Branch: ' + server)
+  grunt.log.writeln('Server: ' + server)
 
 
   // If the server is PTR enable the PTR option but use the "main" server settings
@@ -45,6 +45,10 @@ module.exports = function (grunt) {
     if(!!port) {
       screeps_options['port'] = port
     }
+  }
+
+  if (screeps_options['hostname']) {
+      grunt.log.writeln('Host: ' + screeps_options['hostname'])
   }
 
   grunt.log.writeln('Branch: ' + screeps_options['branch'])
