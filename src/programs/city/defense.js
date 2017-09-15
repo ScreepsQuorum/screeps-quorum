@@ -14,10 +14,12 @@ class CityDefense extends kernel.process {
 
     const room = Game.rooms[this.data.room]
 
-    let towers = sos.lib.cache.getOrUpdate(
+    const towers = sos.lib.cache.getOrUpdate(
       [this.data.room, 'towers'],
-      { persist: true, maxttl: 5000, chance: 0.01 },
-      () => room.find(FIND_MY_STRUCTURES, s => s.structureType === STRUCTURE_TOWER))
+      () => room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}}).map(s => s.id),
+      { persist: true, maxttl: 5000, chance: 0.001 })
+          .map(id => Game.getObjectById(id))
+          .filter(t => t)
 
     const hostiles = room.find(FIND_HOSTILE_CREEPS)
 
@@ -27,7 +29,7 @@ class CityDefense extends kernel.process {
 
     const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader')
     if (playerHostiles.length > 0) {
-      Logger.log(`Hostile creep owned by ${c.owner.username} detected in room ${this.data.room}.`, LOG_WARN)
+      Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)
       this.safeMode(playerHostiles)
     }
   }
@@ -68,7 +70,8 @@ class CityDefense extends kernel.process {
     // look for a heal target every healFrequency ticks
     const healFrequency = 5
     if (this.period(healFrequency, "healTargetSelection")) {
-      const myCreeps = towers[0].pos.room.find(FIND_MY_CREEPS)
+      const room = Game.rooms[this.data.room]
+      const myCreeps = room.find(FIND_MY_CREEPS)
       const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax)
       if (!_.isNumber(lowestCreep) &&
           (lowestCreep.hits < lowestCreep.hitsMax)) {
