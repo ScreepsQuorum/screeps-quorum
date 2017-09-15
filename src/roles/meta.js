@@ -10,7 +10,8 @@ class MetaRole {
     }
     if (creep.memory.recharge) {
       var sources = creep.room.find(FIND_SOURCES_ACTIVE)
-      var source = creep.pos.findClosestByRange(sources)
+      let idx = parseInt(creep.name[creep.name.length - 1], 36)
+      var source = sources[idx % sources.length]
       if (!creep.pos.isNearTo(source)) {
         creep.moveTo(source)
       }
