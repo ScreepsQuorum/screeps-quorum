@@ -191,14 +191,14 @@ cache.__cleankey = function (object, key) {
   }
 }
 
-cache.getOrUpdate = function (label, opts, updateFunc) {
+cache.getOrUpdate = function (label, updateFunc, opts) {
   let result = cache.get(label, opts)
   if (result === undefined) {
     result = updateFunc()
   }
 
   if (result !== undefined) {
-    cache.set(label, opts, result)
+    cache.set(label, result, opts)
   }
 
   return result
