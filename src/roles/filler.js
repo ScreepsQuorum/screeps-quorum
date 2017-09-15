@@ -1,6 +1,12 @@
 const MetaRole = require('roles_meta')
 
 class Filler extends MetaRole {
+
+  constructor () {
+    super()
+    this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION]
+  }
+
   getBuild (options) {
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
@@ -11,7 +17,8 @@ class Filler extends MetaRole {
     }
 
     // Find structure to fill
-    var structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill())
+    var structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures))
+
     if (structure) {
       if (creep.pos.getRangeTo(structure) > 1) {
         creep.moveTo(structure)

@@ -27,6 +27,10 @@ class CityDefense extends kernel.process {
       this.fireTowers(towers, hostiles)
     }
 
+    if (towers && _.some(towers, (tower) => tower.energy < tower.energyCapacity)) {
+      this.launchCreepProcess('loader', 'replenisher', this.data.room, 1)
+    }
+
     const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader')
     if (playerHostiles.length > 0) {
       Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)

@@ -1,15 +1,9 @@
 'use strict'
 
-const FILLABLE_STRUCTURES = [
-  STRUCTURE_SPAWN,
-  STRUCTURE_EXTENSION,
-  STRUCTURE_TOWER
-]
-
-Room.prototype.getStructuresToFill = function () {
+Room.prototype.getStructuresToFill = function (structureTypes) {
   if (!this.__fillable) {
     this.__fillable = this.find(FIND_MY_STRUCTURES, {filter: function (structure) {
-      if (FILLABLE_STRUCTURES.indexOf(structure.structureType) === -1) {
+      if (structureTypes.indexOf(structure.structureType) === -1) {
         return false
       }
 
