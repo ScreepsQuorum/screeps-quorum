@@ -70,6 +70,20 @@ class Process {
     }
   }
 
+  period (interval, label = "default") {
+    if (!this.data.period) {
+      this.data.period = {}
+    }
+
+    const lastRun = this.data.period[label] || 0
+    if (lastRun < Game.time - interval) {
+      this.data.period[label] = Game.time
+      return true
+    }
+
+    return false
+  }
+
   suicide () {
     return kernel.scheduler.kill(this.pid)
   }
