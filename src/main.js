@@ -30,6 +30,7 @@ require('extends_creep')
 require('extends_room_construction')
 require('extends_room_logistics')
 require('extends_room_spawning')
+require('extends_room_structures')
 require('extends_roomposition')
 
 var QosKernel = require('qos_kernel')
