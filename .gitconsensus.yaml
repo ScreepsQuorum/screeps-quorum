@@ -8,13 +8,16 @@ version: 2
 quorum: 3
 
 # Required percentage of "yes" votes (ignoring abstentions)
-threshold: 0.65
+threshold: 0.74
 
 # Number of hours after last action (commit or opening the pull request) before issue can be merged
 mergedelay: 6
 
+# Number of votes at which the mergedelay gets ignored, assuming no negative votes.
+delayoverride: 5
+
 # Number of hours after last action (commit or opening the pull request) before issue is autoclosed
-timeout: 720
+timeout: 360
 
 # Don't count any vote from a user who votes for multiple options
 prevent_doubles: true
