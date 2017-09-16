@@ -1,7 +1,7 @@
 'use strict'
 
 Object.defineProperty(Room.prototype, 'structures', {
-  get: function() {
+  get: function () {
     if (!this._structures || _.isEmpty(this._structures)) {
       const allStructures = this.find(FIND_STRUCTURES)
       this._structures = _.groupBy(allStructures, 'structureType')

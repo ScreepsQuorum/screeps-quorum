@@ -38,7 +38,8 @@ const skipStructures = [
   STRUCTURE_CONTAINER,
 ]
 global.LEVEL_BREAKDOWN = {}
-for (const structure of structures) {
+let structure
+for (structure of structures) {
   if (skipStructures.indexOf(structure) !== -1) {
     continue
   }
@@ -52,7 +53,7 @@ for (const structure of structures) {
   }
 }
 
-Room.prototype.constructNextMissingStructure = function() {
+Room.prototype.constructNextMissingStructure = function () {
   const structureType = this.getNextMissingStructureType()
   if (!structureType) {
     return false
@@ -77,7 +78,7 @@ Room.prototype.constructNextMissingStructure = function() {
     return false
   }
 
-  const structurePositions = _.filter(allStructurePositions[structureType], function(position) {
+  const structurePositions = _.filter(allStructurePositions[structureType], function (position) {
     const structures = position.lookFor(LOOK_STRUCTURES)
     if (!structures || structures.length <= 0) {
       return true
@@ -94,14 +95,14 @@ Room.prototype.constructNextMissingStructure = function() {
   // Prioritize structures based on distance to storage- closer ones get built first.
   if (allStructurePositions[STRUCTURE_STORAGE]) {
     const storagePosition = allStructurePositions[STRUCTURE_STORAGE][0]
-    structurePositions.sort(function(a, b) {
+    structurePositions.sort(function (a, b) {
       return a.getManhattanDistance(storagePosition) - b.getManhattanDistance(storagePosition)
     })
   }
   return this.createConstructionSite(structurePositions[0], structureType)
 }
 
-Room.prototype.getNextMissingStructureType = function() {
+Room.prototype.getNextMissingStructureType = function () {
   if (!this.isMissingStructures()) {
     return false
   }
@@ -122,11 +123,11 @@ Room.prototype.getNextMissingStructureType = function() {
   return false
 }
 
-Room.prototype.isMissingStructures = function() {
+Room.prototype.isMissingStructures = function () {
   return this.getPracticalRoomLevel() < this.controller.level
 }
 
-Room.prototype.getStructureCount = function() {
+Room.prototype.getStructureCount = function () {
   const structures = this.find(FIND_MY_STRUCTURES)
   const counts = {}
   let structure
@@ -139,7 +140,7 @@ Room.prototype.getStructureCount = function() {
   return counts
 }
 
-Room.prototype.getPracticalRoomLevel = function() {
+Room.prototype.getPracticalRoomLevel = function () {
   if (this.__level) {
     return this.__level
   }
@@ -147,7 +148,8 @@ Room.prototype.getPracticalRoomLevel = function() {
   let level
   for (level = 1; level < 8; level++) {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])
-    for (const structureType of neededStructures) {
+    let structureType
+    for (structureType of neededStructures) {
       if (structureType === STRUCTURE_LINK) {
         continue
       }
@@ -164,11 +166,11 @@ Room.prototype.getPracticalRoomLevel = function() {
 }
 
 
-Room.getLayout = function(roomname) {
+Room.getLayout = function (roomname) {
   return new RoomLayout(roomname)
 }
 
-Room.prototype.getLayout = function() {
+Room.prototype.getLayout = function () {
   return Room.getLayout(this.name)
 }
 
@@ -213,7 +215,8 @@ class RoomLayout {
   getAllStructures() {
     if (!this.allStructures) {
       this.allStructures = {}
-      let x,y
+      let x,
+        y
       for (x = 0; x < 50; x++) {
         for (y = 0; y < 50; y++) {
           const structure = this.getStructureAt(x, y)
@@ -251,8 +254,9 @@ class RoomLayout {
     const structures = this.getAllStructures()
     const types = Object.keys(structures)
     const visual = new RoomVisual(this.roomname)
-    for (const type of types) {
-      for (const structure_pos of structures[type]) {
+    let type, structure_pos
+    for (type of types) {
+      for (structure_pos of structures[type]) {
         visual.structure(structure_pos.x, structure_pos.y, type, {
           'opacity': 0.60,
         })

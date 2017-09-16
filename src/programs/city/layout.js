@@ -202,7 +202,7 @@ class CityLayout extends kernel.process {
     }
     if (this.data.attempts > 15) {
       this.data.plan++
-      this.data.attempts = 0
+        this.data.attempts = 0
     }
     if (this.data.plan >= plans.length) {
       // Room probably can't support things
@@ -211,7 +211,7 @@ class CityLayout extends kernel.process {
 
     // Actually run layout planning attempt.
     this.data.attempts++
-    this[plans[this.data.plan]]()
+      this[plans[this.data.plan]]()
   }
 
   /**
@@ -223,7 +223,7 @@ class CityLayout extends kernel.process {
     let dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    const core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function(a, b) {
+    const core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function (a, b) {
       return a.getRangeTo(Game.rooms[a.roomName].controller) - b.getRangeTo(Game.rooms[b.roomName].controller)
     })
     if (!core_position) {
@@ -233,7 +233,7 @@ class CityLayout extends kernel.process {
     dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower1_position) {
@@ -244,7 +244,7 @@ class CityLayout extends kernel.process {
 
 
     /* Get flower2 structures */
-    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower2_position) {
@@ -271,7 +271,7 @@ class CityLayout extends kernel.process {
     dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower1_position) {
@@ -282,7 +282,7 @@ class CityLayout extends kernel.process {
 
 
     /* Get flower2 structures */
-    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower2_position) {
@@ -352,7 +352,8 @@ class CityLayout extends kernel.process {
     if (!size) {
       size = matrix.length
     }
-    let row, column
+    let row,
+      column
     for (row = 0; row < size; row++) {
       if (!matrix[row]) {
         continue
@@ -379,7 +380,8 @@ class CityLayout extends kernel.process {
    */
   getPositionFor(dt, buffer, sort = false) {
     let positions = []
-    let x,y
+    let x,
+      y
     for (x = 0; x < 50; x++) {
       for (y = 0; y < 50; y++) {
         // gt, not gte, because the DT has a minimum of 1 instead of 0
@@ -420,7 +422,8 @@ class CityLayout extends kernel.process {
       y_bottom = 49
     }
 
-    let x,y
+    let x,
+      y
     for (x = x_left; x <= x_right; x++) {
       for (y = y_top; y <= y_bottom; y++) {
         matrix.set(x, y, 0)
@@ -431,7 +434,8 @@ class CityLayout extends kernel.process {
 
   getBaseMatrix() {
     const costMatrix = new PathFinder.CostMatrix()
-    let x,y
+    let x,
+      y
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
@@ -451,7 +455,8 @@ class CityLayout extends kernel.process {
       }
     }
     const sources = this.room.find(FIND_SOURCES)
-    let source, pos
+    let source,
+      pos
     for (source of sources) {
       const poses = source.pos.getAdjacent()
       for (pos of poses) {
@@ -472,7 +477,8 @@ class CityLayout extends kernel.process {
 
   displayMatrix(matrix) {
     const visual = new RoomVisual(this.data.room)
-    let x, y
+    let x,
+      y
     for (x = 0; x < 50; ++x) {
       for (y = 0; y < 50; ++y) {
         const value = matrix.get(x, y)

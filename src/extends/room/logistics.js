@@ -1,9 +1,9 @@
 'use strict'
 
-Room.prototype.getStructuresToFill = function(structureTypes) {
+Room.prototype.getStructuresToFill = function (structureTypes) {
   if (!this.__fillable) {
     this.__fillable = this.find(FIND_MY_STRUCTURES, {
-      filter: function(structure) {
+      filter: function (structure) {
         if (structureTypes.indexOf(structure.structureType) === -1) {
           return false
         }

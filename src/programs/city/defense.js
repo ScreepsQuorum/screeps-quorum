@@ -20,12 +20,13 @@ class CityDefense extends kernel.process {
         [this.data.room, 'towers'],
         () => room.find(FIND_MY_STRUCTURES, {
           filter: {
-            structureType: STRUCTURE_TOWER
+            structureType: STRUCTURE_TOWER,
           },
-        }).map(s => s.id), {
+        })
+        .map(s => s.id), {
           persist: true,
           maxttl: 5000,
-          chance: 0.001
+          chance: 0.001,
         })
       .map(id => Game.getObjectById(id))
       .filter(t => t)

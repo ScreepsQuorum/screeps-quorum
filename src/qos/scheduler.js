@@ -53,7 +53,8 @@ class Scheduler {
     }
 
     const completed = _.shuffle(_.uniq(this.memory.processes.completed))
-    for (const pid of completed) {
+    let pid
+    for (pid of completed) {
       // If process is dead do not merge it back into the queue system.
       if (!this.memory.processes.index[pid]) {
         continue

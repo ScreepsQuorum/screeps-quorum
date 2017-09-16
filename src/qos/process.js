@@ -10,7 +10,8 @@ class Process {
 
   clean() {
     if (this.data.children) {
-      for (const label in this.data.children) { // jshint ignore:line
+      let label
+      for (label in this.data.children) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.children[label])) {
           delete this.data.children[label]
         }
@@ -18,7 +19,8 @@ class Process {
     }
 
     if (this.data.processes) {
-      for (const label in this.data.processes) { // jshint ignore:line
+      let label
+      for (label in this.data.processes) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.processes[label])) {
           delete this.data.processes[label]
         }

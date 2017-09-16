@@ -1,6 +1,6 @@
 'use strict'
 
-RoomPosition.prototype.getAdjacent = function() {
+RoomPosition.prototype.getAdjacent = function () {
   const results = []
   const room = Game.rooms[this.roomName]
 
@@ -38,20 +38,21 @@ RoomPosition.prototype.getAdjacent = function() {
   return results
 }
 
-RoomPosition.prototype.isEdge = function() {
+RoomPosition.prototype.isEdge = function () {
   return this.x === 49 || this.x === 0 || this.y === 49 || this.y === 0
 }
 
-RoomPosition.prototype.isExit = function() {
+RoomPosition.prototype.isExit = function () {
   return this.isEdge() && Game.map.getTerrainAt(this) !== 'wall'
 }
 
-RoomPosition.prototype.inFrontOfExit = function() {
+RoomPosition.prototype.inFrontOfExit = function () {
   if (this.isEdge()) {
     return false
   }
   const neighbors = this.getAdjacent()
-  for (const neighbor of neighbors) {
+  let neighbor;
+  for (neighbor of neighbors) {
     if (!!neighbor.isExit()) {
       return true
     }
@@ -59,10 +60,10 @@ RoomPosition.prototype.inFrontOfExit = function() {
   return false
 }
 
-RoomPosition.prototype.getTerrainAt = function() {
+RoomPosition.prototype.getTerrainAt = function () {
   return Game.map.getTerrainAt(this)
 }
 
-RoomPosition.prototype.getManhattanDistance = function(pos) {
+RoomPosition.prototype.getManhattanDistance = function (pos) {
   return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y)
 }
