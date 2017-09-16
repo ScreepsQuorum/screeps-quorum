@@ -195,10 +195,9 @@ cache.getOrUpdate = function (label, updateFunc, opts) {
   let result = cache.get(label, opts)
   if (result === undefined) {
     result = updateFunc()
-  }
-
-  if (result !== undefined) {
-    cache.set(label, result, opts)
+    if (result !== undefined) {
+      cache.set(label, result, opts)
+    }
   }
 
   return result
