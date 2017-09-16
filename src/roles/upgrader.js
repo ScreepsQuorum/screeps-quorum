@@ -2,7 +2,7 @@
 
 const MetaRole = require('roles_meta')
 
-const CONTROLLER_MESSAGE = '* Self Managed Code * quorum.tedivm.com * #quorum in Slack * (Lur was here)'
+const CONTROLLER_MESSAGE = '* Self Managed Code * quorum.tedivm.com * #quorum in Slack *'
 
 class Upgrader extends MetaRole {
   getBuild(options) {
