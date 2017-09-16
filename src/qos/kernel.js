@@ -1,7 +1,7 @@
 'use strict'
 
-var Scheduler = require('qos_scheduler')
-var Process = require('qos_process')
+const Scheduler = require('qos_scheduler')
+const Process = require('qos_process')
 
 const BUCKET_FLOOR = 2000
 const BUCKET_CEILING = 9500
@@ -45,7 +45,7 @@ class QosKernel {
   }
 
   cleanMemory() {
-    for (var i in Memory.creeps) { // jshint ignore:line
+    for (const i in Memory.creeps) { // jshint ignore:line
       if (!Game.creeps[i]) {
         delete Memory.creeps[i]
       }
@@ -56,14 +56,14 @@ class QosKernel {
 
   run() {
     while (this.shouldContinue()) {
-      var runningProcess = this.scheduler.getNextProcess()
+      const runningProcess = this.scheduler.getNextProcess()
       if (!runningProcess) {
         return
       }
       Logger.defaultLogGroup = runningProcess.name
       try {
-        var processName = runningProcess.name
-        var descriptor = runningProcess.getDescriptor()
+        let processName = runningProcess.name
+        const descriptor = runningProcess.getDescriptor()
         if (descriptor) {
           processName += ' ' + descriptor
         }
@@ -98,9 +98,9 @@ class QosKernel {
     }
 
     if (!this._cpuLimit) {
-      var bucketRange = BUCKET_CEILING - BUCKET_FLOOR
-      var adjustedPercentage = (Game.cpu.bucket - (10000 - bucketRange)) / bucketRange
-      var cpuPercentage = CPU_MINIMUM + ((1 - CPU_MINIMUM) * adjustedPercentage)
+      const bucketRange = BUCKET_CEILING - BUCKET_FLOOR
+      const adjustedPercentage = (Game.cpu.bucket - (10000 - bucketRange)) / bucketRange
+      const cpuPercentage = CPU_MINIMUM + ((1 - CPU_MINIMUM) * adjustedPercentage)
       this._cpuLimit = (Game.cpu.limit * (1 - CPU_ADJUST)) * cpuPercentage
     }
 

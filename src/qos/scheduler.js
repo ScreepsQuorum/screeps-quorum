@@ -51,13 +51,13 @@ class Scheduler {
       this.memory.processes.running = false
     }
 
-    let completed = _.shuffle(_.uniq(this.memory.processes.completed))
-    for (let pid of completed) {
+    const completed = _.shuffle(_.uniq(this.memory.processes.completed))
+    for (const pid of completed) {
       // If process is dead do not merge it back into the queue system.
       if (!this.memory.processes.index[pid]) {
         continue
       }
-      let priority = this.getPriorityForPid(pid)
+      const priority = this.getPriorityForPid(pid)
       this.memory.processes.queues[priority].push(pid)
     }
     this.memory.processes.completed = []
@@ -99,13 +99,13 @@ class Scheduler {
   }
 
   launchProcess (name, data = {}, parent = false) {
-    let pid = this.getNextPid()
+    const pid = this.getNextPid()
     this.memory.processes.index[pid] = {
       n: name,
       d: data,
       p: parent
     }
-    let priority = this.getPriorityForPid(pid)
+    const priority = this.getPriorityForPid(pid)
     if (!this.memory.processes.queues[priority]) {
       this.memory.processes.queues[priority] = []
     }
@@ -144,17 +144,17 @@ class Scheduler {
   }
 
   getPriorityForPid (pid) {
-    let program = this.getProcessForPid(pid)
+    const program = this.getProcessForPid(pid)
     if (!program.priority) {
       return DEFAULT_PRIORITY
     }
-    let priority = typeof program.priority === 'function' ? program.priority() : program.priority
+    const priority = typeof program.priority === 'function' ? program.priority() : program.priority
     return priority < MAX_PRIORITY ? priority : MAX_PRIORITY
   }
 
   getProcessForPid (pid) {
     if (!this.processCache[pid]) {
-      let ProgramClass = this.getProgramClass(this.memory.processes.index[pid].n)
+      const ProgramClass = this.getProgramClass(this.memory.processes.index[pid].n)
       this.processCache[pid] = new ProgramClass(pid,
         this.memory.processes.index[pid].n,
         this.memory.processes.index[pid].d,

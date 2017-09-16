@@ -18,7 +18,7 @@ class Respawn extends kernel.process {
     Logger.log('Dead code detected, initiating despawn', LOG_FATAL)
 
     /* Check all rooms for player owned controllers and unclaim them */
-    for (let roomname of Object.keys(Game.rooms)) {
+    for (const roomname of Object.keys(Game.rooms)) {
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
         Logger.log(`Unclaiming room ${roomname}`)
         Game.rooms[roomname].controller.unclaim()

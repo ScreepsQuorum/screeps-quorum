@@ -10,7 +10,7 @@ class Process {
 
   clean() {
     if (this.data.children) {
-      for (let label in this.data.children) { // jshint ignore:line
+      for (const label in this.data.children) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.children[label])) {
           delete this.data.children[label]
         }
@@ -18,7 +18,7 @@ class Process {
     }
 
     if (this.data.processes) {
-      for (let label in this.data.processes) { // jshint ignore:line
+      for (const label in this.data.processes) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.processes[label])) {
           delete this.data.processes[label]
         }
@@ -54,7 +54,7 @@ class Process {
   }
 
   launchCreepProcess(label, role, roomname, quantity = 1, options = {}) {
-    let room = Game.rooms[roomname]
+    const room = Game.rooms[roomname]
     if (!room) {
       return false
     }
@@ -62,11 +62,11 @@ class Process {
       this.data.children = {}
     }
     for (let x = 0; x < quantity; x++) {
-      let specificLabel = label + x
+      const specificLabel = label + x
       if (this.data.children[specificLabel]) {
         continue
       }
-      let creepName = room.queueCreep(role, options)
+      const creepName = room.queueCreep(role, options)
       this.launchChildProcess(specificLabel, 'creep', {
         'creep': creepName,
       })

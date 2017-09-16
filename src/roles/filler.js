@@ -18,7 +18,7 @@ class Filler extends MetaRole {
     }
 
     // Find structure to fill
-    let structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures))
+    const structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures))
 
     if (structure) {
       if (creep.pos.getRangeTo(structure) > 1) {
@@ -36,7 +36,7 @@ class Filler extends MetaRole {
     if (creep.room.storage) {
       target = creep.room.storage
     } else {
-      let spawns = creep.room.find(FIND_MY_SPAWNS)
+      const spawns = creep.room.find(FIND_MY_SPAWNS)
       target = spawns[0]
     }
     if (creep.pos.getRangeTo(target) > 3) {

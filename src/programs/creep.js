@@ -20,13 +20,13 @@ class ProgramCreep extends kernel.process {
     }
 
     // Get creep
-    let creep = Game.creeps[this.data.creep]
+    const creep = Game.creeps[this.data.creep]
     if (creep.spawning) {
       return
     }
 
     // Load and run creep role
-    let role = creep.getRole()
+    const role = creep.getRole()
     role.manageCreep(creep)
   }
 }

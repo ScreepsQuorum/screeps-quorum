@@ -15,7 +15,7 @@ class CityConstruct extends kernel.process {
       return
     }
 
-    let sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
       filter: function(site) {
         return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER
       },

@@ -13,17 +13,17 @@ class Spawns extends kernel.process {
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
-    let spawns = this.room.find(FIND_MY_SPAWNS)
+    const spawns = this.room.find(FIND_MY_SPAWNS)
 
-    for (let spawn of spawns) {
+    for (const spawn of spawns) {
       if (spawn.spawning) {
         continue
       }
-      let creep = this.room.getQueuedCreep()
+      const creep = this.room.getQueuedCreep()
       if (!creep) {
         break
       }
-      let ret = spawn.createCreep(creep.build, creep.name, creep.memory)
+      const ret = spawn.createCreep(creep.build, creep.name, creep.memory)
       if (Number.isInteger(ret)) {
         Logger.log(`Error ${ret} while spawning creep ${creep.name} in room ${this.data.room}`, LOG_ERROR)
       } else {

@@ -8,7 +8,7 @@ const distance_transform = require('thirdparty_distancetransform')
 
 const LAYOUT_CORE_BUFFER = 4; // CEIL(radius)
 // Keep spawn center for first room.
-var LAYOUT_CORE = [
+const LAYOUT_CORE = [
   [STRUCTURE_TOWER, STRUCTURE_TOWER, STRUCTURE_TOWER],
   [
     STRUCTURE_TOWER,
@@ -99,7 +99,7 @@ var LAYOUT_CORE = [
 
 
 const LAYOUT_FLOWER_BUFFER = 3; // CEIL(radius)
-var LAYOUT_FLOWER = [
+const LAYOUT_FLOWER = [
   [
     null,
     STRUCTURE_EXTENSION,
@@ -177,7 +177,7 @@ class CityLayout extends kernel.process {
     }
 
     this.room = Game.rooms[this.data.room]
-    let layout = this.room.getLayout()
+    const layout = this.room.getLayout()
     if (layout.isPlanned()) {
       Logger.log(`Room ${this.data.room} already planned`, LOG_ERROR)
       layout.visualize()
@@ -185,11 +185,11 @@ class CityLayout extends kernel.process {
     }
 
     // Check for existing spawns in case this is the first room.
-    let spawns = this.room.find(FIND_MY_SPAWNS)
+    const spawns = this.room.find(FIND_MY_SPAWNS)
     this.corePos = spawns.length > 0 ? spawns[0].pos : false
 
     // Iterate through plans, trying each one multiple times before moving on.
-    let plans = [
+    const plans = [
       'nearController',
       'randomCore',
       'randomAll',
@@ -223,7 +223,7 @@ class CityLayout extends kernel.process {
     let dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    let core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function(a, b) {
+    const core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function(a, b) {
       return a.getRangeTo(Game.rooms[a.roomName].controller) - b.getRangeTo(Game.rooms[b.roomName].controller)
     })
     if (!core_position) {
@@ -233,7 +233,7 @@ class CityLayout extends kernel.process {
     dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    let flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower1_position) {
@@ -244,7 +244,7 @@ class CityLayout extends kernel.process {
 
 
     /* Get flower2 structures */
-    let flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower2_position) {
@@ -263,7 +263,7 @@ class CityLayout extends kernel.process {
     let dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    let core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
+    const core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
     if (!core_position) {
       return false
     }
@@ -271,7 +271,7 @@ class CityLayout extends kernel.process {
     dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    let flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower1_position) {
@@ -282,7 +282,7 @@ class CityLayout extends kernel.process {
 
 
     /* Get flower2 structures */
-    let flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
+    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function(a, b) {
       return a.getRangeTo(core_position) - b.getRangeTo(core_position)
     })
     if (!flower2_position) {
@@ -300,7 +300,7 @@ class CityLayout extends kernel.process {
     let dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    let core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
+    const core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
     if (!core_position) {
       return false
     }
@@ -308,7 +308,7 @@ class CityLayout extends kernel.process {
     dt = distance_transform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    let flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
+    const flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
     if (!flower1_position) {
       return false
     }
@@ -317,7 +317,7 @@ class CityLayout extends kernel.process {
 
 
     /* Get flower2 structures */
-    let flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
+    const flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
     if (!flower2_position) {
       return false
     }
@@ -329,15 +329,15 @@ class CityLayout extends kernel.process {
    * Convert the positions and templates into an actual RoomLayout and save it.
    */
   planLayout(core_pos, flower1_pos, flower2_pos) {
-    let layout = Room.getLayout(this.data.room)
+    const layout = Room.getLayout(this.data.room)
 
-    let coreAdjusted = new RoomPosition(core_pos.x - LAYOUT_CORE_BUFFER, core_pos.y - LAYOUT_CORE_BUFFER, this.data.room)
+    const coreAdjusted = new RoomPosition(core_pos.x - LAYOUT_CORE_BUFFER, core_pos.y - LAYOUT_CORE_BUFFER, this.data.room)
     this.planStructureMatrix(layout, coreAdjusted, LAYOUT_CORE, (2 * LAYOUT_CORE_BUFFER) + 1)
 
-    let flower1Adjusted = new RoomPosition(flower1_pos.x - LAYOUT_FLOWER_BUFFER, flower1_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
+    const flower1Adjusted = new RoomPosition(flower1_pos.x - LAYOUT_FLOWER_BUFFER, flower1_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
     this.planStructureMatrix(layout, flower1Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
 
-    let flower2Adjusted = new RoomPosition(flower2_pos.x - LAYOUT_FLOWER_BUFFER, flower2_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
+    const flower2Adjusted = new RoomPosition(flower2_pos.x - LAYOUT_FLOWER_BUFFER, flower2_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
     this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
 
     layout.save()
@@ -360,7 +360,7 @@ class CityLayout extends kernel.process {
         if (!matrix[row][column]) {
           continue
         }
-        let structure = matrix[row][column]
+        const structure = matrix[row][column]
         layout.planStructureAt(structure, leftCorner.x + column, leftCorner.y + row)
         if (structure !== STRUCTURE_ROAD && !OBSTACLE_OBJECT_TYPES[structure]) {
           layout.planStructureAt(STRUCTURE_ROAD, leftCorner.x + column, leftCorner.y + row)
@@ -382,7 +382,7 @@ class CityLayout extends kernel.process {
       for (let x = 0; x < 50; x++) {
         // gt, not gte, because the DT has a minimum of 1 instead of 0
         if (dt.get(x, y) > buffer) {
-          let pos = this.room.getPositionAt(x, y)
+          const pos = this.room.getPositionAt(x, y)
           positions.push(pos)
         }
       }
@@ -427,10 +427,10 @@ class CityLayout extends kernel.process {
   }
 
   getBaseMatrix() {
-    let costMatrix = new PathFinder.CostMatrix()
+    const costMatrix = new PathFinder.CostMatrix()
     for (let y = 1; y < 49; ++y) {
       for (let x = 1; x < 49; ++x) {
-        let pos = new RoomPosition(x, y, this.data.room)
+        const pos = new RoomPosition(x, y, this.data.room)
         if (pos.inFrontOfExit()) {
           continue
         }
@@ -440,22 +440,22 @@ class CityLayout extends kernel.process {
       }
     }
     if (!!this.room.controller) {
-      let poses = this.room.controller.pos.getAdjacent()
-      for (let pos of poses) {
+      const poses = this.room.controller.pos.getAdjacent()
+      for (const pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
-    let sources = this.room.find(FIND_SOURCES)
-    for (let source of sources) {
-      let poses = source.pos.getAdjacent()
-      for (let pos of poses) {
+    const sources = this.room.find(FIND_SOURCES)
+    for (const source of sources) {
+      const poses = source.pos.getAdjacent()
+      for (const pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
-    let minerals = this.room.find(FIND_MINERALS)
-    for (let mineral of minerals) {
-      let poses = mineral.pos.getAdjacent()
-      for (let pos of poses) {
+    const minerals = this.room.find(FIND_MINERALS)
+    for (const mineral of minerals) {
+      const poses = mineral.pos.getAdjacent()
+      for (const pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
@@ -464,10 +464,10 @@ class CityLayout extends kernel.process {
   }
 
   displayMatrix(matrix) {
-    let visual = new RoomVisual(this.data.room)
+    const visual = new RoomVisual(this.data.room)
     for (let y = 0; y < 50; ++y) {
       for (let x = 0; x < 50; ++x) {
-        let value = matrix.get(x, y)
+        const value = matrix.get(x, y)
         if (value > 0) {
           let fontsize,
             y_offset
