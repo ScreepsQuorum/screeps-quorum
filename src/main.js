@@ -25,6 +25,9 @@ require('thirdparty_roomvisual')
 var language = require('thirdparty_creeptalk_emoji')
 require('thirdparty_creeptalk')({'public': true, 'language': language})
 
+/* Make the quorum library code available globally */
+global.qlib = require('lib_loader')
+
 /* Extend built in objects */
 require('extends_creep')
 require('extends_room_construction')
