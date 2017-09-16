@@ -61,7 +61,8 @@ class Process {
     if (!this.data.children) {
       this.data.children = {}
     }
-    for (let x = 0; x < quantity; x++) {
+    let x
+    for (x = 0; x < quantity; x++) {
       const specificLabel = label + x
       if (this.data.children[specificLabel]) {
         continue

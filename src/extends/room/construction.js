@@ -43,7 +43,8 @@ for (const structure of structures) {
     continue
   }
   const levels = Object.keys(CONTROLLER_STRUCTURES[structure])
-  for (const level of levels) {
+  let level
+  for (level of levels) {
     if (!LEVEL_BREAKDOWN[level]) {
       LEVEL_BREAKDOWN[level] = {}
     }
@@ -81,7 +82,8 @@ Room.prototype.constructNextMissingStructure = function() {
     if (!structures || structures.length <= 0) {
       return true
     }
-    for (const structure of structures) {
+    let structure
+    for (structure of structures) {
       if (structure.structureType === structureType) {
         return false
       }
@@ -107,7 +109,9 @@ Room.prototype.getNextMissingStructureType = function() {
   const nextLevel = this.getPracticalRoomLevel() + 1
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
-  for (const structureType of structures) {
+
+  let structureType
+  for (structureType of structures) {
     if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
       continue
     }
@@ -125,7 +129,8 @@ Room.prototype.isMissingStructures = function() {
 Room.prototype.getStructureCount = function() {
   const structures = this.find(FIND_MY_STRUCTURES)
   const counts = {}
-  for (const structure of structures) {
+  let structure
+  for (structure of structures) {
     if (!counts[structure.structureType]) {
       counts[structure.structureType] = 0
     }
@@ -139,7 +144,8 @@ Room.prototype.getPracticalRoomLevel = function() {
     return this.__level
   }
   const structureCount = this.getStructureCount()
-  for (let level = 1; level < 8; level++) {
+  let level
+  for (level = 1; level < 8; level++) {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])
     for (const structureType of neededStructures) {
       if (structureType === STRUCTURE_LINK) {
@@ -207,8 +213,9 @@ class RoomLayout {
   getAllStructures() {
     if (!this.allStructures) {
       this.allStructures = {}
-      for (let x = 0; x < 50; x++) {
-        for (let y = 0; y < 50; y++) {
+      let x,y
+      for (x = 0; x < 50; x++) {
+        for (y = 0; y < 50; y++) {
           const structure = this.getStructureAt(x, y)
           if (!!structure) {
             if (!this.allStructures[structure]) {

@@ -89,7 +89,8 @@ Room.isQueued = function(name) {
     return false
   }
   const spawnrooms = Object.keys(Memory.spawnqueue.index)
-  for (const room of spawnrooms) {
+  let room
+  for (room of spawnrooms) {
     if (Game.rooms[room] && Game.rooms[room].isQueued(name)) {
       return true
     }

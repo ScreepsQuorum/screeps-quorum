@@ -6,7 +6,7 @@ const distance_transform = require('thirdparty_distancetransform')
  * Plan room structures
  */
 
-const LAYOUT_CORE_BUFFER = 4; // CEIL(radius)
+const LAYOUT_CORE_BUFFER = 4 // CEIL(radius)
 // Keep spawn center for first room.
 const LAYOUT_CORE = [
   [STRUCTURE_TOWER, STRUCTURE_TOWER, STRUCTURE_TOWER],
@@ -98,7 +98,7 @@ const LAYOUT_CORE = [
 ]
 
 
-const LAYOUT_FLOWER_BUFFER = 3; // CEIL(radius)
+const LAYOUT_FLOWER_BUFFER = 3 // CEIL(radius)
 const LAYOUT_FLOWER = [
   [
     null,
@@ -352,11 +352,12 @@ class CityLayout extends kernel.process {
     if (!size) {
       size = matrix.length
     }
-    for (let row = 0; row < size; row++) {
+    let row, column
+    for (row = 0; row < size; row++) {
       if (!matrix[row]) {
         continue
       }
-      for (let column = 0; column < size; column++) {
+      for (column = 0; column < size; column++) {
         if (!matrix[row][column]) {
           continue
         }
@@ -378,8 +379,9 @@ class CityLayout extends kernel.process {
    */
   getPositionFor(dt, buffer, sort = false) {
     let positions = []
-    for (let y = 0; y < 50; y++) {
-      for (let x = 0; x < 50; x++) {
+    let x,y
+    for (x = 0; x < 50; x++) {
+      for (y = 0; y < 50; y++) {
         // gt, not gte, because the DT has a minimum of 1 instead of 0
         if (dt.get(x, y) > buffer) {
           const pos = this.room.getPositionAt(x, y)
@@ -418,8 +420,9 @@ class CityLayout extends kernel.process {
       y_bottom = 49
     }
 
-    for (let x = x_left; x <= x_right; x++) {
-      for (let y = y_top; y <= y_bottom; y++) {
+    let x,y
+    for (x = x_left; x <= x_right; x++) {
+      for (y = y_top; y <= y_bottom; y++) {
         matrix.set(x, y, 0)
       }
     }
@@ -428,8 +431,9 @@ class CityLayout extends kernel.process {
 
   getBaseMatrix() {
     const costMatrix = new PathFinder.CostMatrix()
-    for (let y = 1; y < 49; ++y) {
-      for (let x = 1; x < 49; ++x) {
+    let x,y
+    for (x = 1; x < 49; ++x) {
+      for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
         if (pos.inFrontOfExit()) {
           continue
@@ -441,21 +445,24 @@ class CityLayout extends kernel.process {
     }
     if (!!this.room.controller) {
       const poses = this.room.controller.pos.getAdjacent()
-      for (const pos of poses) {
+      let pos
+      for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
     const sources = this.room.find(FIND_SOURCES)
-    for (const source of sources) {
+    let source, pos
+    for (source of sources) {
       const poses = source.pos.getAdjacent()
-      for (const pos of poses) {
+      for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
     const minerals = this.room.find(FIND_MINERALS)
-    for (const mineral of minerals) {
+    let mineral
+    for (mineral of minerals) {
       const poses = mineral.pos.getAdjacent()
-      for (const pos of poses) {
+      for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
     }
@@ -465,8 +472,9 @@ class CityLayout extends kernel.process {
 
   displayMatrix(matrix) {
     const visual = new RoomVisual(this.data.room)
-    for (let y = 0; y < 50; ++y) {
-      for (let x = 0; x < 50; ++x) {
+    let x, y
+    for (x = 0; x < 50; ++x) {
+      for (y = 0; y < 50; ++y) {
         const value = matrix.get(x, y)
         if (value > 0) {
           let fontsize,

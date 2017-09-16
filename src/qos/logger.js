@@ -32,8 +32,9 @@ class Logger {
     }
 
     let attributes = ''
+    let tag
     if (tags) {
-      for (const tag in tags) { // jshint ignore:line
+      for (tag in tags) { // jshint ignore:line
         attributes += ` ${tag}="${tags[tag]}"`
       }
     }

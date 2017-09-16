@@ -24,7 +24,8 @@ class Scheduler {
 
   shift () {
     // Promote processes that did not run.
-    for (let x = 0; x <= MAX_PRIORITY; x++) {
+    let x
+    for (x = 0; x <= MAX_PRIORITY; x++) {
       // If we're at the lowest priority merge it with the next priority rather than replacing it, so no pids are lost.
       if (x === 0) {
         if (!this.memory.processes.queues[x]) {
@@ -71,7 +72,8 @@ class Scheduler {
     }
 
     // Iterate through the queues until a pid is found.
-    for (let x = 0; x <= MAX_PRIORITY; x++) {
+    let x
+    for (x = 0; x <= MAX_PRIORITY; x++) {
       if (!this.memory.processes.queues[x] || this.memory.processes.queues[x].length <= 0) {
         continue
       }

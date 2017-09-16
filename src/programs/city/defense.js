@@ -50,7 +50,8 @@ class CityDefense extends kernel.process {
   fireTowers(towers, hostiles) {
     if (hostiles.length > 0) {
       // for now, just shoot closest for each tower
-      for (const tower of towers) {
+      let tower
+      for (tower of towers) {
         if (tower.energy < TOWER_ENERGY_COST) {
           continue
         }
@@ -62,7 +63,8 @@ class CityDefense extends kernel.process {
 
     const healFunc = (healTarget) => {
       // TODO: clever calculations to avoid overheals
-      for (const tower of towers) {
+      let tower
+      for (tower of towers) {
         tower.heal(healTarget)
       }
     }
@@ -105,7 +107,8 @@ class CityDefense extends kernel.process {
     }
 
     const spawns = room.find(FIND_MY_SPAWNS)
-    for (const spawn of spawns) {
+    let spawn
+    for (spawn of spawns) {
       const closest = spawn.pos.findClosestByRange(hostiles)
       if (spawn.pos.getRangeTo(closest) < 5) {
         // Trigger safemode

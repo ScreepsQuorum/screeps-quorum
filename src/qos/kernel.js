@@ -45,7 +45,8 @@ class QosKernel {
   }
 
   cleanMemory() {
-    for (const i in Memory.creeps) { // jshint ignore:line
+    let i
+    for (i in Memory.creeps) { // jshint ignore:line
       if (!Game.creeps[i]) {
         delete Memory.creeps[i]
       }

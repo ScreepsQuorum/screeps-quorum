@@ -15,7 +15,8 @@ class Spawns extends kernel.process {
     this.room = Game.rooms[this.data.room]
     const spawns = this.room.find(FIND_MY_SPAWNS)
 
-    for (const spawn of spawns) {
+    let spawn
+    for (spawn of spawns) {
       if (spawn.spawning) {
         continue
       }
