@@ -1,3 +1,4 @@
+'use strict'
 
 const MAX_PRIORITY = 16
 const DEFAULT_PRIORITY = 6
@@ -23,7 +24,7 @@ class Scheduler {
 
   shift () {
     // Promote processes that did not run.
-    for (var x = 0; x <= MAX_PRIORITY; x++) {
+    for (let x = 0; x <= MAX_PRIORITY; x++) {
       // If we're at the lowest priority merge it with the next priority rather than replacing it, so no pids are lost.
       if (x === 0) {
         if (!this.memory.processes.queues[x]) {
@@ -50,13 +51,13 @@ class Scheduler {
       this.memory.processes.running = false
     }
 
-    var completed = _.shuffle(_.uniq(this.memory.processes.completed))
-    for (var pid of completed) {
+    let completed = _.shuffle(_.uniq(this.memory.processes.completed))
+    for (let pid of completed) {
       // If process is dead do not merge it back into the queue system.
       if (!this.memory.processes.index[pid]) {
         continue
       }
-      var priority = this.getPriorityForPid(pid)
+      let priority = this.getPriorityForPid(pid)
       this.memory.processes.queues[priority].push(pid)
     }
     this.memory.processes.completed = []
@@ -70,7 +71,7 @@ class Scheduler {
     }
 
     // Iterate through the queues until a pid is found.
-    for (var x = 0; x <= MAX_PRIORITY; x++) {
+    for (let x = 0; x <= MAX_PRIORITY; x++) {
       if (!this.memory.processes.queues[x] || this.memory.processes.queues[x].length <= 0) {
         continue
       }
@@ -98,13 +99,13 @@ class Scheduler {
   }
 
   launchProcess (name, data = {}, parent = false) {
-    var pid = this.getNextPid()
+    let pid = this.getNextPid()
     this.memory.processes.index[pid] = {
       n: name,
       d: data,
       p: parent
     }
-    var priority = this.getPriorityForPid(pid)
+    let priority = this.getPriorityForPid(pid)
     if (!this.memory.processes.queues[priority]) {
       this.memory.processes.queues[priority] = []
     }
@@ -143,17 +144,17 @@ class Scheduler {
   }
 
   getPriorityForPid (pid) {
-    var program = this.getProcessForPid(pid)
+    let program = this.getProcessForPid(pid)
     if (!program.priority) {
       return DEFAULT_PRIORITY
     }
-    var priority = typeof program.priority === 'function' ? program.priority() : program.priority
+    let priority = typeof program.priority === 'function' ? program.priority() : program.priority
     return priority < MAX_PRIORITY ? priority : MAX_PRIORITY
   }
 
   getProcessForPid (pid) {
     if (!this.processCache[pid]) {
-      var ProgramClass = this.getProgramClass(this.memory.processes.index[pid].n)
+      let ProgramClass = this.getProgramClass(this.memory.processes.index[pid].n)
       this.processCache[pid] = new ProgramClass(pid,
         this.memory.processes.index[pid].n,
         this.memory.processes.index[pid].d,
@@ -164,7 +165,7 @@ class Scheduler {
   }
 
   getProgramClass (program) {
-    return require('programs_' + program)
+    return require(`programs_${program}`)
   }
 }
 

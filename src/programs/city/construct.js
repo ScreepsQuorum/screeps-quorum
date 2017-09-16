@@ -1,9 +1,11 @@
+'use strict'
+
 /**
  *
  */
 
 class CityConstruct extends kernel.process {
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -13,9 +15,11 @@ class CityConstruct extends kernel.process {
       return
     }
 
-    var sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {filter: function (site) {
-      return site.structureType != STRUCTURE_ROAD && site.structureType != STRUCTURE_CONTAINER
-    }})
+    let sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: function(site) {
+        return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER
+      },
+    })
     if (sites.length <= 0) {
       this.room.constructNextMissingStructure()
     }

@@ -1,7 +1,9 @@
+'use strict'
+
 const Filler = require('roles_filler')
 
 class Replenisher extends Filler {
-  constructor () {
+  constructor() {
     super()
     this.fillableStructures = [STRUCTURE_TOWER]
   }

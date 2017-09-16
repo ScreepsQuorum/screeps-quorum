@@ -14,15 +14,15 @@ const ERROR_COLORS = {
   '2': '#999999',
   '1': '#737373',
   '0': '#666666',
-  'highlight': '#ffff00'
+  'highlight': '#ffff00',
 }
 
 class Logger {
-  constructor () {
+  constructor() {
     this.defaultLogGroup = 'default'
   }
 
-  log (message, severity = 3, group = false, tags = []) {
+  log(message, severity = 3, group = false, tags = []) {
     if (!group) {
       group = this.defaultLogGroup
     }
@@ -31,20 +31,20 @@ class Logger {
       message = group + ': ' + message
     }
 
-    var attributes = ''
+    let attributes = ''
     if (tags) {
-      for (var tag in tags) {
-        attributes += ' ' + tag + '="' + tags[tag] + '"'
+      for (let tag in tags) { // jshint ignore:line
+        attributes += ` ${tag}="${tags[tag]}"`
       }
     }
-    attributes += ' group="' + group + '"'
-    attributes += ' severity="' + severity + '"'
-    attributes += ' tick="' + Game.time + '"'
-    message = '<font color="' + ERROR_COLORS[severity] + '" ' + attributes + '>' + message + '</font>'
+    attributes += ` group="${group}"`
+    attributes += ` severity="${severity}"`
+    attributes += ` tick="${Game.time}"`
+    message = `<font color="${ERROR_COLORS[severity]}"${attributes}>${message}</font>`
     console.log(message)
   }
 
-  logData (data, severity, group) {
+  logData(data, severity, group) {
     try {
       this.log(JSON.stringify(data), severity, group)
     } catch (err) {
@@ -52,11 +52,13 @@ class Logger {
     }
   }
 
-  highlight (message) {
-    return this.log(message, 'highlight', false, {'type': 'highlight'})
+  highlight(message) {
+    return this.log(message, 'highlight', false, {
+      'type': 'highlight'
+    })
   }
 
-  highlightData (data) {
+  highlightData(data) {
     return this.highlight(JSON.stringify(data))
   }
 }

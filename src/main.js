@@ -1,6 +1,6 @@
 'use strict'
 
-if(Game.cpu.bucket < 500) {
+if (Game.cpu.bucket < 500) {
   throw new Error('Extremely low bucket - aborting script run at top level')
 }
 
@@ -23,7 +23,10 @@ require('thirdparty_roomvisual')
 
 /* Add "creep talk" library - https://github.com/screepers/creeptalk */
 var language = require('thirdparty_creeptalk_emoji')
-require('thirdparty_creeptalk')({'public': true, 'language': language})
+require('thirdparty_creeptalk')({
+  'public': true,
+  'language': language
+})
 
 /* Extend built in objects */
 require('extends_creep')
@@ -35,9 +38,9 @@ require('extends_roomposition')
 
 var QosKernel = require('qos_kernel')
 
-module.exports.loop = function () {
-  var kernal = new QosKernel()
-  kernal.start()
-  kernal.run()
-  kernal.shutdown()
+module.exports.loop = function() {
+  let kernel = new QosKernel()
+  kernel.start()
+  kernel.run()
+  kernel.shutdown()
 }

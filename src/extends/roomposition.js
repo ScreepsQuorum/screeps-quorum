@@ -1,9 +1,8 @@
 'use strict'
 
-
-RoomPosition.prototype.getAdjacent = function () {
-  var results = []
-  var room = Game.rooms[this.roomName]
+RoomPosition.prototype.getAdjacent = function() {
+  let results = []
+  let room = Game.rooms[this.roomName]
 
   // Row -1
   if (this.y - 1 >= 0) {
@@ -39,31 +38,31 @@ RoomPosition.prototype.getAdjacent = function () {
   return results
 }
 
-RoomPosition.prototype.isEdge = function () {
+RoomPosition.prototype.isEdge = function() {
   return this.x === 49 || this.x === 0 || this.y === 49 || this.y === 0
 }
 
-RoomPosition.prototype.isExit = function () {
+RoomPosition.prototype.isExit = function() {
   return this.isEdge() && Game.map.getTerrainAt(this) !== 'wall'
 }
 
-RoomPosition.prototype.inFrontOfExit = function () {
-  if(this.isEdge()) {
+RoomPosition.prototype.inFrontOfExit = function() {
+  if (this.isEdge()) {
     return false
   }
-  var neighbors = this.getAdjacent()
-  for(var neighbor of neighbors) {
-    if(!!neighbor.isExit()) {
+  let neighbors = this.getAdjacent()
+  for (let neighbor of neighbors) {
+    if (!!neighbor.isExit()) {
       return true
     }
   }
   return false
 }
 
-RoomPosition.prototype.getTerrainAt = function () {
+RoomPosition.prototype.getTerrainAt = function() {
   return Game.map.getTerrainAt(this)
 }
 
-RoomPosition.prototype.getManhattanDistance = function (pos) {
+RoomPosition.prototype.getManhattanDistance = function(pos) {
   return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y)
 }

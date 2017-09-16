@@ -1,6 +1,6 @@
+'use strict'
 
 class MetaRole {
-
   recharge(creep) {
     if (creep.carry[RESOURCE_ENERGY] <= 0) {
       creep.memory.recharge = true
@@ -9,10 +9,10 @@ class MetaRole {
       creep.memory.recharge = false
     }
     if (creep.memory.recharge) {
-      var sources = creep.room.find(FIND_SOURCES_ACTIVE)
+      let sources = creep.room.find(FIND_SOURCES_ACTIVE)
       sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
       let idx = parseInt(creep.name[creep.name.length - 1], 36)
-      var source = sources[idx % sources.length]
+      let source = sources[idx % sources.length]
       if (!creep.pos.isNearTo(source)) {
         creep.moveTo(source)
       }
@@ -23,7 +23,6 @@ class MetaRole {
     }
     return false
   }
-
 }
 
 module.exports = MetaRole

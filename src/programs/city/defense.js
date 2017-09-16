@@ -1,13 +1,15 @@
+'use strict'
+
 /**
  * Provide Room-level Security
  */
 
 class CityDefense extends kernel.process {
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -15,11 +17,18 @@ class CityDefense extends kernel.process {
     const room = Game.rooms[this.data.room]
 
     const towers = sos.lib.cache.getOrUpdate(
-      [this.data.room, 'towers'],
-      () => room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}}).map(s => s.id),
-      { persist: true, maxttl: 5000, chance: 0.001 })
-          .map(id => Game.getObjectById(id))
-          .filter(t => t)
+        [this.data.room, 'towers'],
+        () => room.find(FIND_MY_STRUCTURES, {
+          filter: {
+            structureType: STRUCTURE_TOWER
+          },
+        }).map(s => s.id), {
+          persist: true,
+          maxttl: 5000,
+          chance: 0.001
+        })
+      .map(id => Game.getObjectById(id))
+      .filter(t => t)
 
     const hostiles = room.find(FIND_HOSTILE_CREEPS)
 
@@ -27,7 +36,7 @@ class CityDefense extends kernel.process {
       this.fireTowers(towers, hostiles)
     }
 
-    if (towers && _.some(towers, (tower) => tower.energy < tower.energyCapacity)) {
+    if (towers && _.some(towers, tower => tower.energy < tower.energyCapacity)) {
       this.launchCreepProcess('loader', 'replenisher', this.data.room, 1)
     }
 
@@ -38,7 +47,7 @@ class CityDefense extends kernel.process {
     }
   }
 
-  fireTowers (towers, hostiles) {
+  fireTowers(towers, hostiles) {
     if (hostiles.length > 0) {
       // for now, just shoot closest for each tower
       for (let tower of towers) {
@@ -61,8 +70,8 @@ class CityDefense extends kernel.process {
     if (this.data.healTarget !== undefined) {
       const healTarget = Game.getObjectById(this.data.healTarget)
       if (healTarget &&
-          (healTarget.pos.room.name === this.data.room) &&
-          (healTarget.hits < healTarget.hitsMax)) {
+        (healTarget.pos.room.name === this.data.room) &&
+        (healTarget.hits < healTarget.hitsMax)) {
         healFunc(healTarget)
         return
       }
@@ -73,12 +82,12 @@ class CityDefense extends kernel.process {
 
     // look for a heal target every healFrequency ticks
     const healFrequency = 5
-    if (this.period(healFrequency, "healTargetSelection")) {
+    if (this.period(healFrequency, 'healTargetSelection')) {
       const room = Game.rooms[this.data.room]
       const myCreeps = room.find(FIND_MY_CREEPS)
       const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax)
       if (!_.isNumber(lowestCreep) &&
-          (lowestCreep.hits < lowestCreep.hitsMax)) {
+        (lowestCreep.hits < lowestCreep.hitsMax)) {
         this.data.healTarget = lowestCreep.id
         healFunc(lowestCreep)
         return
@@ -86,24 +95,21 @@ class CityDefense extends kernel.process {
     }
   }
 
-  safeMode (hostiles) {
-    var room = Game.rooms[this.data.room]
+  safeMode(hostiles) {
+    let room = Game.rooms[this.data.room]
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true
     }
-    if (room.controller.safeModeAvailable <= 0) {
-      return false
-    }
-    if (room.controller.safeModeCooldown) {
+    if (room.controller.safeModeAvailable <= 0 || room.controller.safeModeCooldown) {
       return false
     }
 
-    var spawns = room.find(FIND_MY_SPAWNS)
-    for(var spawn of spawns) {
-      var closest = spawn.pos.findClosestByRange(hostiles)
-      if(spawn.pos.getRangeTo(closest) < 5) {
+    let spawns = room.find(FIND_MY_SPAWNS)
+    for (let spawn of spawns) {
+      let closest = spawn.pos.findClosestByRange(hostiles)
+      if (spawn.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
-        Logger.log('Activating safemode in ' + this.data.room, LOG_ERROR)
+        Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
         room.controller.activateSafeMode()
         return true
       }
