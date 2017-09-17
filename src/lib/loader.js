@@ -1,13 +1,12 @@
-
-let target = {};
+'use strict';
 
 let loader = {
     get(target, key, receiver) {
-      var classname = 'lib_' + key
+      const classname = 'lib_' + key;
       if(!target[classname]) {
-        target[classname] = require(classname)
+        target[classname] = require(classname);
       }
-      return target[classname]
+      return target[classname];
     }
 };
 

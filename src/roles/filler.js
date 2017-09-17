@@ -1,48 +1,47 @@
-'use strict'
+'use strict';
 
-const MetaRole = require('roles_meta')
+const MetaRole = require('roles_meta');
 
 class Filler extends MetaRole {
   constructor() {
-    super()
-    this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION]
+    super();
+    this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION];
   }
 
   getBuild(options) {
-    return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
+    return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy);
   }
 
   manageCreep(creep) {
     if (this.recharge(creep)) {
-      return
+      return;
     }
 
     // Find structure to fill
-    const structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures))
+    const structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures));
 
     if (structure) {
       if (creep.pos.getRangeTo(structure) > 1) {
-        creep.moveTo(structure)
+        creep.moveTo(structure);
       }
       if (creep.pos.getRangeTo(structure) <= 1) {
-        creep.transfer(structure, RESOURCE_ENERGY)
+        creep.transfer(structure, RESOURCE_ENERGY);
       }
-      return
+      return;
     }
 
     // Park
 
-    let target
+    let target;
     if (creep.room.storage) {
-      target = creep.room.storage
+      target = creep.room.storage;
     } else {
-      const spawns = creep.room.find(FIND_MY_SPAWNS)
-      target = spawns[0]
+      target = creep.room.find(FIND_MY_SPAWNS)[0];
     }
     if (creep.pos.getRangeTo(target) > 3) {
-      creep.moveTo(target)
+      creep.moveTo(target);
     }
   }
 }
 
-module.exports = Filler
+module.exports = Filler;

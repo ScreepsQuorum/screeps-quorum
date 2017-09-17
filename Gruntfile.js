@@ -1,66 +1,66 @@
-'use strict'
+'use strict';
 
 module.exports = function (grunt) {
-  require('time-grunt')(grunt)
+  require('time-grunt')(grunt);
 
-  var currentdate = new Date()
-  grunt.log.subhead('Task Start: ' + currentdate.toLocaleString())
+  var currentdate = new Date();
+  grunt.log.subhead('Task Start: ' + currentdate.toLocaleString());
 
 
   // Pull defaults (including username and password) from .screeps.json
-  var config = require('./.screeps.json')
+  var config = require('./.screeps.json');
 
 
-  var screeps_options = {}
+  var screeps_options = {};
 
-  var server = grunt.option('server') || 'main'
-  grunt.log.writeln('Server: ' + server)
+  var server = grunt.option('server') || 'main';
+  grunt.log.writeln('Server: ' + server);
 
 
   // If the server is PTR enable the PTR option but use the "main" server settings
   if(server === 'ptr') {
-    server = 'main'
-    screeps_options['ptr'] = true
+    server = 'main';
+    screeps_options['ptr'] = true;
   }
 
   // If there is no config for this setting just use defaults and command line overrides
   if(!config[server]) {
-    config[server] = {}
+    config[server] = {};
   }
 
   // Use "sim" branch by default
   if(!config[server]['branch']) {
-    config[server]['branch'] = 'sim'
+    config[server]['branch'] = 'sim';
   }
 
   // Allow grunt options to override default configuration
-  screeps_options['branch'] = grunt.option('branch') || config[server].branch
-  screeps_options['email'] = grunt.option('email') || config[server].email
-  screeps_options['password'] = grunt.option('password') || config[server].password
+  screeps_options['branch'] = grunt.option('branch') || config[server].branch;
+  screeps_options['email'] = grunt.option('email') || config[server].email;
+  screeps_options['password'] = grunt.option('password') || config[server].password;
 
 
   // Add private server settings.
   if (server !== 'main') {
-    screeps_options['hostname'] = grunt.option('hostname') || config[server].hostname
-    screeps_options['ssl'] = grunt.option('ssl') || !!config[server].ssl
-    var port = grunt.option('ssl')
+    screeps_options['hostname'] = grunt.option('hostname') || config[server].hostname;
+    screeps_options['ssl'] = grunt.option('ssl') || !!config[server].ssl;
+    var port = grunt.option('ssl');
     if(!!port) {
-      screeps_options['port'] = port
+      screeps_options['port'] = port;
     }
   }
 
   if (screeps_options['hostname']) {
-      grunt.log.writeln('Host: ' + screeps_options['hostname'])
+      grunt.log.writeln('Host: ' + screeps_options['hostname']);
   }
 
-  grunt.log.writeln('Branch: ' + screeps_options['branch'])
+  grunt.log.writeln('Branch: ' + screeps_options['branch']);
 
 
   // Load needed tasks
-  grunt.loadNpmTasks('grunt-screeps')
-  grunt.loadNpmTasks('grunt-contrib-clean')
-  grunt.loadNpmTasks('grunt-contrib-copy')
-  grunt.loadNpmTasks('grunt-file-append')
+  grunt.loadNpmTasks('grunt-screeps');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-file-append');
 
   grunt.initConfig({
 
@@ -87,7 +87,7 @@ module.exports = function (grunt) {
           filter: 'isFile',
           rename: function (dest, src) {
             // Change the path name utilize underscores for folders
-            return dest + src.replace(/\//g,'_')
+            return dest + src.replace(/\//g,'_');
           }
         }]
       }
@@ -110,9 +110,9 @@ module.exports = function (grunt) {
     clean: {
       'dist': ['dist']
     },
-  })
+  });
 
-  grunt.registerTask('default', ['package', 'screeps'])
-  grunt.registerTask('package', ['clean', 'copy:screeps',  'file_append:versioning'])
-  grunt.registerTask('reset',   ['clean'])
-}
+  grunt.registerTask('default', ['package', 'screeps']);
+  grunt.registerTask('package', ['clean', 'copy:screeps',  'file_append:versioning']);
+  grunt.registerTask('reset',   ['clean']);
+};
