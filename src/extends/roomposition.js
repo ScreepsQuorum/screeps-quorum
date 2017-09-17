@@ -1,9 +1,8 @@
 'use strict'
 
-
 RoomPosition.prototype.getAdjacent = function () {
-  var results = []
-  var room = Game.rooms[this.roomName]
+  const results = []
+  const room = Game.rooms[this.roomName]
 
   // Row -1
   if (this.y - 1 >= 0) {
@@ -48,12 +47,13 @@ RoomPosition.prototype.isExit = function () {
 }
 
 RoomPosition.prototype.inFrontOfExit = function () {
-  if(this.isEdge()) {
+  if (this.isEdge()) {
     return false
   }
-  var neighbors = this.getAdjacent()
-  for(var neighbor of neighbors) {
-    if(!!neighbor.isExit()) {
+  const neighbors = this.getAdjacent()
+  let neighbor;
+  for (neighbor of neighbors) {
+    if (!!neighbor.isExit()) {
       return true
     }
   }

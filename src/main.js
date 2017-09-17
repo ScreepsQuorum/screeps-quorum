@@ -1,6 +1,6 @@
 'use strict'
 
-if(Game.cpu.bucket < 500) {
+if (Game.cpu.bucket < 500) {
   throw new Error('Extremely low bucket - aborting script run at top level')
 }
 
@@ -11,7 +11,7 @@ if(Game.cpu.bucket < 500) {
 require('version')
 
 /* Enable QOS Logger */
-var QosLogger = require('qos_logger')
+const QosLogger = require('qos_logger')
 global.Logger = new QosLogger()
 
 /* Add "sos library" - https://github.com/ScreepsOS/sos-library */
@@ -22,8 +22,11 @@ global.sos_lib = require('thirdparty_sos_lib')
 require('thirdparty_roomvisual')
 
 /* Add "creep talk" library - https://github.com/screepers/creeptalk */
-var language = require('thirdparty_creeptalk_emoji')
-require('thirdparty_creeptalk')({'public': true, 'language': language})
+const language = require('thirdparty_creeptalk_emoji')
+require('thirdparty_creeptalk')({
+  'public': true,
+  'language': language
+})
 
 /* Make the quorum library code available globally */
 global.qlib = require('lib_loader')
@@ -36,11 +39,11 @@ require('extends_room_spawning')
 require('extends_room_structures')
 require('extends_roomposition')
 
-var QosKernel = require('qos_kernel')
+const QosKernel = require('qos_kernel')
 
-module.exports.loop = function () {
-  var kernal = new QosKernel()
-  kernal.start()
-  kernal.run()
-  kernal.shutdown()
+module.exports.loop = function() {
+  const kernel = new QosKernel()
+  kernel.start()
+  kernel.run()
+  kernel.shutdown()
 }

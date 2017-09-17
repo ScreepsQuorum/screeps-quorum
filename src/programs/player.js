@@ -1,16 +1,21 @@
+'use strict'
+
+
 /**
  * Top level program- it is responsible for launching everything else.
  */
 
 class Player extends kernel.process {
-  main () {
-
+  main() {
     this.launchChildProcess('respawner', 'respawner')
 
-    for (var roomname of Object.keys(Game.rooms)) {
+    let roomname
+    for (roomname of Object.keys(Game.rooms)) {
       /* Launch a "City" program for any room owned by this player */
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
-        this.launchChildProcess('room_' + roomname, 'city', {'room': roomname})
+        this.launchChildProcess(`room_${roomname}`, 'city', {
+          'room': roomname,
+        })
       }
     }
   }

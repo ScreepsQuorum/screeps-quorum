@@ -1,7 +1,9 @@
-module.exports = function (grunt) {
-  require('time-grunt')(grunt);
+'use strict'
 
-  var currentdate = new Date();
+module.exports = function (grunt) {
+  require('time-grunt')(grunt)
+
+  var currentdate = new Date()
   grunt.log.subhead('Task Start: ' + currentdate.toLocaleString())
 
 
@@ -11,12 +13,12 @@ module.exports = function (grunt) {
 
   var screeps_options = {}
 
-  var server = grunt.option('server') || 'main';
+  var server = grunt.option('server') || 'main'
   grunt.log.writeln('Server: ' + server)
 
 
   // If the server is PTR enable the PTR option but use the "main" server settings
-  if(server == 'ptr') {
+  if(server === 'ptr') {
     server = 'main'
     screeps_options['ptr'] = true
   }
@@ -32,15 +34,15 @@ module.exports = function (grunt) {
   }
 
   // Allow grunt options to override default configuration
-  screeps_options['branch'] = grunt.option('branch') || config[server].branch;
-  screeps_options['email'] = grunt.option('email') || config[server].email;
-  screeps_options['password'] = grunt.option('password') || config[server].password;
+  screeps_options['branch'] = grunt.option('branch') || config[server].branch
+  screeps_options['email'] = grunt.option('email') || config[server].email
+  screeps_options['password'] = grunt.option('password') || config[server].password
 
 
   // Add private server settings.
-  if (server != 'main') {
-    screeps_options['hostname'] = grunt.option('hostname') || config[server].hostname;
-    screeps_options['ssl'] = grunt.option('ssl') || !!config[server].ssl;
+  if (server !== 'main') {
+    screeps_options['hostname'] = grunt.option('hostname') || config[server].hostname
+    screeps_options['ssl'] = grunt.option('ssl') || !!config[server].ssl
     var port = grunt.option('ssl')
     if(!!port) {
       screeps_options['port'] = port
@@ -85,7 +87,7 @@ module.exports = function (grunt) {
           filter: 'isFile',
           rename: function (dest, src) {
             // Change the path name utilize underscores for folders
-            return dest + src.replace(/\//g,'_');
+            return dest + src.replace(/\//g,'_')
           }
         }]
       }
@@ -97,7 +99,7 @@ module.exports = function (grunt) {
       versioning: {
         files: [
           {
-            append: "\nglobal.SCRIPT_VERSION = "+ currentdate.getTime() + "\n",
+            append: `\nglobal.SCRIPT_VERSION = ${currentdate.getTime()}\n`,
             input: 'dist/version.js',
           }
         ]
@@ -110,8 +112,7 @@ module.exports = function (grunt) {
     },
   })
 
-  grunt.registerTask('default', ['package', 'screeps']);
-  grunt.registerTask('package', ['clean', 'copy:screeps',  'file_append:versioning']);
-  grunt.registerTask('reset',   ['clean']);
+  grunt.registerTask('default', ['package', 'screeps'])
+  grunt.registerTask('package', ['clean', 'copy:screeps',  'file_append:versioning'])
+  grunt.registerTask('reset',   ['clean'])
 }
-

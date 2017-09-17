@@ -1,15 +1,17 @@
+'use strict'
 
 class Process {
-  constructor (pid, name, data, parent) {
+  constructor(pid, name, data, parent) {
     this.pid = pid
     this.name = name
     this.data = data
     this.parent = parent
   }
 
-  clean () {
+  clean() {
     if (this.data.children) {
-      for (let label in this.data.children) {
+      let label
+      for (label in this.data.children) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.children[label])) {
           delete this.data.children[label]
         }
@@ -17,7 +19,8 @@ class Process {
     }
 
     if (this.data.processes) {
-      for (let label in this.data.processes) {
+      let label
+      for (label in this.data.processes) { // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.processes[label])) {
           delete this.data.processes[label]
         }
@@ -25,11 +28,11 @@ class Process {
     }
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return false
   }
 
-  launchChildProcess (label, name, data = {}) {
+  launchChildProcess(label, name, data = {}) {
     if (!this.data.children) {
       this.data.children = {}
     }
@@ -40,7 +43,7 @@ class Process {
     return this.data.children[label]
   }
 
-  launchProcess (label, name, data = {}) {
+  launchProcess(label, name, data = {}) {
     if (!this.data.processes) {
       this.data.processes = {}
     }
@@ -52,25 +55,28 @@ class Process {
     return this.data.processes[label]
   }
 
-  launchCreepProcess (label, role, roomname, quantity = 1, options = {}) {
-    var room = Game.rooms[roomname]
+  launchCreepProcess(label, role, roomname, quantity = 1, options = {}) {
+    const room = Game.rooms[roomname]
     if (!room) {
       return false
     }
     if (!this.data.children) {
       this.data.children = {}
     }
-    for (var x = 0; x < quantity; x++) {
-      var specificLabel = label + x
+    let x
+    for (x = 0; x < quantity; x++) {
+      const specificLabel = label + x
       if (this.data.children[specificLabel]) {
         continue
       }
-      var creepName = room.queueCreep(role, options)
-      this.launchChildProcess(specificLabel, 'creep', {'creep': creepName})
+      const creepName = room.queueCreep(role, options)
+      this.launchChildProcess(specificLabel, 'creep', {
+        'creep': creepName,
+      })
     }
   }
 
-  period (interval, label = "default") {
+  period(interval, label = 'default') {
     if (!this.data.period) {
       this.data.period = {}
     }
@@ -84,11 +90,11 @@ class Process {
     return false
   }
 
-  suicide () {
+  suicide() {
     return kernel.scheduler.kill(this.pid)
   }
 
-  run () {
+  run() {
     this.clean()
     this.main()
   }
