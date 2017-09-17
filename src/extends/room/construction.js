@@ -116,7 +116,7 @@ Room.prototype.getNextMissingStructureType = function () {
     if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
       continue
     }
-    if (nextLevelStructureCount[structureType] <= 0) {
+    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
       continue
     }
     if (!structureCount[structureType] || structureCount[structureType] < nextLevelStructureCount[structureType]) {
