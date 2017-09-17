@@ -22,7 +22,11 @@ class CityConstruct extends kernel.process {
     });
 
     if (sites.length <= 0) {
-      this.room.constructNextMissingStructure();
+
+      let result = this.room.constructNextMissingStructure();
+      if (Number.isInteger(result) && result < 0) {
+        Logger.log(`Unable to build next structure: ${result}`, LOG_ERROR);
+      }
     }
 
     if (sites.length > 0) {
