@@ -19,9 +19,6 @@ Room.prototype.queueCreep = function (role, options = {}) {
   if (!Memory.spawnqueue.index[this.name]) {
     Memory.spawnqueue.index[this.name] = {}
   }
-  if (!options.energy || options.energy > this.energyCapacityAvailable) {
-    options.energy = this.energyCapacityAvailable
-  }
   options.role = role
   Memory.spawnqueue.index[this.name][name] = options
   return name
@@ -51,7 +48,7 @@ Room.prototype.getQueuedCreep = function () {
 
   const options = Memory.spawnqueue.index[this.name][creeps[0]]
   const role = Creep.getRole(options.role)
-  const build = role.getBuild(options)
+  const build = role.getBuild(this, options)
   if (Creep.getCost(build) > this.energyAvailable) {
     return false
   }
