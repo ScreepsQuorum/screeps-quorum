@@ -1,7 +1,7 @@
 'use strict';
 
+global.DEFAULT_PRIORITY = global.PRIORITIES_DEFAULT || 6;
 const MAX_PRIORITY = 16;
-const DEFAULT_PRIORITY = 6;
 const MAX_PID = 9999999;
 
 class Scheduler {
@@ -148,10 +148,10 @@ class Scheduler {
 
   getPriorityForPid (pid) {
     const program = this.getProcessForPid(pid);
-    if (!program.priority) {
+    if (!program.getPriority) {
       return DEFAULT_PRIORITY;
     }
-    const priority = typeof program.priority === 'function' ? program.priority() : program.priority;
+    const priority = program.getPriority();
     return priority < MAX_PRIORITY ? priority : MAX_PRIORITY;
   }
 

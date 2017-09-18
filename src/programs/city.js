@@ -1,6 +1,11 @@
 'use strict';
 
 class City extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_CITY
+  }
+
   getDescriptor() {
     return this.data.room;
   }

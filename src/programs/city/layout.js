@@ -167,6 +167,11 @@ const LAYOUT_FLOWER = [
 
 
 class CityLayout extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_CONSTRUCTION
+  }
+
   getDescriptor() {
     return this.data.room;
   }

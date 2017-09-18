@@ -4,6 +4,11 @@
  * This program handles spawning of creeps.
  */
 class Spawns extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_SPAWNS
+  }
+
   getDescriptor() {
     return this.data.room;
   }

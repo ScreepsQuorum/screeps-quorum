@@ -8,7 +8,9 @@ if (Game.cpu.bucket < 500) {
 // Load any prototypes or libraries
 
 /* Get Upload Version */
+
 require('version');
+require('constants');
 
 /* Enable QOS Logger */
 const QosLogger = require('qos_logger');

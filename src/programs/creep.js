@@ -5,6 +5,11 @@
  */
 
 class ProgramCreep extends kernel.process {
+  getPriority() {
+    const role = Creep.getRoleFromName(this.data.creep)
+    return role.getPriority()
+  }
+
   getDescriptor() {
     return this.data.creep;
   }

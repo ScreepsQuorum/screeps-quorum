@@ -1,6 +1,19 @@
 'use strict';
 
 class MetaRole {
+
+  setBuildDefaults(room, options) {
+    if (!options.energy) {
+      if (this.defaultEnergy) {
+        options.energy = this.defaultEnergy
+      }
+    }
+    if (options.energy > room.energyCapacityAvailable) {
+      options.energy = room.energyCapacityAvailable
+    }
+  }
+
+
   recharge(creep) {
     if (creep.carry[RESOURCE_ENERGY] <= 0) {
       creep.memory.recharge = true;
@@ -22,6 +35,10 @@ class MetaRole {
       return true;
     }
     return false;
+  }
+
+  getPriority(creep) {
+    return PRIORITIES_CREEP_DEFAULT
   }
 }
 
