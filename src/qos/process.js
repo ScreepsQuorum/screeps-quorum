@@ -8,6 +8,11 @@ class Process {
     this.parent = parent
   }
 
+  getPriority() {
+    return this.priority || DEFAULT_PRIORITY
+  }
+
+
   clean() {
     if (this.data.children) {
       let label

@@ -6,6 +6,11 @@
  */
 
 class Player extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_PLAYER
+  }
+
   main() {
     this.launchChildProcess('respawner', 'respawner')
 
