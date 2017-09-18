@@ -5,6 +5,10 @@ Creep.getRole = function (roleName) {
   return new Role()
 }
 
+Creep.getRoleFromName = function (creepname) {
+  return Creep.getRole(creepname.split('_', 1)[0])
+}
+
 Creep.prototype.getRole = function () {
   // If the creep role isn't in memory grab it based off of the name
   let roleType = this.memory.role ? this.memory.role : this.name.split('_', 1)[0]

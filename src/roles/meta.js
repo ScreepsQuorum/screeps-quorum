@@ -23,6 +23,10 @@ class MetaRole {
     }
     return false
   }
+
+  getPriority(creep) {
+    return PRIORITIES_CREEP_DEFAULT
+  }
 }
 
 module.exports = MetaRole

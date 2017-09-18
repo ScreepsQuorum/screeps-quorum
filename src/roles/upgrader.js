@@ -9,6 +9,10 @@ class Upgrader extends MetaRole {
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
+  getPriority(creep) {
+    return PRIORITIES_CREEP_UPGRADER
+  }
+
   manageCreep(creep) {
     if (this.recharge(creep)) {
       return
