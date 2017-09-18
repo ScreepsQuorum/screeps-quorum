@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  * Provide Room-level Security
@@ -11,15 +11,15 @@ class CityDefense extends kernel.process {
   }
 
   getDescriptor() {
-    return this.data.room
+    return this.data.room;
   }
 
   main() {
     if (!Game.rooms[this.data.room]) {
-      return this.suicide()
+      return this.suicide();
     }
 
-    const room = Game.rooms[this.data.room]
+    const room = Game.rooms[this.data.room];
 
     const towers = sos.lib.cache.getOrUpdate(
         [this.data.room, 'towers'],
@@ -34,97 +34,100 @@ class CityDefense extends kernel.process {
           chance: 0.001,
         })
       .map(id => Game.getObjectById(id))
-      .filter(t => t)
+      .filter(t => t);
 
-    const hostiles = room.find(FIND_HOSTILE_CREEPS)
+    const hostiles = room.find(FIND_HOSTILE_CREEPS);
 
     if (towers && towers.length > 0) {
-      this.fireTowers(towers, hostiles)
+      this.fireTowers(towers, hostiles);
     }
 
     if (towers && _.some(towers, tower => tower.energy < tower.energyCapacity)) {
-      this.launchCreepProcess('loader', 'replenisher', this.data.room, 1)
+      this.launchCreepProcess('loader', 'replenisher', this.data.room, 1);
     }
 
-    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader')
+    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader');
     if (playerHostiles.length > 0) {
-      Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)
-      this.safeMode(playerHostiles)
+      Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN);
+      this.safeMode(playerHostiles);
     }
   }
 
   fireTowers(towers, hostiles) {
+
+    let rangefunc = (tower) => ((c) =>c.pos.getRangeTo(tower.pos));
+
     if (hostiles.length > 0) {
       // for now, just shoot closest for each tower
-      let tower
+      let tower, closest;
       for (tower of towers) {
         if (tower.energy < TOWER_ENERGY_COST) {
-          continue
+          continue;
         }
-        const closest = _.min(hostiles, c => c.pos.getRangeTo(tower.pos))
-        tower.attack(closest)
+        closest = _.min(hostiles, rangefunc(tower));
+        tower.attack(closest);
       }
-      return
+      return;
     }
 
     const healFunc = (healTarget) => {
       // TODO: clever calculations to avoid overheals
-      let tower
+      let tower;
       for (tower of towers) {
-        tower.heal(healTarget)
+        tower.heal(healTarget);
       }
-    }
+    };
 
     if (this.data.healTarget !== undefined) {
-      const healTarget = Game.getObjectById(this.data.healTarget)
+      const healTarget = Game.getObjectById(this.data.healTarget);
       if (healTarget &&
         (healTarget.pos.room.name === this.data.room) &&
         (healTarget.hits < healTarget.hitsMax)) {
-        healFunc(healTarget)
-        return
+        healFunc(healTarget);
+        return;
       }
 
       // heal target no longer valid
-      delete this.data.healTarget
+      delete this.data.healTarget;
     }
 
     // look for a heal target every healFrequency ticks
-    const healFrequency = 5
+    const healFrequency = 5;
     if (this.period(healFrequency, 'healTargetSelection')) {
-      const room = Game.rooms[this.data.room]
-      const myCreeps = room.find(FIND_MY_CREEPS)
-      const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax)
+      const room = Game.rooms[this.data.room];
+      const myCreeps = room.find(FIND_MY_CREEPS);
+      const lowestCreep = _.min(myCreeps, c => c.hits / c.hitsMax);
       if (!_.isNumber(lowestCreep) &&
         (lowestCreep.hits < lowestCreep.hitsMax)) {
-        this.data.healTarget = lowestCreep.id
-        healFunc(lowestCreep)
-        return
+        this.data.healTarget = lowestCreep.id;
+        healFunc(lowestCreep);
+        return;
       }
     }
   }
 
   safeMode(hostiles) {
-    const room = Game.rooms[this.data.room]
+    const room = Game.rooms[this.data.room];
     if (room.controller.safeMode && room.controller.safeMode > 0) {
-      return true
+      return true;
     }
     if (room.controller.safeModeAvailable <= 0 || room.controller.safeModeCooldown) {
-      return false
+      return false;
     }
 
-    const spawns = room.find(FIND_MY_SPAWNS)
-    let spawn
+    const spawns = room.find(FIND_MY_SPAWNS);
+    let spawn, closest;
     for (spawn of spawns) {
-      const closest = spawn.pos.findClosestByRange(hostiles)
+      closest = spawn.pos.findClosestByRange(hostiles);
       if (spawn.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
-        Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
-        room.controller.activateSafeMode()
-        return true
+        Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR);
+        room.controller.activateSafeMode();
+        return true;
       }
     }
-    return false
+    return false;
   }
 }
 
-module.exports = CityDefense
+module.exports = CityDefense;

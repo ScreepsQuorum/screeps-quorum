@@ -1,69 +1,70 @@
-'use strict'
+'use strict';
 
 class Cluster {
   static clean () {
-    var clusters = Cluster.listAll()
-    for (var clustername of clusters) {
-      var cluster = new Cluster(clustername)
+    var clusters = Cluster.listAll();
+    let clustername;
+    for (clustername of clusters) {
       if (Memory.clusters[clustername].creeps.length <= 0) {
-        delete Memory.clusters[clustername]
+        delete Memory.clusters[clustername];
       }
     }
   }
 
   static listAll () {
     if (!Memory.clusters) {
-      return []
+      return [];
     }
-    return Object.keys(Memory.clusters)
+    return Object.keys(Memory.clusters);
   }
 
   constructor (name, room = false) {
-    this.name = name
-    this.room = room
+    this.name = name;
+    this.room = room;
     if (!Memory.clusters) {
-      Memory.clusters = {}
+      Memory.clusters = {};
     }
     if (!Memory.clusters[name]) {
       Memory.clusters[name] = {
         'creeps': []
-      }
+      };
     }
-    this.memory = Memory.clusters[name]
-    this.creeps = []
-    for (var creepname of this.memory.creeps) {
+    this.memory = Memory.clusters[name];
+    this.creeps = [];
+    let creepname;
+    for (creepname of this.memory.creeps) {
       if (Game.creeps[creepname]) {
-        this.creeps.push(Game.creeps[creepname])
-        continue
+        this.creeps.push(Game.creeps[creepname]);
+        continue;
       }
       if (room) {
         if (!room.isQueued(creepname)) {
-          this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1)
+          this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1);
         }
       } else if (!Room.isQueued(creepname)) {
-        this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1)
+        this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1);
       }
     }
   }
 
   sizeCluster (role, quantity, options = {}, room = false) {
     if (this.memory.creeps.length >= quantity) {
-      return true
+      return true;
     }
-    var spawnroom = room || this.room
+    let spawnroom = room || this.room;
     while (this.memory.creeps.length < quantity) {
-      this.memory.creeps.push(spawnroom.queueCreep(role, options))
+      this.memory.creeps.push(spawnroom.queueCreep(role, options));
     }
-    return false
+    return false;
   }
 
   getCreeps () {
-    return this.creeps
+    return this.creeps;
   }
 
   forEach (creepAction) {
-    return this.getCreeps().forEach(creepAction)
+    return this.getCreeps().forEach(creepAction);
   }
 }
 
-module.exports = Cluster
+module.exports = Cluster;
