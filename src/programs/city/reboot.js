@@ -6,6 +6,11 @@
  */
 
 class CityReboot extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_CITY_REBOOT
+  }
+
   main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()

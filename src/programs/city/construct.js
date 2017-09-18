@@ -5,6 +5,11 @@
  */
 
 class CityConstruct extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_CONSTRUCTION
+  }
+
   main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()

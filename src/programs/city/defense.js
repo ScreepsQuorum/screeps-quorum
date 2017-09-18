@@ -5,6 +5,11 @@
  */
 
 class CityDefense extends kernel.process {
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_DEFENSE
+  }
+
   getDescriptor() {
     return this.data.room
   }

@@ -6,8 +6,9 @@
  */
 
 class Respawn extends kernel.process {
-  priority() {
-    return 12
+  constructor(...args) {
+    super(...args)
+    this.priority = PRIORITIES_RESPAWNER
   }
 
   main() {
