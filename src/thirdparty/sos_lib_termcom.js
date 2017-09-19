@@ -1,20 +1,21 @@
 
 class Termcom {
-  constructor () {
-    if (!Memory.sos.communications) {
+  constructor() {
+    if(!Memory.sos.communications) {
       Memory.sos.communications = {}
     }
     this.memory = Memory.sos.communications
-    if (!this.memory.buffer) {
+    if(!this.memory.buffer) {
       this.memory.buffer = {}
     }
-    if (!this.memory.queue) {
+    if(!this.memory.queue) {
       this.memory.queue = {}
     }
+
   }
 
-  publishTerminals (terminal_rooms, protocols = []) {
-    if (!terminal_rooms || terminal_rooms.length < 0) {
+  publishTerminals(terminal_rooms, protocols=[]) {
+    if(!terminal_rooms || terminal_rooms.length < 0) {
       sos.lib.broadcaster.resetChannel('termcom')
       return
     }
@@ -24,20 +25,20 @@ class Termcom {
     })
   }
 
-  buildmessages () {
-    for (var transaction of Game.market.incomingTransactions) {
-      if (!this.validateMessagePiece(transaction)) {
+  buildmessages() {
+    for(var transaction of Game.market.incomingTransactions) {
+      if(!this.validateMessagePiece(transaction)) {
         continue
       }
-      if (/^([\da-zA-Z]{1,3})\|([\d]{1,2})\|.+/.test(transaction.description)) {
+      if(/^([\da-zA-Z]{1,3})\|([\d]{1,2})\|.+/.test(transaction.description)) {
         this.constructMessage(transaction)
       } else {
         var index_id = sos.lib.uuid.vs()
         this.memory.queue[index_id] = {
-          id: index_id,
-          user: transaction.sender.username,
-          message: transaction.description,
-          terminal: transaction.from,
+          id:index_id,
+          user:transaction.sender.username,
+          message:transaction.description,
+          terminal:transaction.from,
           time: Game.time
         }
       }
@@ -45,41 +46,42 @@ class Termcom {
     this.memory.lastrun = Game.time
   }
 
-  validateMessagePiece (transaction) {
-    if (transaction.order) {
+  validateMessagePiece(transaction) {
+    if(!!transaction.order) {
       return false
     }
-    if (!transaction.description) {
+    if(!transaction.description) {
       return false
     }
-    if (!transaction.sender) {
+    if(!transaction.sender) {
       return false
     }
-    if (!transaction.sender.username) {
+    if(!transaction.sender.username) {
       return false
     }
-    if (transaction.sender.username == transaction.recipient.username) {
+    if(transaction.sender.username == transaction.recipient.username) {
       return false
     }
-    if (this.memory.lastrun) {
-      if (transaction.time <= this.memory.lastrun) {
+    if(!!this.memory.lastrun) {
+      if(transaction.time <= this.memory.lastrun) {
         return false
       }
     }
-    if (!transaction.description) {
+    if(!transaction.description) {
       return false
     }
-    if (transaction.description.length <= 0) {
+    if(transaction.description.length <= 0) {
       return false
     }
     return true
   }
 
-  constructMessage (transaction) {
+  constructMessage(transaction) {
+
     var user = transaction['sender']['username']
     var description = transaction['description']
 
-    if (!this.memory.buffer[user]) {
+    if(!this.memory.buffer[user]) {
       this.memory.buffer[user] = {}
     }
 
@@ -94,11 +96,11 @@ class Termcom {
 
     var index_id = user + '_' + id
 
-    if (!this.memory.buffer[index_id]) {
+    if(!this.memory.buffer[index_id]) {
       this.memory.buffer[index_id] = {
         parts: {},
         total: false,
-        time: transaction['time']
+        time: transaction['time'],
       }
     }
 
@@ -106,8 +108,8 @@ class Termcom {
     var packet_id = pieces[1]
 
     // get total packets
-    if (packet_id == 0) {
-      this.memory.buffer[index_id].total = pieces[2] - 1
+    if(packet_id == 0) {
+      this.memory.buffer[index_id].total = pieces[2]-1
       this.memory.buffer[index_id].terminal = transaction.from
       var message_piece = pieces[3]
     } else {
@@ -116,18 +118,18 @@ class Termcom {
 
     // get message piece
     this.memory.buffer[index_id].parts[packet_id] = message_piece
-    if (this.memory.buffer[index_id].total) {
+    if(!!this.memory.buffer[index_id].total) {
       var total = this.memory.buffer[index_id].total
-      if (Object.keys(this.memory.buffer[index_id].parts).length == total) {
+      if(Object.keys(this.memory.buffer[index_id].parts).length == total) {
         var message = ''
-        for (var i = 0; i < total; i++) {
+        for(var i = 0; i < total; i++) {
           message += this.memory.buffer[index_id].parts[i]
         }
         this.memory.queue[index_id] = {
           id: index_id,
-          user: user,
-          message: message,
-          terminal: this.memory.buffer[index_id].terminal,
+          user:user,
+          message:message,
+          terminal:this.memory.buffer[index_id].terminal,
           time: Game.time
         }
         delete this.memory.buffer[index_id]
@@ -135,47 +137,47 @@ class Termcom {
     }
   }
 
-  cleanBuffer () {
+  cleanBuffer() {
     var messages = Object.keys(this.memory.buffer)
-    for (var index_id of messages) {
-      if (Game.time - this.memory.buffer[index_id].time > 1000) {
+    for(var index_id of messages) {
+      if(Game.time - this.memory.buffer[index_id].time > 1000) {
         delete this.memory.buffer[index_id]
       }
     }
   }
 
-  cleanQueue () {
+  cleanQueue() {
     var messages = Object.keys(this.memory.queue)
-    for (var index_id of messages) {
-      if (Game.time - this.memory.queue[index_id].time > 5000) {
+    for(var index_id of messages) {
+      if(Game.time - this.memory.queue[index_id].time > 5000) {
         delete this.memory.queue[index_id]
       }
     }
   }
 
-  removeMessage (id) {
-    if (this.memory.queue[id]) {
+  removeMessage(id) {
+    if(!!this.memory.queue[id]) {
       delete this.memory.queue[id]
     }
   }
 
-  getMessageByID (id) {
-    if (this.memory.queue[id]) {
+  getMessageByID(id) {
+    if(!!this.memory.queue[id]) {
       return this.memory.queue[id]
     }
   }
 
-  getMessages () {
+  getMessages() {
     return this.memory.queue
   }
 
-  sendMessage (message, room) {
-    if (!this.memory.squeue) {
+  sendMessage(message, room) {
+    if(!this.memory.squeue) {
       this.memory.squeue = []
     }
 
     // Message is small enough to fit in a single transmission
-    if (message.length <= 100) {
+    if(message.length <= 100) {
       this.memory.squeue.push({
         to: room,
         packet: message
@@ -187,14 +189,14 @@ class Termcom {
 
     // header size == 8
     // available message chars == 92
-    var total_pieces = Math.ceil(message.length / 92)
-    for (var i = 0; i < total_pieces; i++) {
+    var total_pieces = Math.ceil(message.length/92)
+    for(var i = 0; i < total_pieces; i++) {
       var packet = msg_id
       packet += '|' + i
-      if (i == 0) {
+      if(i == 0) {
         packet += '|' + total_pieces
       }
-      packet += message.slice(i, i + 92)
+      packet += message.slice(i, i+92)
       this.memory.squeue.push({
         to: room,
         packet: packet
@@ -202,16 +204,17 @@ class Termcom {
     }
   }
 
-  hasPacketsToSend () {
+  hasPacketsToSend() {
     return !!this.memory.squeue && this.memory.squeue.length > 0
   }
 
-  getNextPacketToSend () {
-    if (this.memory.squeue.length < 1) {
+  getNextPacketToSend() {
+    if(this.memory.squeue.length < 1) {
       return false
     }
     return this.memory.squeue.shift()
   }
+
 }
 
 module.exports = new Termcom()

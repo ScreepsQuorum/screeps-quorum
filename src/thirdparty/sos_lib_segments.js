@@ -1,5 +1,5 @@
 
-if (!Memory.__segindex) {
+if(!Memory.__segindex) {
   Memory.__segindex = {
     'index': {},
     'savelog': {},
@@ -11,7 +11,7 @@ if (!Memory.__segindex) {
   }
 }
 
-if (!Memory.__segindex.public) {
+if(!Memory.__segindex.public) {
   Memory.__segindex.public = []
 }
 
@@ -19,7 +19,7 @@ var cache = {}
 
 var sos_lib_segments = {
 
-  maxMemory: 100 * 1024,
+  maxMemory: 100*1024,
   maxActiveSegments: 10,
 
   // Start at 19- leave the first 20 for manual assignment
@@ -38,43 +38,43 @@ var sos_lib_segments = {
   },
 
   saveString: function (label, string) {
-    var needed_segments = Math.ceil(string.length / this.maxMemory)
+    var needed_segments = Math.ceil(string.length/this.maxMemory)
     var ids = this.getIndexByLabel(label, true)
-    if (RawMemory.segments) {
+    if(!!RawMemory.segments) {
       var availableSegments = Object.keys(RawMemory.segments)
     } else {
       var availableSegments = []
     }
 
-    if (ids.length > needed_segments) {
+    if(ids.length > needed_segments) {
       // Mark unused segments for cleaning.
       var unneeded = ids.slice(needed_segments, ids.length)
       Memory.__segindex.clear = Memory.__segindex.clear.concat(unneeded)
       ids = ids.slice(0, needed_segments)
     } else if (ids.length < needed_segments) {
       var diff = needed_segments - ids.length
-      for (var i = 0; i < diff; i++) {
+      for(var i = 0; i<diff; i++) {
         var id = this.getNextId()
-        if (!id && id !== 0) {
+        if(!id && id !== 0) {
           return ERR_FULL
         }
         ids.push(id)
       }
     }
 
-    Memory.__segindex.index[label] = {'ids': ids}
+    Memory.__segindex.index[label] = {'ids':ids}
 
-    for (var i = 0; i < needed_segments; i++) {
+    for(var i = 0; i < needed_segments; i++) {
       var start = i * this.maxMemory
       var end = start + this.maxMemory // will end *one before* this value
       var chunk = string.slice(start, end)
       var id = ids[i]
       Memory.__segindex.savelog[id] = Game.time
-      if (!cache[Game.time]) {
+      if(!cache[Game.time]) {
         cache[Game.time] = {}
       }
       cache[Game.time][label] = chunk
-      if (availableSegments.indexOf(id) < 0) {
+      if(availableSegments.indexOf(id) < 0) {
         Memory.__segindex.buffer[id] = chunk
       } else {
         RawMemory.segments[id] = chunk
@@ -84,15 +84,15 @@ var sos_lib_segments = {
 
   getObject: function (label) {
     var stringdata = this.getString(label)
-    if (typeof stringdata === 'string') {
-      if (stringdata.length <= 0) {
+    if(typeof stringdata == 'string') {
+      if(stringdata.length <= 0) {
         return {}
       } else {
         var start = Game.cpu.getUsed()
         var data = JSON.parse(stringdata)
         var parseTime = Game.cpu.getUsed() - start
         console.log('Segment ' + label + ' parse time: ' + parseTime + ' with length ' + stringdata.length)
-        if (typeof Stats !== 'undefined') {
+        if(typeof Stats != 'undefined') {
           Stats.addStat('segments.' + label, {
             'label': label,
             'parseTime': parseTime,
@@ -102,33 +102,33 @@ var sos_lib_segments = {
         return data
       }
     }
-    if (!stringdata || stringdata < 0) {
+    if(!stringdata || stringdata < 0) {
       return stringdata
     }
     return ERR_NOT_FOUND
   },
 
-  getString: function (label, ttl = 3) {
+  getString: function (label, ttl=3) {
     var ids = this.getIndexByLabel(label, true)
     var datastring = ''
-    for (var id of ids) {
+    for(var id of ids) {
       this.requestSegment(id, ttl)
-      if (datastring === false || datastring < 0) {
+      if(datastring === false || datastring < 0) {
         continue
       }
 
-      if (typeof Memory.__segindex.buffer[id] === 'string') {
+      if(typeof Memory.__segindex.buffer[id] == 'string') {
         datastring += Memory.__segindex.buffer[id]
         continue
       }
 
-      if (!!RawMemory.segments && typeof RawMemory.segments[id] === 'string') {
+      if(!!RawMemory.segments && typeof RawMemory.segments[id] == 'string') {
         datastring += RawMemory.segments[id]
         continue
       }
 
       var saveTick = Memory.__segindex.savelog[id]
-      if (!!cache[saveTick] && typeof cache[saveTick][id] === 'string') {
+      if(!!cache[saveTick] && typeof cache[saveTick][id] == 'string') {
         datastring += cache[saveTick][id]
         continue
       }
@@ -147,22 +147,22 @@ var sos_lib_segments = {
     delete Memory.__segindex.index[label]
   },
 
-  reserveSegments: function (label, count = 1) {
+  reserveSegments: function (label, count=1) {
     var ids = this.getIndexByLabel(label)
 
-    if (!ids) {
+    if(!ids) {
       ids = []
     }
 
-    if (ids.length > count) {
+    if(ids.length > count) {
       var unneeded = ids.slice(count, ids.length)
       Memory.__segindex.clear = Memory.__segindex.clear.concat(unneeded)
       ids = ids.slice(0, count)
-    } else if (ids.length < count) {
+    } else if(ids.length < count) {
       var diff = count - ids.length
-      for (var i = 0; i < diff; i++) {
+      for(var i = 0; i<diff; i++) {
         var id = this.getNextId()
-        if (!id && id !== 0) {
+        if(!id && id !== 0) {
           return ERR_FULL
         }
         ids.push(id)
@@ -173,7 +173,7 @@ var sos_lib_segments = {
     return ids
   },
 
-  requestSegment: function (index, ttl = 5) {
+  requestSegment: function (index, ttl=5) {
     Memory.__segindex.ttls[index] = ttl
   },
 
@@ -182,56 +182,57 @@ var sos_lib_segments = {
   },
 
   markCritical: function (label) {
-    if (Memory.__segindex.critical.indexOf(label) < 0) {
+    if(Memory.__segindex.critical.indexOf(label) < 0) {
       Memory.__segindex.critical.push(label)
     }
   },
 
   unmarkCritical: function (label) {
     var index = Memory.__segindex.critical.indexOf(label)
-    if (index >= 0) {
+    if(index >= 0) {
       Memory.__segindex.critical.splice(index, 1)
     }
   },
 
   markPublic: function (label) {
-    if (Memory.__segindex.public.indexOf(label) < 0) {
+    if(Memory.__segindex.public.indexOf(label) < 0) {
       Memory.__segindex.public.push(label)
     }
   },
 
   unmarkPublic: function (label) {
     var index = Memory.__segindex.public.indexOf(label)
-    if (index >= 0) {
+    if(index >= 0) {
       Memory.__segindex.public.splice(index, 1)
     }
   },
 
   setDefaultPublic: function (label) {
     var index = this.getIndexByLabel(label)
-    if (!index) {
+    if(!index) {
       return index
     }
-    if (!index || index.length > 1) {
+    if(!index || index.length > 1) {
       // throw error
     }
     RawMemory.setDefaultPublicSegment(index[0])
   },
 
   getAvailableSegments: function () {
-    if (!RawMemory.segments) {
+    if(!RawMemory.segments) {
       return []
     }
     var availableSegments = Object.keys(RawMemory.segments).map(Number)
-    availableSegments = _.filter(availableSegments, function (a) {
+    availableSegments = _.filter(availableSegments, function(a){
       return Number.isInteger(a)
     })
     return availableSegments
   },
 
   moveToGlobalCache: function () {
+
     // On a server without memory segments so there is nothing to move.
-    if (!RawMemory.setActiveSegments) {
+    if(!RawMemory.setActiveSegments) {
       return
     }
 
@@ -239,27 +240,27 @@ var sos_lib_segments = {
     var availableSegments = this.getAvailableSegments()
     for (var id of availableSegments) {
       // Out of management range.
-      if (id < this.min || id > this.max) {
+      if(id < this.min || id > this.max) {
         continue
       }
 
       // Hasn't been saved yet so don't remove it.
-      if (!Memory.__segindex.savelog[id]) {
+      if(!Memory.__segindex.savelog[id]) {
         continue
       }
 
       // Something may be trying to clear it- just leave blank.
-      if (RawMemory.segments[id] === '') {
+      if(RawMemory.segments[id] === '') {
         continue
       }
 
       // Something is trying to clear it- leave for end of tick processing.
-      if (Memory.__segindex.clear.includes(id)) {
+      if(Memory.__segindex.clear.includes(id)) {
         continue
       }
 
       var saveTick = Memory.__segindex.savelog[id]
-      if (!cache[saveTick]) {
+      if(!cache[saveTick]) {
         cache[saveTick] = {}
       }
       cache[saveTick][id] = RawMemory.segments[id]
@@ -272,36 +273,36 @@ var sos_lib_segments = {
 
     // Build list of critical segments from label.
     var critical = []
-    for (var critical_label of Memory.__segindex.critical) {
+    for(var critical_label of Memory.__segindex.critical) {
       var ids = this.getIndexByLabel(critical_label)
       critical = critical.concat(ids)
     }
 
     // Create list of segments to ask for, starting with the critical ones.
-    if (critical.length > this.maxActiveSegments) {
-      var segments = _.shuffle(critical.concat([])).slice(0, this.maxActiveSegments)
+    if(critical.length > this.maxActiveSegments) {
+      var segments = _.shuffle(critical.concat([])).slice(0,this.maxActiveSegments)
     } else {
       var segments = critical.concat([])
     }
 
     // clean available segments
-    for (var index in Memory.__segindex.clear) {
+    for(var index in Memory.__segindex.clear) {
       var id = Memory.__segindex.clear[index]
-      if (Memory.__segindex.buffer[id]) {
+      if(Memory.__segindex.buffer[id]) {
         delete Memory.__segindex.buffer[id]
       }
-      if (availableSegments.indexOf(id) >= 0) {
+      if(availableSegments.indexOf(id) >= 0) {
         RawMemory.segments[id] = ''
         delete Memory.__segindex.clear[index]
       }
     }
-    Memory.__segindex.clear = _.filter(Memory.__segindex.clear, function (a) {
+    Memory.__segindex.clear = _.filter(Memory.__segindex.clear, function(a){
       return Number.isInteger(a)
     })
 
     // On a server without memory segments, so just keep things in buffer
     // and don't attempt to request real segments.
-    if (!RawMemory.setActiveSegments) {
+    if(!RawMemory.setActiveSegments) {
       return
     }
 
@@ -312,29 +313,29 @@ var sos_lib_segments = {
     var usablesegments = 10 - (currentsegments + this.free)
 
     // Move data from the buffers to segments.
-    for (var index in Memory.__segindex.buffer) {
+    for(var index in Memory.__segindex.buffer) {
       var id = Number(index)
 
       // Is the segment active?
-      if (availableSegments.indexOf(id) >= 0) {
+      if(availableSegments.indexOf(id) >= 0) {
         RawMemory.segments[id] = Memory.__segindex.buffer[index]
         delete Memory.__segindex.buffer[index]
 
       // Are there enough free segments to send data?
-      } else if (usablesegments > 0) {
+      } else if(usablesegments > 0) {
         RawMemory.segments[id] = Memory.__segindex.buffer[index]
         delete Memory.__segindex.buffer[index]
         usablesegments--
 
       // Are there enough free segments on the next tick to reserve some?
-      } else if (segments.length < this.maxActiveSegments) {
+      } else if(segments.length < this.maxActiveSegments) {
         segments.push(id)
       }
     }
 
-    for (var index in Memory.__segindex.clear) {
+    for(var index in Memory.__segindex.clear) {
       var id = Number(index)
-      if (usablesegments < 1) {
+      if(usablesegments < 1) {
         break
       }
       RawMemory.segments[id] = ''
@@ -345,34 +346,34 @@ var sos_lib_segments = {
     // Cache all segments in global to make reconstruction easier.
     for (var id of availableSegments) {
       var saveTick = Memory.__segindex.savelog[id]
-      if (!saveTick) {
+      if(!saveTick) {
         saveTick = Game.time
         Memory.__segindex.savelog[id] = Game.time
       }
-      if (!cache[saveTick]) {
+      if(!cache[saveTick]) {
         cache[saveTick] = {}
       }
       cache[saveTick][id] = RawMemory.segments[id]
     }
 
     // Add requested segments
-    if (segments.length < this.maxActiveSegments) {
+    if(segments.length < this.maxActiveSegments) {
       var diff = this.maxActiveSegments - segments.length
       var reqs = Object.keys(Memory.__segindex.ttls)
-      if (reqs.length > diff) {
-        reqs.sort(function (a, b) {
+      if(reqs.length > diff) {
+        reqs.sort(function(a,b){
           return this.ttl[a] - this.ttl[b]
-        }.bind({'ttl': Memory.__segindex.ttls}))
+        }.bind({'ttl':Memory.__segindex.ttls}))
       }
-      for (var index of reqs) {
+      for(var index of reqs) {
         Memory.__segindex.ttls[index]--
-        if (Memory.__segindex.ttls[index] <= 0) {
+        if(Memory.__segindex.ttls[index] <= 0) {
           delete Memory.__segindex.ttls[index]
           continue
         }
         segments.push(index)
         diff--
-        if (diff <= 0) {
+        if(diff <= 0) {
           break
         }
       }
@@ -380,70 +381,70 @@ var sos_lib_segments = {
 
     // Add segments which needs to be cleared
     // Replace this by just injecting blind, as that works now
-    if (segments.length < this.maxActiveSegments) {
+    if(segments.length < this.maxActiveSegments) {
       var diff = this.maxActiveSegments - segments.length
       var clear = Memory.__segindex.clear.concat({})
-      if (clear.length > diff) {
-        clear = clear.slice(0, diff)
+      if(clear.length > diff) {
+        clear = clear.slice(0,diff)
       }
       segments = segments.concat(clear)
     }
 
-    segments = _.filter(_.uniq(segments.map(Number)), function (a) { return Number.isInteger(a) })
-    if (segments.length > 0) {
+    segments = _.filter(_.uniq(segments.map(Number)),function(a){return Number.isInteger(a)})
+    if(segments.length > 0) {
       RawMemory.setActiveSegments(segments)
     }
 
     // Send list of segments to make public
     // setPublicSegments isn't in the sim
-    if (RawMemory.setPublicSegments) {
+    if(!!RawMemory.setPublicSegments) {
       var public_segments = []
-      for (var label of Memory.__segindex.public) {
+      for(var label of Memory.__segindex.public) {
         var segments = this.getIndexByLabel(label)
-        if (segments) {
-          public_segments = public_segments.concat(segments)
+        if(segments) {
+            public_segments = public_segments.concat(segments)
         }
       }
       RawMemory.setPublicSegments(public_segments)
     }
   },
 
-  getNextId: function () {
+  getNextId: function() {
     var current = Memory.__segindex.last
-    if (!current || current > this.max) {
+    if(!current || current > this.max) {
       current = this.min
     }
     var start = current
 
     var inUse = []
-    for (var label in Memory.__segindex.index) {
+    for(var label in Memory.__segindex.index) {
       inUse = inUse.concat(Memory.__segindex.index[label].ids)
     }
     inUse = inUse.concat(_.values(Memory.__segindex.clear))
 
-    while (true) {
-      if (inUse.indexOf(current) < 0) {
+    while(true) {
+      if(inUse.indexOf(current) < 0) {
         Memory.__segindex.last = +current + +1
         return current
       }
       current++
-      if (current > this.max) {
+      if(current > this.max) {
         current = this.min
       }
-      if (current == start) {
+      if(current == start) {
         return ERR_FULL
       }
     }
   },
 
-  getIndexByLabel: function (label, autoassign = true) {
-    if (!!Memory.__segindex.index[label] && !!Memory.__segindex.index[label].ids) {
+  getIndexByLabel: function(label, autoassign=true) {
+    if(!!Memory.__segindex.index[label] && !!Memory.__segindex.index[label].ids) {
       return Memory.__segindex.index[label].ids
     }
 
-    if (autoassign) {
+    if(autoassign) {
       var id = this.getNextId()
-      Memory.__segindex.index[label] = {'ids': [id]}
+      Memory.__segindex.index[label] = {'ids':[id]}
       return Memory.__segindex.index[label].ids.map(Number)
     } else {
       return ERR_NOT_FOUND
@@ -452,7 +453,7 @@ var sos_lib_segments = {
 
   getUsedSegmentList: function () {
     var inUse = []
-    for (var label in Memory.__segindex.index) {
+    for(var label in Memory.__segindex.index) {
       inUse = inUse.concat(Memory.__segindex.index[label].ids)
     }
     inUse = inUse.concat(_.values(Memory.__segindex.clear))
@@ -460,21 +461,21 @@ var sos_lib_segments = {
   },
 
   getUsagePercentage: function (label = false, limitToControlled = true) {
-    if (label) {
+    if(label) {
       var id_list = this.getIndexByLabel(label, false).length
-      if (!id_list || id_list <= 0) {
+      if(!id_list || id_list <= 0) {
         return 0
       }
       var current = id_list
     } else {
       var current = this.getUsedSegmentList().length
-      if (current.length <= 0) {
+      if(current.length <= 0) {
         return 0
       }
     }
-    if (limitToControlled) {
-      var max = ((this.max + 1) - this.min)
-      if (max <= 0) {
+    if(limitToControlled) {
+      var max = ((this.max+1) - this.min)
+      if(max <= 0) {
         return 1
       }
     } else {
@@ -484,8 +485,8 @@ var sos_lib_segments = {
     return current / max
   },
 
-  clearAll: function (confirm = false) {
-    if (!confirm) {
+  clearAll: function (confirm=false) {
+    if(!confirm) {
       return false
     }
     Memory.__segindex = {
@@ -500,7 +501,7 @@ var sos_lib_segments = {
 
     // Remove "active" segments for cleaner logic.
     var segkeys = Object.keys(RawMemory.segments)
-    for (var key in segkeys) {
+    for(var key in segkeys) {
       delete RawMemory.segments[key]
     }
 
@@ -508,7 +509,7 @@ var sos_lib_segments = {
     // immediately, while the rest get queues.
     var clearnow = 10
     for (var i = this.min; i <= this.max; i++) {
-      if (clearnow >= 1) {
+      if(clearnow >= 1) {
         RawMemory.segments[i] = ''
         clearnow--
       } else {
@@ -517,5 +518,6 @@ var sos_lib_segments = {
     }
   }
 }
+
 
 module.exports = sos_lib_segments

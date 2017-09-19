@@ -1,13 +1,13 @@
 
 function getId () {
-  if (!Memory.__sos_serverid) {
+  if(!Memory.__sos_serverid) {
     Memory.__sos_serverid = sos.lib.uuid.v4().substring(24, 36)
   }
   return Memory.__sos_serverid
 }
 
 function getLabel () {
-  if (Memory.__sos_serverlabel) {
+  if(!!Memory.__sos_serverlabel) {
     return Memory.__sos_serverlabel
   }
   return getId()
@@ -20,5 +20,5 @@ function setLabel (label) {
 module.exports = {
   getId: getId,
   getLabel: getLabel,
-  setLabel: setLabel
+  setLabel: setLabel,
 }

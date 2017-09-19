@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var cache = {}
 
@@ -13,72 +13,76 @@ var defaultOpts = {
 cache.__items = {}
 
 cache.get = function (label, opts) {
-  if (Array.isArray(label)) {
+
+  if(Array.isArray(label)) {
     label = label.join('.')
   }
 
-  opts = Object.assign({}, defaultOpts, opts)
+  opts = Object.assign({}, defaultOpts, opts);
 
-  if (opts.ttl && opts.chance < 1) {
+  if(opts.ttl && opts.chance < 1) {
     var allow_refresh = Math.random() <= opts.chance
   } else {
     var allow_refresh = true
   }
 
   // "Global Cache"
-  if (this.__items[label]) {
-    if (this.__items[label].exp) {
-      if (this.__items[label].exp < Game.time) {
+  if(!!this.__items[label]) {
+    if(!!this.__items[label].exp) {
+      if(this.__items[label].exp < Game.time) {
         delete this.__items[label]
       }
     }
   }
 
-  if (this.__items[label]) {
-    if (!opts.ttl || (this.__items[label].tick + opts.ttl) > Game.time) {
+  if(!!this.__items[label]) {
+    if(!opts.ttl || (this.__items[label].tick + opts.ttl) > Game.time) {
       return this.__items[label].d
     }
   }
 
+
   // No cached items in memory.
-  if (!Memory.sos || !Memory.sos.cache) {
+  if(!Memory.sos || !Memory.sos.cache) {
     return
   }
 
+
   // Memory Cache
   var item = _.get(Memory.sos.cache, label, undefined)
-  // var item = !!Memory.sos.cache[label] ? Memory.sos.cache[label] : false
-  if (item) {
-    if (item.exp) {
-      if (item.exp < Game.time) {
-        // delete Memory.sos.cache[label]
+  //var item = !!Memory.sos.cache[label] ? Memory.sos.cache[label] : false
+  if(!!item) {
+    if(!!item.exp) {
+      if(item.exp < Game.time) {
+        //delete Memory.sos.cache[label]
         _.set(Memory.sos.cache, label, undefined)
         return
       }
     }
   }
 
-  var item = _.get(Memory.sos.cache, label, undefined)
-  // var item = !!Memory.sos.cache[label] ? Memory.sos.cache[label] : false
 
-  if (item) {
+  var item = _.get(Memory.sos.cache, label, undefined)
+  //var item = !!Memory.sos.cache[label] ? Memory.sos.cache[label] : false
+
+  if(!!item) {
     // Advance "lu" cache time
-    var lu = Game.time + opts.lastuse
-    if (item.lu != lu) {
+    var lu = Game.time + opts. lastuse
+    if(item.lu != lu) {
       item.lu = Game.time + opts.lastuse
       _.set(Memory.sos.cache, label, item)
     }
-    if (allow_refresh && (item.tick + opts.ttl) < Game.time) {
+    if(allow_refresh && (item.tick + opts.ttl) < Game.time) {
       return
     }
-    if (item.c) {
+    if(!!item.c) {
       var decompressed_label = label + '_' + item.tick
-      if (this.__decompress[decompressed_label]) {
+      if(!!this.__decompress[decompressed_label]) {
         return this.__decompress[decompressed_label]
       }
 
       var uncompressed_data = this.__decompress(item.d)
-      if (uncompressed_data) {
+      if(!!uncompressed_data) {
         this.__decompress[decompressed_label] = uncompressed_data
       }
       return uncompressed_data
@@ -89,18 +93,19 @@ cache.get = function (label, opts) {
 }
 
 cache.set = function (label, data, opts = {}) {
-  if (Array.isArray(label)) {
+
+  if(Array.isArray(label)) {
     label = label.join('.')
   }
 
-  opts = Object.assign({}, defaultOpts, opts)
+  opts = Object.assign({}, defaultOpts, opts);
 
   var exp = 0
-  if (opts.maxttl) {
+  if(opts.maxttl) {
     exp = opts.maxttl + Game.time
   }
 
-  if (!opts.persist) {
+  if(!opts.persist) {
     this.__items[label] = {
       d: data,
       tick: Game.time,
@@ -109,15 +114,15 @@ cache.set = function (label, data, opts = {}) {
     return
   }
 
-  if (this.__decompress[label]) {
+  if(this.__decompress[label]) {
     delete this.__decompress[label]
   }
 
-  if (!Memory.sos) {
+  if(!Memory.sos) {
     return
   }
 
-  if (!Memory.sos.cache) {
+  if(!Memory.sos.cache) {
     Memory.sos.cache = {}
   }
 
@@ -126,11 +131,11 @@ cache.set = function (label, data, opts = {}) {
     lu: Game.time + opts.lastuse
   }
 
-  if (exp) {
+  if(exp) {
     save_item.exp = exp
   }
 
-  if (opts.compress) {
+  if(opts.compress) {
     save_item['c'] = 1
     save_item['d'] = this.__compress(data)
   } else {
@@ -146,31 +151,33 @@ cache.clear = function () {
 }
 
 cache.clean = function () {
-  if (!Memory.sos || !Memory.sos.cache) {
+  if(!Memory.sos || !Memory.sos.cache) {
     return
   }
 
-  for (var label in Memory.sos.cache) {
+  for(var label in Memory.sos.cache) {
     this.__cleankey(Memory.sos.cache, label)
   }
+
 }
 
 cache.__cleankey = function (object, key) {
-  if (object[key].tick) {
-    if (object[key].exp && object[key].exp < Game.time) {
+
+  if(object[key].tick) {
+    if(object[key].exp && object[key].exp < Game.time) {
       delete object[key]
     }
-    if (object[key].lu && object[key].lu < Game.time) {
+    if(object[key].lu && object[key].lu < Game.time) {
       delete object[key]
     }
   } else {
-    for (var label in object[key]) {
-      if (object[key][label]) {
-        if (object[key][label].tick) {
-          if (object[key][label].exp && object[key][label].exp < Game.time) {
+    for(var label in object[key]) {
+      if(object[key][label]) {
+        if(object[key][label].tick) {
+          if(object[key][label].exp && object[key][label].exp < Game.time) {
             delete object[key][label]
           }
-          if (object[key][label].lu && object[key][label].lu < Game.time) {
+          if(object[key][label].lu && object[key][label].lu < Game.time) {
             delete object[key][label]
           }
         } else {
@@ -178,7 +185,7 @@ cache.__cleankey = function (object, key) {
         }
       }
     }
-    if (Object.keys(object[key]).length < 0) {
+    if(Object.keys(object[key]).length < 0) {
       delete object[key]
     }
   }
@@ -208,7 +215,7 @@ cache.__decompress = function (value) {
     var data = JSON.parse(decompressed)
     return data
   } catch (err) {
-
+    return
   }
 }
 

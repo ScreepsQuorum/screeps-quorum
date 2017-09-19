@@ -5,48 +5,49 @@ var sos_lib_vram = {
   cache: {},
 
   getData: function (key) {
-    if (!Memory.sos) {
+
+    if(!Memory.sos) {
       return
     }
 
-    if (!Memory.sos.vram) {
+    if(!Memory.sos.vram) {
       Memory.sos.vram = {
         'm': {}
       }
     }
 
-    if (!Memory.sos.vram.c) {
+    if(!Memory.sos.vram.c) {
       Memory.sos.vram.c = {}
     }
 
     // If in cache validate against memory version
-    if (this.cache[key]) {
-      if (!Memory.sos.vram.m[key]) {
+    if(this.cache[key]) {
+      if(!Memory.sos.vram.m[key]) {
         delete this.cache[key]
       } else {
-        if (this.cache[key].v != Memory.sos.vram.m[key].v) {
+        if(this.cache[key].v != Memory.sos.vram.m[key].v) {
           delete this.cache[key]
         }
       }
     }
 
     // If not in cache pull from memory.
-    if (!this.cache[key]) {
+    if(!this.cache[key]) {
       // See if this is the first time it has been set and initialize.
-      if (!Memory.sos.vram.m[key] || !sos.lib.segments.hasSegment(key)) {
-        Memory.sos.vram.m[key] = {'v': 0}
+      if(!Memory.sos.vram.m[key] || !sos.lib.segments.hasSegment(key)) {
+        Memory.sos.vram.m[key] = {'v':0}
         this.cache[key] = {
-          v: 0,
-          d: {}
+          v:0,
+          d:{}
         }
         this.markDirty(key)
       }
 
       // Check memory cache (for "active" data)
-      if (!!Memory.sos.vram.c[key] && !!Memory.sos.vram.c[key].d && Memory.sos.vram.m[key].v) {
+      if(!!Memory.sos.vram.c[key] && !!Memory.sos.vram.c[key].d && Memory.sos.vram.m[key].v) {
         this.cache[key] = {
           d: Memory.sos.vram.c[key].d,
-          v: Memory.sos.vram.m[key].v
+          v:Memory.sos.vram.m[key].v
         }
         this.markDirty(key)
         return this.cache[key].d
@@ -54,14 +55,14 @@ var sos_lib_vram = {
 
       var data = sos.lib.segments.getObject(key)
       // Segment not yet available
-      if (Number.isInteger(data) && data < 0) {
+      if(Number.isInteger(data) && data < 0) {
         return data
       }
 
-      if (!!Memory.sos.vram.m[key] && !!data) {
+      if(!!Memory.sos.vram.m[key] && !!data) {
         this.cache[key] = {
-          v: Memory.sos.vram.m[key].v,
-          d: data
+          v:Memory.sos.vram.m[key].v,
+          d:data
         }
       }
     }
@@ -70,22 +71,22 @@ var sos_lib_vram = {
   },
 
   getVersion: function (key) {
-    if (!Memory.sos.segments) {
+    if(!Memory.sos.segments) {
       return false
     }
-    if (!Memory.sos.segments.m[key]) {
+    if(!Memory.sos.segments.m[key]) {
       return false
     }
 
     return Memory.sos.segments.m[key].v
   },
 
-  setActive (key, ttl = 15) {
-    if (!Memory.sos.vram.c[key]) {
+  setActive(key, ttl=15) {
+    if(!Memory.sos.vram.c[key]) {
       Memory.sos.vram.c[key] = {}
     }
     var tick = +ttl + +Game.time
-    if (!Memory.sos.vram.c[key].t || Memory.sos.vram.c[key].t < tick) {
+    if(!Memory.sos.vram.c[key].t || Memory.sos.vram.c[key].t < tick) {
       Memory.sos.vram.c[key].t = +ttl + +Game.time
     }
   },
@@ -95,22 +96,22 @@ var sos_lib_vram = {
   },
 
   clearData: function (key) {
-    if (this.cache[key]) {
+    if(!!this.cache[key]) {
       delete this.cache[key]
     }
     sos.lib.segments.clear(key)
-    if (Memory.sos.vram.m[key]) {
+    if(!!Memory.sos.vram.m[key]) {
       delete Memory.sos.vram.m[key]
     }
   },
 
   markDirty: function (key) {
-    if (this.lastSave == Game.time) {
+    if(this.lastSave == Game.time) {
       // buffer in memory this one tick to prevent multiple json.stringify calls.
       this.setActive(key, 1)
       this.saveData(key, this.cache[key].d)
     } else {
-      if (this.dirty.indexOf(key) < 0) {
+      if(this.dirty.indexOf(key) < 0) {
         this.dirty.push(key)
       }
     }
@@ -118,21 +119,21 @@ var sos_lib_vram = {
 
   saveDirty: function () {
     this.lastSave = Game.time
-    for (var key of this.dirty) {
+    for(var key of this.dirty) {
       this.saveData(key, this.cache[key].d)
     }
     this.dirty = []
 
-    if (!Memory.sos.vram || !Memory.sos.vram.c) {
+    if(!Memory.sos.vram || !Memory.sos.vram.c) {
       return
     }
 
     var keys = Object.keys(Memory.sos.vram.c)
-    for (var key of keys) {
-      if (!Memory.sos.vram.c[key].d) {
+    for(var key of keys) {
+      if(!Memory.sos.vram.c[key].d) {
         continue
       }
-      if (Memory.sos.vram.c[key].t >= Game.time) {
+      if(Memory.sos.vram.c[key].t >= Game.time) {
         continue
       }
       this.saveData(key, Memory.sos.vram.c[key].d)
@@ -140,22 +141,22 @@ var sos_lib_vram = {
   },
 
   saveData: function (key, value) {
-    if (!Memory.sos.vram) {
+    if(!Memory.sos.vram) {
       Memory.sos.vram = {
         'm': {}
       }
     }
-    if (!Memory.sos.vram.c) {
+    if(!Memory.sos.vram.c) {
       Memory.sos.vram.c = {}
     }
 
     // Update Version
-    if (!Memory.sos.vram.m[key]) {
+    if(!Memory.sos.vram.m[key]) {
       Memory.sos.vram.m[key] = {
-        v: 0
+        v:0
       }
     } else {
-      if (Memory.sos.vram.m[key].v >= 99) {
+      if(Memory.sos.vram.m[key].v >= 99) {
         Memory.sos.vram.m[key].v = 1
       } else {
         Memory.sos.vram.m[key].v++
@@ -169,8 +170,8 @@ var sos_lib_vram = {
     }
 
     // Check "active" cache.
-    if (Memory.sos.vram.c[key]) {
-      if (Memory.sos.vram.c[key].t >= Game.time) {
+    if(!!Memory.sos.vram.c[key]) {
+      if(Memory.sos.vram.c[key].t >= Game.time) {
         console.log('Saving to cache')
         Memory.sos.vram.c[key].d = value
       } else {
