@@ -1,5 +1,6 @@
 'use strict'
 
+let fs = require('fs');
 let gulp = require('gulp')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
@@ -51,7 +52,7 @@ gulp.task('deploy', () => {
   options.password = opts.password
   options.host = opts.hostname
   options.secure = !!opts.ssl
-  options.port = opts.ssl || opts.port
+  options.port = opts.port
 
 
   // allow overrides from passed arguments
@@ -60,6 +61,20 @@ gulp.task('deploy', () => {
   }
 
   return gulp.src('dist/*.js').pipe(screeps(options))
+})
+
+gulp.task('ci-config', (cb) => {
+  fs.writeFile('.screeps.json', JSON.stringify({
+    main: {
+      ptr: !!process.env.SCREEPS_PTR,
+      branch: process.env.SCREEPS_BRANCH || 'default',
+      email: process.env.SCREEPS_EMAIL,
+      password: process.env.SCREEPS_PASSWORD,
+      host: process.env.SCREEPS_HOST || 'screeps.com',
+      ssl: !!process.env.SCREEPS_SSL || (process.env.SCREEPS_HOST == 'screeps.com'),
+      port: process.env.SCREEPS_PORT || 443
+    }
+  }))
 })
 
 gulp.task('default', ['copy', 'deploy'])
