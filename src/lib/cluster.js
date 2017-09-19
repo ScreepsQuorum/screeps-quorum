@@ -5,7 +5,7 @@ class Cluster {
     var clusters = Cluster.listAll()
     for (var clustername of clusters) {
       var cluster = new Cluster(clustername)
-      if (Memory.clusters[clustername].creeps.length <= 0) {
+      if (cluster.getCreeps().length <= 0) {
         delete Memory.clusters[clustername]
       }
     }

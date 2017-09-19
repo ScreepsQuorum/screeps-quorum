@@ -1,17 +1,16 @@
 'use strict'
 
-
 /**
  * This program detects when the game has no spawns or creeps and unclaims atll rooms, triggering a respawn.
  */
 
 class Respawn extends kernel.process {
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this.priority = PRIORITIES_RESPAWNER
   }
 
-  main() {
+  main () {
     // As long as there are active spawns or creeps do not respawn
     if (Object.keys(Game.spawns).length > 0 || Object.keys(Game.creeps).length > 0) {
       return

@@ -4,13 +4,13 @@ var emoji_language = {
   'attack': [
     '🔥💀💀🔥',
     '☠🔥💀💥',
-    '💀💥🔥☠',
+    '💀💥🔥☠'
   ],
 
   'attackController': [],
 
   'build': [
-    '🚧🚧🚧',
+    '🚧🚧🚧'
   ],
 
   'claimController': [
@@ -18,7 +18,7 @@ var emoji_language = {
   ],
 
   'dismantle': [
-    '💣💣💣💣💣',
+    '💣💣💣💣💣'
   ],
 
   'drop': [],
@@ -30,7 +30,7 @@ var emoji_language = {
   'heal': [
     '⚕🚑⚕🚑⚕🚑⚕',
     '🚑⚕🚑⚕🚑⚕🚑',
-    '⚕⚕⚕⚕⚕⚕⚕⚕⚕⚕',
+    '⚕⚕⚕⚕⚕⚕⚕⚕⚕⚕'
   ],
 
   'move': [],
@@ -46,7 +46,7 @@ var emoji_language = {
   'repair': [],
 
   'reserveController': [
-    '🔒🔒🔒',
+    '🔒🔒🔒'
   ],
 
   'suicide': [
@@ -55,19 +55,18 @@ var emoji_language = {
   ],
 
   'transfer': [
-    '🎁🎁🎁',
+    '🎁🎁🎁'
   ],
 
   'upgradeController': [
     '💗☯☸🙌',
     '🙌☯💗☸',
-    '☯🙌☸💗',
+    '☯🙌☸💗'
   ],
 
-  'withdraw': [],
+  'withdraw': []
 
 }
-
 
 emoji_language.rangedAttack = emoji_language.attack
 emoji_language.rangedMassAttack = emoji_language.attack

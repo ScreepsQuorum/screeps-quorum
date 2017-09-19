@@ -10,7 +10,7 @@ const CPU_MINIMUM = 0.50
 const CPU_ADJUST = 0.05
 
 class QosKernel {
-  constructor() {
+  constructor () {
     global.kernel = this
 
     if (!Memory.qos) {
@@ -21,7 +21,7 @@ class QosKernel {
     this.process = Process
   }
 
-  start() {
+  start () {
     // Announce new uploads
     Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_INFO, 'kernel')
     if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
@@ -44,7 +44,7 @@ class QosKernel {
     }
   }
 
-  cleanMemory() {
+  cleanMemory () {
     let i
     for (i in Memory.creeps) { // jshint ignore:line
       if (!Game.creeps[i]) {
@@ -55,7 +55,7 @@ class QosKernel {
     sos.lib.cache.clean()
   }
 
-  run() {
+  run () {
     while (this.shouldContinue()) {
       const runningProcess = this.scheduler.getNextProcess()
       if (!runningProcess) {
@@ -85,11 +85,11 @@ class QosKernel {
     }
   }
 
-  shouldContinue() {
+  shouldContinue () {
     return !!this.simulation || Game.cpu.getUsed() < this.getCpuLimit()
   }
 
-  getCpuLimit() {
+  getCpuLimit () {
     if (Game.cpu.bucket > BUCKET_CEILING) {
       return Game.cpu.tickLimit - CPU_BUFFER
     }
@@ -108,7 +108,7 @@ class QosKernel {
     return this._cpuLimit
   }
 
-  shutdown() {
+  shutdown () {
     sos.lib.vram.saveDirty()
     sos.lib.segments.process()
   }

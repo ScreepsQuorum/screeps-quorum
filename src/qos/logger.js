@@ -14,15 +14,15 @@ const ERROR_COLORS = {
   '2': '#999999',
   '1': '#737373',
   '0': '#666666',
-  'highlight': '#ffff00',
+  'highlight': '#ffff00'
 }
 
 class Logger {
-  constructor() {
+  constructor () {
     this.defaultLogGroup = 'default'
   }
 
-  log(message, severity = 3, group = false, tags = []) {
+  log (message, severity = 3, group = false, tags = []) {
     if (!group) {
       group = this.defaultLogGroup
     }
@@ -45,7 +45,7 @@ class Logger {
     console.log(message)
   }
 
-  logData(data, severity, group) {
+  logData (data, severity, group) {
     try {
       this.log(JSON.stringify(data), severity, group)
     } catch (err) {
@@ -53,13 +53,13 @@ class Logger {
     }
   }
 
-  highlight(message) {
+  highlight (message) {
     return this.log(message, 'highlight', false, {
       'type': 'highlight'
     })
   }
 
-  highlightData(data) {
+  highlightData (data) {
     return this.highlight(JSON.stringify(data))
   }
 }

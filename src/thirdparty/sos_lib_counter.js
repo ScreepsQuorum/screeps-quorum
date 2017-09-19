@@ -1,11 +1,10 @@
-'use strict';
+'use strict'
 
-function counterGet(group) {
-
-  if(!Memory.sos) {
+function counterGet (group) {
+  if (!Memory.sos) {
     Memory.sos = {}
   }
-  if(!Memory.sos.counter) {
+  if (!Memory.sos.counter) {
     Memory.sos.counter = {}
   }
 
@@ -18,25 +17,25 @@ function counterGet(group) {
   return Memory.sos.counter[group]
 }
 
-function counterSet(group, value) {
-  if(!Memory.sos) {
+function counterSet (group, value) {
+  if (!Memory.sos) {
     Memory.sos = {}
   }
-  if(!Memory.sos.counter) {
+  if (!Memory.sos.counter) {
     Memory.sos.counter = {}
   }
   Memory.sos.counter[group] = value
   return value
 }
 
-function counterReset(group) {
-  if(!Memory.sos) {
+function counterReset (group) {
+  if (!Memory.sos) {
     Memory.sos = {}
   }
-  if(!Memory.sos.counter) {
+  if (!Memory.sos.counter) {
     Memory.sos.counter = {}
   }
-  if(Memory.sos.counter[group]) {
+  if (Memory.sos.counter[group]) {
     delete Memory.sos.counter[group]
   }
 }

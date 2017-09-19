@@ -5,16 +5,16 @@
  */
 
 class CityDefense extends kernel.process {
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this.priority = PRIORITIES_DEFENSE
   }
 
-  getDescriptor() {
+  getDescriptor () {
     return this.data.room
   }
 
-  main() {
+  main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -25,13 +25,13 @@ class CityDefense extends kernel.process {
         [this.data.room, 'towers'],
         () => room.find(FIND_MY_STRUCTURES, {
           filter: {
-            structureType: STRUCTURE_TOWER,
-          },
+            structureType: STRUCTURE_TOWER
+          }
         })
         .map(s => s.id), {
           persist: true,
           maxttl: 5000,
-          chance: 0.001,
+          chance: 0.001
         })
       .map(id => Game.getObjectById(id))
       .filter(t => t)
@@ -53,7 +53,7 @@ class CityDefense extends kernel.process {
     }
   }
 
-  fireTowers(towers, hostiles) {
+  fireTowers (towers, hostiles) {
     if (hostiles.length > 0) {
       // for now, just shoot closest for each tower
       let tower
@@ -98,12 +98,11 @@ class CityDefense extends kernel.process {
         (lowestCreep.hits < lowestCreep.hitsMax)) {
         this.data.healTarget = lowestCreep.id
         healFunc(lowestCreep)
-        return
       }
     }
   }
 
-  safeMode(hostiles) {
+  safeMode (hostiles) {
     const room = Game.rooms[this.data.room]
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true

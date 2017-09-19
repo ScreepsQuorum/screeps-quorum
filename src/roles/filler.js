@@ -3,18 +3,18 @@
 const MetaRole = require('roles_meta')
 
 class Filler extends MetaRole {
-  constructor() {
+  constructor () {
     super()
     this.defaultEnergy = 2200
     this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION]
   }
 
-  getBuild(room, options) {
+  getBuild (room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
-  manageCreep(creep) {
+  manageCreep (creep) {
     if (this.recharge(creep)) {
       return
     }

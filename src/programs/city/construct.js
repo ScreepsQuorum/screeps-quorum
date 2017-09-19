@@ -5,12 +5,12 @@
  */
 
 class CityConstruct extends kernel.process {
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this.priority = PRIORITIES_CONSTRUCTION
   }
 
-  main() {
+  main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -23,7 +23,7 @@ class CityConstruct extends kernel.process {
     const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
       filter: function (site) {
         return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER
-      },
+      }
     })
     if (sites.length <= 0) {
       let result = this.room.constructNextMissingStructure()
