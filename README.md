@@ -54,4 +54,4 @@ By default `Gulp` will deploy to the `main` server, but this can be changed with
 gulp --server=127.0.0.1
 ```
 
-By default gulp will push to the `sim` branch. This can be changed in the configuration file or by passing the `branch` option to gulp.
+By default gulp will push to the `default` branch. This can be changed in the configuration file or by passing the `branch` option to gulp.
