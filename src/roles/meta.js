@@ -4,9 +4,7 @@ class MetaRole {
 
   setBuildDefaults(room, options) {
     if (!options.energy) {
-      if (this.defaultEnergy) {
-        options.energy = this.defaultEnergy
-      }
+      options.energy = this.defaultEnergy || room.energyCapacityAvailable
     }
     if (options.energy > room.energyCapacityAvailable) {
       options.energy = room.energyCapacityAvailable
