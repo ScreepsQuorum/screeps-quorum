@@ -29,4 +29,8 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               yarn run ci-config
               yarn run deploy
+              if [ ! -z "${NPM_TOKEN}" ]; then
+                echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+                npm run 2npm
+              fi
             fi

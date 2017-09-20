@@ -2,6 +2,15 @@
 
 Screeps Quorum is a completely automated project centered around the game [Screeps](https://screeps.com/).
 
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![License](https://img.shields.io/npm/l/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
+[![Version](https://img.shields.io/npm/v/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
+[![Downloads](https://img.shields.io/npm/dw/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
+[![CircleCI](https://circleci.com/gh/ScreepsQuorum/screeps-quorum/tree/master.svg?style=shield)](https://circleci.com/gh/ScreepsQuorum/screeps-quorum/tree/master)
+[![CircleCI](https://circleci.com/gh/ScreepsQuorum/screeps-quorum/tree/master.svg?style=shield)](https://circleci.com/gh/ScreepsQuorum/screeps-quorum/tree/master)
+
+![npm](https://nodei.co/npm/screepsbot-quorum.png "NPM")
+
 While there are other Screeps code bases which focus on automation, this is the first codebase which has automated its own management and deployment. The Quorum project does not have a single specific user behind it, but is completely independent.
 
 All Pull Requests are done by volunteers, and the entire project is [open source](https://github.com/ScreepsQuorum/screeps-quorum/blob/master/LICENSE).
