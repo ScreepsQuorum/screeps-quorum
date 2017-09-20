@@ -5,7 +5,7 @@ let gulp = require('gulp')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
-let minimist = require(minimist)
+let minimist = require('minimist')
 
 let args = minimist(process.argv.slice(2))
 
