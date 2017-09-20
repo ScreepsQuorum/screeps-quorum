@@ -6,7 +6,6 @@ let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
 
-let config = require('./.screeps.json')
 
 let rawArgs = process.argv.slice(2)
 let args = {}
@@ -38,6 +37,7 @@ gulp.task('copy', () => {
 })
 
 gulp.task('deploy', () => {
+  let config = require('./.screeps.json')
   let opts = config[args.server || 'main']
   let options = {}
   if (!opts) {
