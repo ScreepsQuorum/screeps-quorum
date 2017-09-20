@@ -1,17 +1,21 @@
 {
-  "name": "screeps_quorum",
+  "name": "screepsbot-quorum",
   "version": "0.1.0",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-screeps": "^1.0.3",
+    "publish": "^0.6.0",
     "standard": "^10.0.3"
   },
+  "screeps_bot": true,
+  "main": "dist/main.js",
   "scripts": {
     "test": "standard",
     "deploy": "gulp",
-    "ci-config": "gulp ci-config"
+    "ci-config": "gulp ci-config",
+    "2npm": "publish"
   },
   "standard": {
     "ignore": [
