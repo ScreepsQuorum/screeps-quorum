@@ -31,6 +31,6 @@ jobs:
               yarn run deploy
               if [ ! -z "${NPM_TOKEN}" ]; then
                 echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-                yarn run 2npm
+                npm run 2npm
               fi
             fi
