@@ -3,16 +3,16 @@
  */
 
 class ProgramCreep extends kernel.process {
-  getPriority() {
+  getPriority () {
     const role = Creep.getRoleFromName(this.data.creep)
     return role.getPriority()
   }
 
-  getDescriptor() {
+  getDescriptor () {
     return this.data.creep
   }
 
-  main() {
+  main () {
     // See if creep is dead and if so close this process
     if (!Game.creeps[this.data.creep]) {
       if (!Room.isQueued(this.data.creep)) {

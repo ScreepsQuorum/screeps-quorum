@@ -10,5 +10,5 @@ Object.defineProperty(Room.prototype, 'structures', {
     return this._structures
   },
   enumerable: false,
-  configurable: true,
+  configurable: true
 })

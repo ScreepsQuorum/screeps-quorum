@@ -5,16 +5,16 @@ const MetaRole = require('roles_meta')
 const CONTROLLER_MESSAGE = '* Self Managed Code * quorum.tedivm.com * #quorum in Slack *'
 
 class Upgrader extends MetaRole {
-  getBuild(room, options) {
+  getBuild (room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
-  getPriority(creep) {
+  getPriority (creep) {
     return PRIORITIES_CREEP_UPGRADER
   }
 
-  manageCreep(creep) {
+  manageCreep (creep) {
     if (this.recharge(creep)) {
       return
     }

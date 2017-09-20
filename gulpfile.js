@@ -1,5 +1,6 @@
 'use strict'
 
+let fs = require('fs')
 let gulp = require('gulp')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
@@ -26,11 +27,11 @@ gulp.task('copy', () => {
     name += path.basename
     path.basename = name
     path.dirname = ''
-  })).pipe(insert.transform(function(contents, file) {
+  })).pipe(insert.transform(function (contents, file) {
     let name = file.path.match(/[^/\\]+/g)
     name = name[name.length - 1]
     if (name === 'version.js') {
-      return `${contents}\nglobal.SCRIPT_VERSION = ${+new Date}` // jshint ignore:line
+      return `${contents}\nglobal.SCRIPT_VERSION = ${+new Date()}` // jshint ignore:line
     }
     return contents
   })).pipe(gulp.dest('dist/'))
@@ -51,8 +52,7 @@ gulp.task('deploy', () => {
   options.password = opts.password
   options.host = opts.hostname
   options.secure = !!opts.ssl
-  options.port = opts.ssl || opts.port
-
+  options.port = opts.port
 
   // allow overrides from passed arguments
   for (let i in args) { // jshint ignore:line
@@ -60,6 +60,20 @@ gulp.task('deploy', () => {
   }
 
   return gulp.src('dist/*.js').pipe(screeps(options))
+})
+
+gulp.task('ci-config', (cb) => {
+  fs.writeFile('.screeps.json', JSON.stringify({
+    main: {
+      ptr: !!process.env.SCREEPS_PTR,
+      branch: process.env.SCREEPS_BRANCH || 'default',
+      email: process.env.SCREEPS_EMAIL,
+      password: process.env.SCREEPS_PASSWORD,
+      host: process.env.SCREEPS_HOST || 'screeps.com',
+      ssl: !!process.env.SCREEPS_SSL || (process.env.SCREEPS_HOST === 'screeps.com'),
+      port: process.env.SCREEPS_PORT || 443
+    }
+  }))
 })
 
 gulp.task('default', ['copy', 'deploy'])

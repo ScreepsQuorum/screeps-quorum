@@ -4,7 +4,6 @@ if (Game.cpu.bucket < 500) {
   throw new Error('Extremely low bucket - aborting script run at top level')
 }
 
-
 // Load any prototypes or libraries
 
 /* Get Upload Version */
@@ -42,7 +41,7 @@ require('extends_roomposition')
 
 const QosKernel = require('qos_kernel')
 
-module.exports.loop = function() {
+module.exports.loop = function () {
   const kernel = new QosKernel()
   kernel.start()
   kernel.run()

@@ -51,9 +51,9 @@ RoomPosition.prototype.inFrontOfExit = function () {
     return false
   }
   const neighbors = this.getAdjacent()
-  let neighbor;
+  let neighbor
   for (neighbor of neighbors) {
-    if (!!neighbor.isExit()) {
+    if (neighbor.isExit()) {
       return true
     }
   }

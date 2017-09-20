@@ -1,19 +1,18 @@
 'use strict'
 
 class Process {
-  constructor(pid, name, data, parent) {
+  constructor (pid, name, data, parent) {
     this.pid = pid
     this.name = name
     this.data = data
     this.parent = parent
   }
 
-  getPriority() {
+  getPriority () {
     return this.priority || DEFAULT_PRIORITY
   }
 
-
-  clean() {
+  clean () {
     if (this.data.children) {
       let label
       for (label in this.data.children) { // jshint ignore:line
@@ -33,11 +32,11 @@ class Process {
     }
   }
 
-  getDescriptor() {
+  getDescriptor () {
     return false
   }
 
-  launchChildProcess(label, name, data = {}) {
+  launchChildProcess (label, name, data = {}) {
     if (!this.data.children) {
       this.data.children = {}
     }
@@ -48,7 +47,7 @@ class Process {
     return this.data.children[label]
   }
 
-  launchProcess(label, name, data = {}) {
+  launchProcess (label, name, data = {}) {
     if (!this.data.processes) {
       this.data.processes = {}
     }
@@ -60,7 +59,7 @@ class Process {
     return this.data.processes[label]
   }
 
-  launchCreepProcess(label, role, roomname, quantity = 1, options = {}) {
+  launchCreepProcess (label, role, roomname, quantity = 1, options = {}) {
     const room = Game.rooms[roomname]
     if (!room) {
       return false
@@ -76,12 +75,12 @@ class Process {
       }
       const creepName = room.queueCreep(role, options)
       this.launchChildProcess(specificLabel, 'creep', {
-        'creep': creepName,
+        'creep': creepName
       })
     }
   }
 
-  period(interval, label = 'default') {
+  period (interval, label = 'default') {
     if (!this.data.period) {
       this.data.period = {}
     }
@@ -95,11 +94,11 @@ class Process {
     return false
   }
 
-  suicide() {
+  suicide () {
     return kernel.scheduler.kill(this.pid)
   }
 
-  run() {
+  run () {
     this.clean()
     this.main()
   }

@@ -4,16 +4,16 @@
  * This program handles spawning of creeps.
  */
 class Spawns extends kernel.process {
-  constructor(...args) {
+  constructor (...args) {
     super(...args)
     this.priority = PRIORITIES_SPAWNS
   }
 
-  getDescriptor() {
+  getDescriptor () {
     return this.data.room
   }
 
-  main() {
+  main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }

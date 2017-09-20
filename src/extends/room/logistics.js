@@ -9,7 +9,7 @@ Room.prototype.getStructuresToFill = function (structureTypes) {
         }
 
         return structure.energy < structure.energyCapacity
-      },
+      }
     })
   }
   return this.__fillable

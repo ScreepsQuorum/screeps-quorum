@@ -5,7 +5,6 @@ global.SEGMENT_CONSTRUCTION = 'construction'
 /* Room layouts are critical information so we want this segment available at all times */
 sos.lib.vram.markCritical(SEGMENT_CONSTRUCTION)
 
-
 global.STRUCTURE_LOADER = 'loader'
 global.STRUCTURE_CRANE = 'crane'
 const structureMap = [
@@ -26,16 +25,15 @@ const structureMap = [
   'terminal',
   'nuker',
   'loader',
-  'crane',
+  'crane'
 ]
-
 
 const structures = Object.keys(CONTROLLER_STRUCTURES)
 const skipStructures = [
   STRUCTURE_ROAD,
   STRUCTURE_WALL,
   STRUCTURE_RAMPART,
-  STRUCTURE_CONTAINER,
+  STRUCTURE_CONTAINER
 ]
 global.LEVEL_BREAKDOWN = {}
 let structure
@@ -168,7 +166,6 @@ Room.prototype.getPracticalRoomLevel = function () {
   return 8
 }
 
-
 Room.getLayout = function (roomname) {
   return new RoomLayout(roomname)
 }
@@ -177,16 +174,15 @@ Room.prototype.getLayout = function () {
   return Room.getLayout(this.name)
 }
 
-
 class RoomLayout {
-  constructor(roomname) {
+  constructor (roomname) {
     this.roomname = roomname
     this.allStructures = false
   }
 
-  planStructureAt(structureType, x, y, overrideRoads = false) {
+  planStructureAt (structureType, x, y, overrideRoads = false) {
     const currentStructure = this.getStructureAt(x, y)
-    if (!!currentStructure) {
+    if (currentStructure) {
       if (!overrideRoads || currentStructure !== STRUCTURE_ROAD) {
         return false
       }
@@ -197,7 +193,7 @@ class RoomLayout {
     }
     const map = this._getStructureMap()
     map.set(x, y, structureId)
-    if (!!this.allStructures) {
+    if (this.allStructures) {
       if (!this.allStructures[structureType]) {
         this.allStructures[structureType] = []
       }
@@ -206,7 +202,7 @@ class RoomLayout {
     return true
   }
 
-  getStructureAt(x, y) {
+  getStructureAt (x, y) {
     const map = this._getStructureMap()
     const structureId = map.get(x, y)
     if (!structureMap[structureId]) {
@@ -215,7 +211,7 @@ class RoomLayout {
     return structureMap[structureId]
   }
 
-  getAllStructures() {
+  getAllStructures () {
     if (!this.allStructures) {
       this.allStructures = {}
       let x,
@@ -223,7 +219,7 @@ class RoomLayout {
       for (x = 0; x < 50; x++) {
         for (y = 0; y < 50; y++) {
           const structure = this.getStructureAt(x, y)
-          if (!!structure) {
+          if (structure) {
             if (!this.allStructures[structure]) {
               this.allStructures[structure] = []
             }
@@ -235,12 +231,12 @@ class RoomLayout {
     return this.allStructures
   }
 
-  clear() {
+  clear () {
     this.allStructures = false
     this.structureMap = new PathFinder.CostMatrix()
   }
 
-  save() {
+  save () {
     const map = this._getStructureMap()
     const globalmap = sos.lib.vram.getData(SEGMENT_CONSTRUCTION)
     globalmap[this.roomname] = map.serialize()
@@ -248,32 +244,32 @@ class RoomLayout {
     this.unplanned = true
   }
 
-  isPlanned() {
+  isPlanned () {
     this._getStructureMap()
     return !this.unplanned
   }
 
-  visualize() {
+  visualize () {
     const structures = this.getAllStructures()
     const types = Object.keys(structures)
     const visual = new RoomVisual(this.roomname)
-    let type, structure_pos
+    let type, structurePos
     for (type of types) {
-      for (structure_pos of structures[type]) {
-        visual.structure(structure_pos.x, structure_pos.y, type, {
-          'opacity': 0.60,
+      for (structurePos of structures[type]) {
+        visual.structure(structurePos.x, structurePos.y, type, {
+          'opacity': 0.60
         })
       }
     }
   }
 
-  _getStructureMap() {
+  _getStructureMap () {
     if (!this.structureMap) {
       const map = sos.lib.vram.getData(SEGMENT_CONSTRUCTION)
       if (Number.isInteger(map)) {
         throw new Error('Room structure maps are not available')
       }
-      if (!!map[this.roomname]) {
+      if (map[this.roomname]) {
         this.structureMap = PathFinder.CostMatrix.deserialize(map[this.roomname])
         this.unplanned = false
       } else {

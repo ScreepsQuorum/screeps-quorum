@@ -3,12 +3,12 @@
 const MetaRole = require('roles_meta')
 
 class Builder extends MetaRole {
-  getBuild(room, options) {
+  getBuild (room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
-  manageCreep(creep) {
+  manageCreep (creep) {
     if (this.recharge(creep)) {
       return
     }
