@@ -5,13 +5,9 @@ let gulp = require('gulp')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
+let minimist = require(minimist)
 
-let rawArgs = process.argv.slice(2)
-let args = {}
-for (let i in rawArgs) { // jshint ignore:line
-  let v = rawArgs[i].match(/--([^\s]+)=([^\s]+)/)
-  args[v[1]] = v[2]
-}
+let args = minimist(process.argv.slice(2))
 
 gulp.task('copy', () => {
   gulp.src('src/**').pipe(rename((path) => {
@@ -45,6 +41,11 @@ gulp.task('deploy', () => {
     throw err
   }
 
+  // allow overrides from passed arguments
+  for (let i in args) { // jshint ignore:line
+    opts[i] = args[i]
+  }
+
   options.ptr = opts.ptr
   options.branch = opts.branch
   options.email = opts.email
@@ -52,11 +53,6 @@ gulp.task('deploy', () => {
   options.host = opts.hostname
   options.secure = !!opts.ssl
   options.port = opts.port
-
-  // allow overrides from passed arguments
-  for (let i in args) { // jshint ignore:line
-    opts[i] = args[i]
-  }
 
   return gulp.src('dist/*.js').pipe(screeps(options))
 })
