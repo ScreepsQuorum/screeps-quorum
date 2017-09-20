@@ -6,7 +6,6 @@ let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
 
-
 let rawArgs = process.argv.slice(2)
 let args = {}
 for (let i in rawArgs) { // jshint ignore:line
