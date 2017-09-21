@@ -16,7 +16,7 @@
     "test": "standard",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
-    "2npm": "publish"
+    "2npm": "npm publish"
   },
   "standard": {
     "ignore": [
