@@ -57,7 +57,7 @@ gulp.task('deploy', () => {
   return gulp.src('dist/*.js').pipe(screeps(options))
 })
 
-gulp.task('ci-config', (cb) => {
+gulp.task('ci-config', ['ci-version'], (cb) => {
   fs.writeFile('.screeps.json', JSON.stringify({
     main: {
       ptr: !!process.env.SCREEPS_PTR,
@@ -68,7 +68,16 @@ gulp.task('ci-config', (cb) => {
       ssl: !!process.env.SCREEPS_SSL,
       port: process.env.SCREEPS_PORT
     }
-  }))
+  }), cb)
 })
-
+gulp.task('ci-version', (cb) => {
+  let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  let now = new Date()
+  let seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()
+  let year = now.getFullYear()
+  let month = ('0' + now.getMonth()).slice(-2)
+  let day = ('0' + now.getDate()).slice(-2)
+  pkg.version = `${year}.${month}.${day}.${seconds}`
+  fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
+})
 gulp.task('default', ['copy', 'deploy'])
