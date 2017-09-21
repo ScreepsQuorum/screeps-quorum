@@ -75,9 +75,9 @@ gulp.task('ci-version', (cb) => {
   let now = new Date()
   let seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()
   let year = now.getFullYear()
-  let month = ('0' + now.getMonth()).slice(-2)
-  let day = ('0' + now.getDate()).slice(-2)
-  pkg.version = `${year}.${month}.${day}.${seconds}`
+  let month = now.getMonth()
+  let day = now.getDate()
+  pkg.version = `${year}.${month}.${day}-${seconds}`
   fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
 })
 gulp.task('default', ['copy', 'deploy'])
