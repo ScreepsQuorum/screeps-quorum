@@ -8,7 +8,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-screeps": "^1.0.3",
     "minimist": "^1.2.0",
-    "publish": "^0.6.0",
     "standard": "^10.0.3"
   },
   "screeps_bot": true,
@@ -17,7 +16,7 @@
     "test": "standard",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
-    "2npm": "publish"
+    "2npm": "npm publish"
   },
   "standard": {
     "ignore": [
