@@ -31,7 +31,7 @@ gulp.task('copy', () => {
   })).pipe(gulp.dest('dist/'))
 })
 
-gulp.task('deploy', () => {
+gulp.task('deploy', ['copy'], () => {
   let config = require('./.screeps.json')
   let opts = config[args.server || 'main']
   let options = {}
