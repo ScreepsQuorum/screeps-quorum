@@ -14,7 +14,7 @@ threshold: 0.74
 mergedelay: 6
 
 # Number of votes at which the mergedelay gets ignored, assuming no negative votes.
-delayoverride: 5
+delayoverride: 4
 
 # Number of hours after last action (commit or opening the pull request) before issue is autoclosed
 timeout: 360
