@@ -10,7 +10,7 @@ let minimist = require('minimist')
 let args = minimist(process.argv.slice(2))
 
 gulp.task('copy', () => {
-  gulp.src('src/**').pipe(rename((path) => {
+  return gulp.src('src/**/*.js').pipe(rename((path) => {
     let parts = path.dirname.match(/[^/\\]+/g)
     let name = ''
     for (let i in parts) {
