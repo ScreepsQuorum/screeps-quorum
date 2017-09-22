@@ -31,7 +31,7 @@ gulp.task('copy', () => {
   })).pipe(gulp.dest('dist/'))
 })
 
-gulp.task('deploy', () => {
+gulp.task('deploy', ['copy'], () => {
   let config = require('./.screeps.json')
   let opts = config[args.server || 'main']
   let options = {}
@@ -46,29 +46,38 @@ gulp.task('deploy', () => {
     opts[i] = args[i]
   }
 
-  options.ptr = opts.ptr
-  options.branch = opts.branch
+  options.ptr = opts.ptr || false
+  options.branch = opts.branch || 'default'
   options.email = opts.email
   options.password = opts.password
-  options.host = opts.hostname
-  options.secure = !!opts.ssl
-  options.port = opts.port
+  options.host = opts.host || 'screeps.com'
+  options.secure = !!opts.ssl || (options.host === 'screeps.com')
+  options.port = opts.port || 443
 
   return gulp.src('dist/*.js').pipe(screeps(options))
 })
 
-gulp.task('ci-config', (cb) => {
+gulp.task('ci-config', ['ci-version'], (cb) => {
   fs.writeFile('.screeps.json', JSON.stringify({
     main: {
       ptr: !!process.env.SCREEPS_PTR,
-      branch: process.env.SCREEPS_BRANCH || 'default',
+      branch: process.env.SCREEPS_BRANCH,
       email: process.env.SCREEPS_EMAIL,
       password: process.env.SCREEPS_PASSWORD,
-      host: process.env.SCREEPS_HOST || 'screeps.com',
-      ssl: !!process.env.SCREEPS_SSL || (process.env.SCREEPS_HOST === 'screeps.com'),
-      port: process.env.SCREEPS_PORT || 443
+      host: process.env.SCREEPS_HOST,
+      ssl: !!process.env.SCREEPS_SSL,
+      port: process.env.SCREEPS_PORT
     }
-  }))
+  }), cb)
 })
-
+gulp.task('ci-version', (cb) => {
+  let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+  let now = new Date()
+  let seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()
+  let year = now.getFullYear()
+  let month = now.getMonth()
+  let day = now.getDate()
+  pkg.version = `${year}.${month}.${day}-${seconds}`
+  fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
+})
 gulp.task('default', ['copy', 'deploy'])

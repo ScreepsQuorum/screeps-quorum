@@ -1,6 +1,7 @@
 {
   "name": "screepsbot-quorum",
   "version": "0.1.0",
+  "license": "MIT",
   "devDependencies": {
     "grunt": "^1.0.0",
     "grunt-contrib-clean": "^1.0.0",
@@ -24,7 +25,7 @@
     "test": "standard",
     "deploy": "grunt",
     "ci-config": "gulp ci-config",
-    "2npm": "publish"
+    "2npm": "npm publish"
   },
   "standard": {
     "ignore": [
