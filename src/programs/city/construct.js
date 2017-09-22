@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /**
  *
@@ -6,36 +6,36 @@
 
 class CityConstruct extends kernel.process {
   constructor (...args) {
-    super(...args)
-    this.priority = PRIORITIES_CONSTRUCTION
+    super(...args);
+    this.priority = PRIORITIES_CONSTRUCTION;
   }
 
   main () {
     if (!Game.rooms[this.data.room]) {
-      return this.suicide()
+      return this.suicide();
     }
-    this.room = Game.rooms[this.data.room]
+    this.room = Game.rooms[this.data.room];
 
     if (!this.room.isMissingStructures()) {
-      return
+      return;
     }
 
     const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
       filter: function (site) {
-        return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER
+        return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER;
       }
-    })
+    });
     if (sites.length <= 0) {
-      let result = this.room.constructNextMissingStructure()
+      let result = this.room.constructNextMissingStructure();
       if (Number.isInteger(result) && result < 0) {
-        Logger.log(`Unable to build next structure: ${result}`, LOG_ERROR)
+        Logger.log(`Unable to build next structure: ${result}`, LOG_ERROR);
       }
     }
 
     if (sites.length > 0) {
-      this.launchCreepProcess('builders', 'builder', this.data.room, 2)
+      this.launchCreepProcess('builders', 'builder', this.data.room, 2);
     }
   }
 }
 
-module.exports = CityConstruct
+module.exports = CityConstruct;

@@ -1,16 +1,16 @@
-'use strict'
+'use strict';
 
 Room.prototype.getStructuresToFill = function (structureTypes) {
   if (!this.__fillable) {
     this.__fillable = this.find(FIND_MY_STRUCTURES, {
       filter: function (structure) {
         if (structureTypes.indexOf(structure.structureType) === -1) {
-          return false
+          return false;
         }
 
-        return structure.energy < structure.energyCapacity
+        return structure.energy < structure.energyCapacity;
       }
-    })
+    });
   }
-  return this.__fillable
-}
+  return this.__fillable;
+};

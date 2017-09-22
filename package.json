@@ -8,12 +8,12 @@
     "gulp-rename": "^1.2.2",
     "gulp-screeps": "^1.0.3",
     "minimist": "^1.2.0",
-    "standard": "^10.0.3"
+    "semistandard": "^11.0.0"
   },
   "screeps_bot": true,
   "main": "dist/main.js",
   "scripts": {
-    "test": "standard",
+    "test": "semistandard",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
     "2npm": "npm publish"
