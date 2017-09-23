@@ -17,7 +17,7 @@ mergedelay: 6
 delayoverride: 4
 
 # Number of hours after last action (commit or opening the pull request) before issue is autoclosed
-timeout: 360
+timeout: 168
 
 # Don't count any vote from a user who votes for multiple options
 prevent_doubles: true
