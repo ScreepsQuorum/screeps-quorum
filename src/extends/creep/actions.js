@@ -11,6 +11,23 @@ Creep.prototype.recharge = function () {
     return false
   }
 
+  // See if creep can get energy from storage, or as a fallback from terminal.
+  let storage = false
+  if (this.room.storage && this.room.storage.store[RESOURCE_ENERGY]) {
+    storage = this.room.storage
+  } else if (this.room.terminal && this.room.terminal.store[RESOURCE_ENERGY]) {
+    storage = this.room.terminal
+  }
+  if (storage) {
+    if (!this.pos.isNearTo(storage)) {
+      this.moveTo(storage)
+    }
+    if (this.pos.isNearTo(storage)) {
+      this.withdraw(storage, RESOURCE_ENERGY)
+    }
+    return true
+  }
+
   // As a last resort harvest energy from the active sources.
   const sources = this.room.find(FIND_SOURCES_ACTIVE)
   sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
