@@ -33,6 +33,7 @@ global.qlib = require('lib_loader')
 
 /* Extend built in objects */
 require('extends_creep')
+require('extends_creep_actions')
 require('extends_room_construction')
 require('extends_room_logistics')
 require('extends_room_spawning')
