@@ -40,6 +40,13 @@ class City extends kernel.process {
     // Launch fillers
     this.launchCreepProcess('fillers', 'filler', this.data.room, 2)
 
+    // Launch mine
+    if (this.room.energyCapacityAvailable >= 800) {
+      this.launchChildProcess('mining', 'city_mine', {
+        'room': this.data.room
+      })
+    }
+
     // Launch upgraders
     const upgraderQuantity = this.room.controller.level >= 8 ? 1 : 5
     this.launchCreepProcess('upgraders', 'upgrader', this.data.room, upgraderQuantity, {
