@@ -38,6 +38,46 @@ RoomPosition.prototype.getAdjacent = function () {
   return results
 }
 
+RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false) {
+  return _.filter(this.getAdjacent(), function (pos) {
+    return pos.isSteppable(includeCreeps)
+  })
+}
+
+RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
+  if (this.getTerrainAt() === 'wall') {
+    return false
+  }
+  const structures = this.lookFor(LOOK_STRUCTURES)
+  let structure
+  for (structure of structures) {
+    if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
+      return false
+    }
+  }
+  if (includeCreeps) {
+    if (this.lookFor(LOOK_CREEPS).length > 0) {
+      return false
+    }
+  }
+  return true
+}
+
+RoomPosition.prototype.getMostOpenNeighbor = function () {
+  const steppable = this.getSteppableAdjacent()
+  let pos
+  let best
+  let score = 0
+  for (pos of steppable) {
+    const posScore = pos.getSteppableAdjacent().length
+    if (posScore > score) {
+      score = posScore
+      best = pos
+    }
+  }
+  return best
+}
+
 RoomPosition.prototype.isEdge = function () {
   return this.x === 49 || this.x === 0 || this.y === 49 || this.y === 0
 }
