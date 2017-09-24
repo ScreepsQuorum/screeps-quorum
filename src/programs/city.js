@@ -41,10 +41,12 @@ class City extends kernel.process {
     this.launchCreepProcess('fillers', 'filler', this.data.room, 2)
 
     // Launch upgraders
-    const upgraderQuantity = this.room.controller.level >= 8 ? 1 : 5
-    this.launchCreepProcess('upgraders', 'upgrader', this.data.room, upgraderQuantity, {
-      'priority': 5
-    })
+    if (this.room.isEconomyCapable('UPGRADE_CONTROLLERS')) {
+      const upgraderQuantity = this.room.controller.level >= 8 ? 1 : 5
+      this.launchCreepProcess('upgraders', 'upgrader', this.data.room, upgraderQuantity, {
+        'priority': 5
+      })
+    }
     if (this.room.controller.isTimingOut()) {
       this.launchCreepProcess('eupgrader', 'upgrader', this.data.room, 1, {
         priority: 1,
