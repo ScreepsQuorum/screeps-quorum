@@ -40,3 +40,10 @@ Creep.buildFromTemplate = function (template, energy) {
   }
   return parts
 }
+
+Creep.prototype.getCarryPercentage = function () {
+  if (this.carryCapacity <= 0) {
+    return 0
+  }
+  return _.sum(this.carry) / this.carryCapacity
+}
