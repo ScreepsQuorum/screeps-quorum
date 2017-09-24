@@ -111,11 +111,12 @@ class CityDefense extends kernel.process {
       return false
     }
 
-    const spawns = room.find(FIND_MY_SPAWNS)
-    let spawn
-    for (spawn of spawns) {
-      const closest = spawn.pos.findClosestByRange(hostiles)
-      if (spawn.pos.getRangeTo(closest) < 5) {
+    let safeStructures = room.find(FIND_MY_SPAWNS)
+    safeStructures.push(room.controller)
+    let structure
+    for (structure of safeStructures) {
+      const closest = structure.pos.findClosestByRange(hostiles)
+      if (structure.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
         Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
         room.controller.activateSafeMode()
