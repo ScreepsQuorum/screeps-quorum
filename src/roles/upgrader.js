@@ -15,7 +15,7 @@ class Upgrader extends MetaRole {
   }
 
   manageCreep (creep) {
-    if (this.recharge(creep)) {
+    if (creep.recharge()) {
       return
     }
 
