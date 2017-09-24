@@ -29,6 +29,7 @@
       "PathCache",
       "SCRIPT_VERSION",
       "sos",
+      "qlib",
       "SEGMENT_CONSTRUCTION",
       "LEVEL_BREAKDOWN",
       "STRUCTURE_LOADER",
