@@ -28,6 +28,19 @@ Creep.prototype.recharge = function () {
     return true
   }
 
+  // If there is no storage check for containers.
+  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > 0)
+  if (containers.length > 0) {
+    const container = this.pos.findClosestByRange(containers)
+    if (!this.pos.isNearTo(container)) {
+      this.moveTo(container)
+    }
+    if (this.pos.isNearTo(container)) {
+      this.withdraw(container, RESOURCE_ENERGY)
+    }
+    return true
+  }
+
   // As a last resort harvest energy from the active sources.
   const sources = this.room.find(FIND_SOURCES_ACTIVE)
   sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
