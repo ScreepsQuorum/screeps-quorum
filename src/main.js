@@ -41,6 +41,7 @@ require('extends_room_logistics')
 require('extends_room_spawning')
 require('extends_room_structures')
 require('extends_roomposition')
+require('extends_source')
 
 const QosKernel = require('qos_kernel')
 

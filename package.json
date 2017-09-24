@@ -33,6 +33,7 @@
       "ECONOMY_DEVELOPING",
       "ECONOMY_STABLE",
       "ECONOMY_SURPLUS",
+      "qlib",
       "SEGMENT_CONSTRUCTION",
       "LEVEL_BREAKDOWN",
       "STRUCTURE_LOADER",
