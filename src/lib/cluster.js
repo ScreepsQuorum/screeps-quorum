@@ -38,10 +38,10 @@ class Cluster {
       }
       if (room) {
         if (!room.isQueued(creepname)) {
-          this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1)
+          this.memory.creeps.splice(this.memory.creeps.indexOf(creepname), 1)
         }
       } else if (!Room.isQueued(creepname)) {
-        this.memory.creeps.indexOf.splice(this.memory.creeps.indexOf(creepname), 1)
+        this.memory.creeps.splice(this.memory.creeps.indexOf(creepname), 1)
       }
     }
   }
