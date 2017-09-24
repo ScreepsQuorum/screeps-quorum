@@ -78,7 +78,7 @@ class CityDefense extends kernel.process {
     if (this.data.healTarget !== undefined) {
       const healTarget = Game.getObjectById(this.data.healTarget)
       if (healTarget &&
-        (healTarget.pos.room.name === this.data.room) &&
+        (healTarget.pos.roomName === this.data.room) &&
         (healTarget.hits < healTarget.hitsMax)) {
         healFunc(healTarget)
         return
