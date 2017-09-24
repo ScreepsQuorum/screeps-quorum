@@ -32,6 +32,7 @@ require('thirdparty_creeptalk')({
 global.qlib = require('lib_loader')
 
 /* Extend built in objects */
+require('extends_controller')
 require('extends_creep')
 require('extends_room_construction')
 require('extends_room_logistics')
