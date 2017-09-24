@@ -35,7 +35,7 @@ View the [Quorum Dashboard](http://quorum.tedivm.com/) for all the information o
 
 ## Deploying
 
-This codebase uses `Gulp` to deploy to the screeps server. It uses a configuration file, `.screeps.json`, which can save multiple configurations.
+This codebase uses [Gulp](https://gulpjs.com/) to deploy to the screeps server. It uses a configuration file, `.screeps.json`, which can save multiple configurations.
 
 ```json
 {
