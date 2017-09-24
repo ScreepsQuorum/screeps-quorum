@@ -31,7 +31,7 @@ prevent_doubles: true
 extra_labels: false
 
 # Only process votes by contributors
-contributors_only: false
+contributors_only: true
 
 # Only process votes by collaborators
 collaborators_only: false
