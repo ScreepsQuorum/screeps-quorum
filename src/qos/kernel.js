@@ -111,6 +111,15 @@ class QosKernel {
   shutdown () {
     sos.lib.vram.saveDirty()
     sos.lib.segments.process()
+
+    const processCount = this.scheduler.getProcessCount()
+    const completedCount = this.scheduler.memory.processes.completed.length
+
+    Logger.log(`Processes Run: ${completedCount}/${processCount}`, LOG_INFO, 'kernel')
+    Logger.log(`Tick Limit: ${Game.cpu.tickLimit}`, LOG_INFO, 'kernel')
+    Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
+    Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')
+    Logger.log(`Bucket: ${Game.cpu.bucket}`, LOG_INFO, 'kernel')
   }
 }
 
