@@ -44,7 +44,7 @@ class CityMine extends kernel.process {
 
     // Run miners.
     const miners = new qlib.Cluster('miners_' + source.id, this.room)
-    miners.sizeCluster('miner', 1)
+    miners.sizeCluster('miner', 1, {'priority': 2})
     miners.forEach(function (miner) {
       if (!miner.pos.isNearTo(source)) {
         miner.moveTo(minerPos)
