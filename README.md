@@ -33,6 +33,15 @@ Join the discussion on slack at [#quorum](https://screeps.slack.com/messages/quo
 View the [Quorum Dashboard](http://quorum.tedivm.com/) for all the information on the currently running instance.
 
 
+## Contributing
+
+This project does everything but code itself- that part comes from community pull requests.
+
+Not sure where to get started? The github project has a [list of needed features](https://github.com/ScreepsQuorum/screeps-quorum/issues) specifically to give people a jumping off point for getting into the project.
+
+Please take a moment to read the [contributors guide](https://github.com/ScreepsQuorum/screeps-quorum/blob/master/CONTRIBUTING.md) to get an understanding of how the project works and how contributions will be looked at by the community.
+
+
 ## Deploying
 
 This codebase uses [Gulp](https://gulpjs.com/) to deploy to the screeps server. It uses a configuration file, `.screeps.json`, which can save multiple configurations.
