@@ -38,7 +38,12 @@ class City extends kernel.process {
     }
 
     // Launch fillers
-    this.launchCreepProcess('fillers', 'filler', this.data.room, 2)
+    let options = {}
+    if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
+      options['carry_only'] = true
+      options['energy'] = 1600
+    }
+    this.launchCreepProcess('fillers', 'filler', this.data.room, 2, options)
 
     // Launch mine
     if (this.room.energyCapacityAvailable >= 800) {
@@ -49,7 +54,13 @@ class City extends kernel.process {
 
     // Launch upgraders
     if (this.room.isEconomyCapable('UPGRADE_CONTROLLERS')) {
-      const upgraderQuantity = this.room.controller.level >= 8 ? 1 : 5
+      let upgraderQuantity = this.room.getRoomSetting('UPGRADERS_QUANTITY')
+      if (this.room.isEconomyCapable('EXTRA_UPGRADERS')) {
+        upgraderQuantity += 2
+      }
+      if (this.room.controller.level >= 8) {
+        upgraderQuantity = 1
+      }
       this.launchCreepProcess('upgraders', 'upgrader', this.data.room, upgraderQuantity, {
         'priority': 5
       })
