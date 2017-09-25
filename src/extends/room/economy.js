@@ -6,7 +6,8 @@ global.ECONOMY_STABLE = 2
 global.ECONOMY_SURPLUS = 3
 
 const economySettings = {
-  'UPGRADE_CONTROLLERS': ECONOMY_STABLE
+  'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
+  'EXTRA_UPGRADERS': ECONOMY_SURPLUS
 }
 
 Room.prototype.isEconomyCapable = function (key) {
