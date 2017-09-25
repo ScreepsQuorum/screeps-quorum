@@ -42,6 +42,10 @@ Creep.prototype.recharge = function () {
   }
 
   // As a last resort harvest energy from the active sources.
+  if (this.getActiveBodyparts(WORK) <= 0) {
+    // Still returning true because the creep still does need to recharge.
+    return true
+  }
   const sources = this.room.find(FIND_SOURCES_ACTIVE)
   sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
   const idx = parseInt(this.name[this.name.length - 1], 36)
