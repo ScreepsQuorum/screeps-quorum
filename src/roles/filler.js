@@ -28,7 +28,7 @@ class Filler extends MetaRole {
 
     if (structure) {
       if (creep.pos.getRangeTo(structure) > 1) {
-        creep.moveTo(structure)
+        creep.travelTo(structure)
       }
       if (creep.pos.getRangeTo(structure) <= 1) {
         creep.transfer(structure, RESOURCE_ENERGY)
@@ -46,7 +46,7 @@ class Filler extends MetaRole {
       target = spawns[0]
     }
     if (creep.pos.getRangeTo(target) > 3) {
-      creep.moveTo(target)
+      creep.travelTo(target)
     }
   }
 }
