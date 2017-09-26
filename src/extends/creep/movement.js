@@ -39,7 +39,7 @@ Creep.prototype.travelTo = function (pos, opts) {
     if (this.memory._sc >= struckThreshold) {
       delete this.memory._move
       if (typeof moveToOpts.ignoreCreeps === 'undefined') {
-        moveToOpts.ignoreCreeps = true
+        moveToOpts.ignoreCreeps = false
       }
       // This creep is really stuck attempt to have it move to a random empty space.
       if (this.memory._sc > struckRerouteThreshold) {
@@ -48,6 +48,11 @@ Creep.prototype.travelTo = function (pos, opts) {
           this.move(this.pos.getDirectionTo(_.shuffle(steppable)[0]))
         }
       }
+    }
+
+    // Default to having ignoreCreeps set to true if it isn't already set.
+    if (typeof moveToOpts.ignoreCreeps === 'undefined') {
+      moveToOpts.ignoreCreeps = true
     }
 
     // If destination pos is nearby go to it immediately and skip `moveTo` call.
