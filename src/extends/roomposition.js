@@ -107,3 +107,15 @@ RoomPosition.prototype.getTerrainAt = function () {
 RoomPosition.prototype.getManhattanDistance = function (pos) {
   return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y)
 }
+
+RoomPosition.prototype.serialize = function () {
+  return Room.serializeName(this.roomName) + String.fromCharCode(((this.x * 100) + +this.y) + 200)
+}
+
+RoomPosition.deserialize = function (string) {
+  const roomname = Room.deserializeName(string.slice(0, -1))
+  const coordraw = (string.charCodeAt(string.length - 1) - 200)
+  const x = Math.floor(coordraw / 100)
+  const y = coordraw % 50
+  return new RoomPosition(x, y, roomname)
+}
