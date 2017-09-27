@@ -23,21 +23,26 @@ class Filler extends MetaRole {
       return
     }
 
+    // Check to see if creep is already assigned a valid target and reuse.
+    if (creep.memory.ft) {
+      const cachedStructure = Game.getObjectById(creep.memory.ft)
+      if (cachedStructure.energy < cachedStructure.energyCapacity) {
+        this.fillStructure(creep, cachedStructure)
+        return
+      } else {
+        delete creep.memory.ft
+      }
+    }
+
     // Find structure to fill
     const structure = creep.pos.findClosestByRange(creep.room.getStructuresToFill(this.fillableStructures))
-
     if (structure) {
-      if (creep.pos.getRangeTo(structure) > 1) {
-        creep.travelTo(structure)
-      }
-      if (creep.pos.getRangeTo(structure) <= 1) {
-        creep.transfer(structure, RESOURCE_ENERGY)
-      }
+      creep.memory.ft = structure.id
+      this.fillStructure(creep, structure)
       return
     }
 
     // Park
-
     let target
     if (creep.room.storage) {
       target = creep.room.storage
@@ -47,6 +52,15 @@ class Filler extends MetaRole {
     }
     if (creep.pos.getRangeTo(target) > 3) {
       creep.travelTo(target)
+    }
+  }
+
+  fillStructure (creep, structure) {
+    if (creep.pos.getRangeTo(structure) > 1) {
+      creep.travelTo(structure)
+    }
+    if (creep.pos.getRangeTo(structure) <= 1) {
+      creep.transfer(structure, RESOURCE_ENERGY)
     }
   }
 }
