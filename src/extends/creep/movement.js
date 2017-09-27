@@ -9,12 +9,12 @@ const travelToDefaults = {
   'ignoreStuck': false
 }
 
-Creep.prototype.travelTo = function (pos, opts) {
+Creep.prototype.travelTo = function (pos, opts = {}) {
   if (this.fatigue) {
     return ERR_TIRED
   }
 
-  const moveToOpts = Object.assign(travelToDefaults, opts)
+  const moveToOpts = Object.assign({}, travelToDefaults, opts)
 
   // Compute max operations based on number of rooms.
   if (typeof moveToOpts.maxOps === 'undefined') {
@@ -45,7 +45,7 @@ Creep.prototype.travelTo = function (pos, opts) {
       if (this.memory._sc > struckRerouteThreshold) {
         const steppable = this.pos.getSteppableAdjacent(true)
         if (steppable.length > 0) {
-          this.move(this.pos.getDirectionTo(_.shuffle(steppable)[0]))
+          return this.move(this.pos.getDirectionTo(_.shuffle(steppable)[0]))
         }
       }
     }
