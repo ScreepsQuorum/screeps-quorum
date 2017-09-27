@@ -20,7 +20,7 @@ Creep.prototype.recharge = function () {
   }
   if (storage) {
     if (!this.pos.isNearTo(storage)) {
-      this.moveTo(storage)
+      this.travelTo(storage)
     }
     if (this.pos.isNearTo(storage)) {
       this.withdraw(storage, RESOURCE_ENERGY)
@@ -33,7 +33,7 @@ Creep.prototype.recharge = function () {
   if (containers.length > 0) {
     const container = this.pos.findClosestByRange(containers)
     if (!this.pos.isNearTo(container)) {
-      this.moveTo(container)
+      this.travelTo(container)
     }
     if (this.pos.isNearTo(container)) {
       this.withdraw(container, RESOURCE_ENERGY)
@@ -51,7 +51,7 @@ Creep.prototype.recharge = function () {
   const idx = parseInt(this.name[this.name.length - 1], 36)
   const source = sources[idx % sources.length]
   if (!this.pos.isNearTo(source)) {
-    this.moveTo(source)
+    this.travelTo(source)
   }
   if (this.pos.isNearTo(source)) {
     this.harvest(source)

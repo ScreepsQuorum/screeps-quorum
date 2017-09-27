@@ -17,7 +17,7 @@ class Builder extends MetaRole {
     const construction = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES)
     if (construction) {
       if (creep.pos.getRangeTo(construction) > 2) {
-        creep.moveTo(construction)
+        creep.travelTo(construction)
       }
       if (creep.pos.getRangeTo(construction) <= 3) {
         creep.build(construction)
@@ -28,7 +28,7 @@ class Builder extends MetaRole {
     // Upgrade controller if there isn't anything to build
     const controller = creep.room.controller
     if (creep.pos.getRangeTo(controller) > 2) {
-      creep.moveTo(controller)
+      creep.travelTo(controller)
     }
     if (creep.pos.getRangeTo(controller) <= 3) {
       creep.upgradeController(controller)

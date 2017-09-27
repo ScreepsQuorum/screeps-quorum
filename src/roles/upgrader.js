@@ -21,14 +21,14 @@ class Upgrader extends MetaRole {
 
     if (!creep.room.controller.sign || creep.room.controller.sign.text !== CONTROLLER_MESSAGE) {
       if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
-        creep.moveTo(creep.room.controller)
+        creep.travelTo(creep.room.controller)
       }
       if (creep.pos.inRangeTo(creep.room.controller, 3)) {
         creep.signController(creep.room.controller, CONTROLLER_MESSAGE)
       }
     } else {
       if (!creep.pos.inRangeTo(creep.room.controller, 2)) {
-        creep.moveTo(creep.room.controller)
+        creep.travelTo(creep.room.controller)
       }
     }
 

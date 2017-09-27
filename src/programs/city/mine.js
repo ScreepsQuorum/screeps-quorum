@@ -47,7 +47,7 @@ class CityMine extends kernel.process {
     miners.sizeCluster('miner', 1, {'priority': 2})
     miners.forEach(function (miner) {
       if (!miner.pos.isNearTo(source)) {
-        miner.moveTo(minerPos)
+        miner.travelTo(minerPos)
         return
       }
       if (construction && miner.carry[RESOURCE_ENERGY]) {
@@ -72,7 +72,7 @@ class CityMine extends kernel.process {
     haulers.forEach(function (hauler) {
       if (hauler.getCarryPercentage() > 0.8) {
         if (!hauler.pos.isNearTo(hauler.room.storage)) {
-          hauler.moveTo(hauler.room.storage)
+          hauler.travelTo(hauler.room.storage)
         }
         if (hauler.pos.isNearTo(hauler.room.storage)) {
           hauler.transfer(hauler.room.storage, RESOURCE_ENERGY)
@@ -80,7 +80,7 @@ class CityMine extends kernel.process {
         return
       }
       if (!hauler.pos.isNearTo(container)) {
-        hauler.moveTo(container)
+        hauler.travelTo(container)
       }
       if (hauler.pos.isNearTo(container)) {
         if (container.store[RESOURCE_ENERGY]) {
