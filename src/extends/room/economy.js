@@ -30,7 +30,7 @@ Room.prototype.getEconomyLevel = function () {
     return ECONOMY_CRASHED
   }
 
-  // When fully developed between 10000 and 300000
+  // When fully developed between 15000 and 300000
   if (energy < desiredBuffer) {
     return ECONOMY_DEVELOPING
   }
