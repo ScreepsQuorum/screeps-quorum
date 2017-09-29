@@ -63,7 +63,6 @@ class CityMine extends kernel.process {
 
     // If using containers spawn haulers
     if (!container || !this.room.storage) {
-      Logger.highlight('bailing before haulers')
       return
     }
 
