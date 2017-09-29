@@ -6,6 +6,7 @@ global.ECONOMY_STABLE = 2
 global.ECONOMY_SURPLUS = 3
 
 const economySettings = {
+  'BUILD_STRUCTURES': ECONOMY_STABLE,
   'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
   'EXTRA_UPGRADERS': ECONOMY_SURPLUS
 }
@@ -18,27 +19,28 @@ Room.prototype.isEconomyCapable = function (key) {
 }
 
 Room.prototype.getEconomyLevel = function () {
-  if (!this.storage) {
+  if (this.getPracticalRoomLevel() < 4) {
     return ECONOMY_STABLE
   }
 
+  const desiredBuffer = this.getDesiredEnergyBuffer()
   const energy = this.getEnergyAmount()
 
-  if (energy < 10000) {
+  if (energy < 15000) {
     return ECONOMY_CRASHED
   }
 
-  // Between 10000 and 180000
-  if (energy < 180000) {
+  // When fully developed between 15000 and 300000
+  if (energy < desiredBuffer) {
     return ECONOMY_DEVELOPING
   }
 
-  // Between 180000 and 200000
-  if (energy < 200000) {
+  // When fully developed between 300000 and 320000
+  if (energy < (desiredBuffer + 20000)) {
     return ECONOMY_STABLE
   }
 
-  // Over 200000
+  // When fully developed over 300000
   return ECONOMY_SURPLUS
 }
 
@@ -51,4 +53,12 @@ Room.prototype.getEnergyAmount = function () {
     energy += this.terminal.store[RESOURCE_ENERGY]
   }
   return energy
+}
+
+Room.prototype.getDesiredEnergyBuffer = function () {
+  const roomLevel = this.getPracticalRoomLevel()
+  if (roomLevel < 4) {
+    return 0
+  }
+  return Math.min((roomLevel - 3) * 100000, 300000)
 }
