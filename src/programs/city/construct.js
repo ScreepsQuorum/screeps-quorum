@@ -32,7 +32,7 @@ class CityConstruct extends kernel.process {
       }
     }
 
-    if (sites.length > 0) {
+    if (sites.length > 0 && this.room.isEconomyCapable('BUILD_STRUCTURES')) {
       this.launchCreepProcess('builders', 'builder', this.data.room, 2)
     }
   }
