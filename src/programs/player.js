@@ -12,6 +12,7 @@ class Player extends kernel.process {
 
   main () {
     this.launchChildProcess('respawner', 'respawner')
+    this.launchChildProcess('intel', 'empire_intel')
 
     let roomname
     for (roomname of Object.keys(Game.rooms)) {

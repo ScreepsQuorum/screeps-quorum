@@ -71,6 +71,13 @@ class City extends kernel.process {
         energy: 200
       })
     }
+
+    // Launch scouts to map out neighboring rooms
+    if (this.room.getRoomSetting('SCOUTS')) {
+      this.launchCreepProcess('scouts', 'spook', this.data.room, 1, {
+        'priority': 4
+      })
+    }
   }
 }
 
