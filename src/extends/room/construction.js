@@ -128,7 +128,7 @@ Room.prototype.isMissingStructures = function () {
   return this.getPracticalRoomLevel() < this.controller.level
 }
 
-Room.prototype.getStructureCount = function (structureFind=FIND_MY_STRUCTURES) {
+Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES) {
   const structures = this.find(structureFind)
   const counts = {}
   let structure
