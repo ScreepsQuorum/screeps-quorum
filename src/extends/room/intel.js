@@ -40,7 +40,7 @@ Room.prototype.saveIntel = function (refresh = false) {
   // Record room owner, level.
   if (this.controller) {
     if (this.controller.owner) {
-      roominfo[INTEL_OWNER] = this.controller.owner
+      roominfo[INTEL_OWNER] = this.controller.owner.username
       roominfo[INTEL_PRACTICAL_LEVEL] = this.getPracticalRoomLevel()
     } else if (this.controller.reservation) {
       roominfo[INTEL_OWNER] = this.controller.reservation.username
@@ -88,6 +88,11 @@ Room.prototype.saveIntel = function (refresh = false) {
     }
   }
   */
+
+  // Remove this room as a scouting target if it is one.
+  if (Memory.intel.targets[this.name]) {
+    delete Memory.intel.targets[this.name]
+  }
 
   Memory.intel.buffer[this.name] = roominfo
   return roominfo
