@@ -38,10 +38,20 @@ class Spook extends MetaRole {
   }
 
   stompConstruction (creep) {
-    const construction = creep.pos.findClosestByRange(FIND_HOSTILE_CONSTRUCTION_SITES)
+    // Use cached construction site
+    if (creep.memory.stomp) {
+      let construction = Game.getObjectById(creep.memory.stomp)
+      creep.travelTo(construction)
+      return true
+    }
+    // Find a new site to stomp, excluding any being stood on.
+    const construction = creep.pos.findClosestByRange(FIND_HOSTILE_CONSTRUCTION_SITES, {filter: function (site) {
+      return site.pos.getRangeTo(creep) > 0
+    }})
     if (!construction) {
       return false
     }
+    creep.memory.stomp = construction.id
     creep.travelTo(construction)
     return true
   }
