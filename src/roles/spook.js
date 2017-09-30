@@ -16,13 +16,21 @@ class Spook extends MetaRole {
 
     // Harass current room by signing controller and stomping contruction sites.
     if (!creep.room.controller || !creep.room.controller.my) {
-      // Find and destroy any hostile construction sites
-      if (this.stompConstruction(creep)) {
-        return
+
+      if (!creep.memory.stomproom || creep.memory.stomproom !== creep.room.name) {
+        creep.memory.stomproom = creep.room.name
+        creep.memory.stomptime = Game.time
       }
-      // Tag the controller
-      if (this.signController(creep)) {
-        return
+
+      if (Game.time - creep.memory.stomptime < 70) {
+        // Find and destroy any hostile construction sites
+        if (this.stompConstruction(creep)) {
+          return
+        }
+        // Tag the controller
+        if (this.signController(creep)) {
+          return
+        }
       }
     }
 
