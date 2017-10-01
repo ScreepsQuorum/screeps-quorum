@@ -89,9 +89,12 @@ Room.prototype.saveIntel = function (refresh = false) {
   }
   */
 
-  // Remove this room as a scouting target if it is one.
+  // Remove this room as a scouting target and active assignments
   if (Memory.intel.targets[this.name]) {
     delete Memory.intel.targets[this.name]
+  }
+  if (Memory.intel.active[this.name]) {
+    delete Memory.intel.active[this.name]
   }
 
   Memory.intel.buffer[this.name] = roominfo
