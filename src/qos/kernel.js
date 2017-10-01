@@ -73,7 +73,7 @@ class QosKernel {
         runningProcess.run()
       } catch (err) {
         Logger.log('program error occurred', LOG_ERROR)
-        Logger.log(`process ${runningProcess.pid}: runningProcess.name`, LOG_ERROR)
+        Logger.log(`process ${runningProcess.pid}: ${runningProcess.name}`, LOG_ERROR)
         if (!!err && !!err.stack) {
           Logger.log(err.stack, LOG_ERROR)
         } else {
