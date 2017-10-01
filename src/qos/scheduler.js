@@ -59,8 +59,13 @@ class Scheduler {
       if (!this.memory.processes.index[pid]) {
         continue
       }
-      const priority = this.getPriorityForPid(pid)
-      this.memory.processes.queues[priority].push(pid)
+      try {
+        const priority = this.getPriorityForPid(pid)
+        this.memory.processes.queues[priority].push(pid)
+      } catch (err) {
+        delete this.memory.processes.index[pid]
+        Logger.log(err, LOG_ERROR)
+      }
     }
     this.memory.processes.completed = []
   }
