@@ -183,7 +183,7 @@ Room.getScoutTarget = function (creep) {
     let testRoom
     for (testRoom of targetRooms) {
       // Filter out rooms that already have a scount creep assigned to them.
-      if (assignedRooms.includes(testRoom)) {
+      if (assignedRooms.indexOf(testRoom) >= 0) {
         if (Game.creeps[Memory.intel.active[testRoom]]) {
           continue
         } else {
