@@ -45,9 +45,18 @@ class City extends kernel.process {
     }
     this.launchCreepProcess('fillers', 'filler', this.data.room, 2, options)
 
-    // Launch mine
+    // Launch mining
     if (this.room.energyCapacityAvailable >= 800) {
       this.launchChildProcess('mining', 'city_mine', {
+        'room': this.data.room
+      })
+    }
+
+    // Launch mineral extraction
+    if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
+      // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
+      // conditions.
+      this.launchChildProcess('extraction', 'city_extract', {
         'room': this.data.room
       })
     }

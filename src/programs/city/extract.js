@@ -1,0 +1,89 @@
+'use strict'
+
+
+/**
+ * Attempts to prevent stalled rooms by launching filler creeps at 300 energy.
+ */
+
+class CityExtract extends kernel.process {
+  main () {
+    if (!Game.rooms[this.data.room]) {
+      return this.suicide()
+    }
+    this.room = Game.rooms[this.data.room]
+
+    const extractor = this.room.structures[STRUCTURE_EXTRACTOR] ? this.room.structures[STRUCTURE_EXTRACTOR][0] : false
+    const mineral = this.room.find(FIND_MINERALS)[0]
+    const storage = this.room.terminal ? this.room.terminal : this.room.storage
+    const canExtract = extractor && mineral.mineralAmount > 0 && !mineral.ticksToRegeneration
+    const frackerCluster = new qlib.Cluster('Extract_frackers_' + this.data.room, this.room)
+    const haulerCluster = new qlib.Cluster('Extract_Haulers_' + this.data.room, this.room)
+    const frackers = frackerCluster.getCreeps()
+    const frackersToEmpty = _.filter(frackers, function (fracker) {
+      if (!fracker.pos.isNearTo(mineral)) {
+        return false
+      }
+      return _.sum(fracker.carry) > 0
+    })
+
+    frackerCluster.sizeCluster('fracker', canExtract > 0 ? Math.min(3, extractor.pos.getSteppableAdjacent().length) : 0)
+    haulerCluster.sizeCluster('hauler', canExtract > 0 ? 2 : 0)
+
+    frackerCluster.forEach(function (fracker) {
+      const carrying = fracker.getCarryPercentage()
+      if (!canExtract) {
+        fracker.recycle()
+        return
+      }
+      if (!fracker.pos.isNearTo(extractor)) {
+        fracker.travelTo(extractor)
+        return
+      }
+      // Minimize dropped minerals
+      if (carrying >= 1) {
+        return
+      }
+      if (!extractor.cooldown) {
+        fracker.harvest(mineral)
+      }
+    })
+
+    haulerCluster.forEach(function (hauler) {
+      if (!canExtract || hauler.ticksToLive < 50) {
+        hauler.recycle()
+        return
+      }
+      if (hauler.getCarryPercentage() >= 1) {
+        if (hauler.pos.isNearTo(storage)) {
+          hauler.transferAll(storage)
+        } else {
+          hauler.travelTo(storage)
+        }
+        return
+      }
+
+      if (frackersToEmpty.length < 1) {
+        if (hauler.pos.getRangeTo(mineral) > 2) {
+          hauler.travelTo(mineral)
+        }
+        return
+      }
+
+      const closestExtractor = hauler.pos.findClosestByRange(frackersToEmpty)
+      if (!closestExtractor || !hauler.pos.isNearTo(closestExtractor)) {
+        hauler.travelTo(mineral)
+      } else {
+        closestExtractor.transfer(hauler, mineral.mineralType)
+      }
+    })
+
+    // If there is nothing left to extract and the existing creeps have recycled themselves
+    if (canExtract) {
+      if (frackers.length <= 0 && haulerCluster.getCreeps().length <= 0) {
+        this.suicide()
+      }
+    }
+  }
+}
+
+module.exports = CityExtract
