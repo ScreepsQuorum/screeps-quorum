@@ -19,6 +19,9 @@ class Filler extends MetaRole {
   }
 
   manageCreep (creep) {
+    if (creep.ticksToLive < 50) {
+      return this.recycle()
+    }
     if (creep.recharge()) {
       return
     }

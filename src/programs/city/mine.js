@@ -69,6 +69,9 @@ class CityMine extends kernel.process {
     const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
     haulers.sizeCluster('hauler', 1)
     haulers.forEach(function (hauler) {
+      if (hauler.ticksToLive < 50) {
+        return hauler.recycle()
+      }
       if (hauler.getCarryPercentage() > 0.8) {
         if (!hauler.pos.isNearTo(hauler.room.storage)) {
           hauler.travelTo(hauler.room.storage)

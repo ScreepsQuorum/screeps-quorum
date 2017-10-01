@@ -58,3 +58,62 @@ Creep.prototype.recharge = function () {
   }
   return true
 }
+
+Creep.prototype.recycle = function () {
+  let storage = this.room.storage
+  if (!storage && this.room.terminal) {
+    storage = this.room.terminal
+  }
+
+  // Empty creep of all resources, dump them in storage.
+  if (this.getCarryPercentage() > 0) {
+    if (storage) {
+      if (this.pos.isNearTo(storage)) {
+        this.transferAll(storage)
+      } else {
+        this.travelTo(storage)
+      }
+      return
+    }
+  }
+
+  // No spawn - time to suicide.
+  if (!this.room.structures[STRUCTURE_SPAWN]) {
+    this.suicide()
+    return
+  }
+
+  // Identify spawn closest to storage, to make reclaimed energy easier to store.
+  let spawn = false
+  if (storage) {
+    spawn = storage.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
+  } else {
+    spawn = this.room.structures[STRUCTURE_SPAWN][0]
+  }
+
+  // Pick the location immediately above the spawn and recycle there.
+  const suicideBooth = new RoomPosition(spawn.pos.x, spawn.pos.y - 1, spawn.room.name)
+  if (this.pos.getRangeTo(suicideBooth) > 0) {
+    this.travelTo(suicideBooth)
+  } else {
+    spawn.recycleCreep(this)
+  }
+}
+
+Creep.prototype.transferAll = function (target) {
+  if (this.getCarryPercentage() <= 0) {
+    return ERR_NOT_ENOUGH_RESOURCES
+  }
+  if (!this.pos.isNearTo(target)) {
+    return ERR_NOT_IN_RANGE
+  }
+  const resources = Object.keys(this.carry)
+  let resource
+  for (resource of resources) {
+    if (this.carry[resource] > 0) {
+      return this.transfer(target, resource)
+    }
+  }
+  // this line should never get reached
+  return false
+}
