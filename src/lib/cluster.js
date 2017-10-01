@@ -33,6 +33,7 @@ class Cluster {
     this.creeps = []
     for (var creepname of this.memory.creeps) {
       if (Game.creeps[creepname]) {
+        Game.creeps[creepname].cluster = this
         this.creeps.push(Game.creeps[creepname])
         continue
       }
@@ -62,7 +63,17 @@ class Cluster {
   }
 
   forEach (creepAction) {
-    return this.getCreeps().forEach(creepAction)
+    const creeps = this.getCreeps()
+    for (let creep of creeps) {
+      try {
+        if (creep.spawning) {
+          continue
+        }
+        creepAction(creep)
+      } catch (err) {
+        Logger.log(err, LOG_ERROR)
+      }
+    }
   }
 }
 
