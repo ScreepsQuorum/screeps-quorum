@@ -183,7 +183,7 @@ Room.getScoutTarget = function (creep) {
     let testRoom
     for (testRoom of targetRooms) {
       // Filter out rooms that already have a scount creep assigned to them.
-      if (assignedRooms.includes(testRoom)) {
+      if (assignedRooms.indexOf(testRoom) >= 0) {
         if (Game.creeps[Memory.intel.active[testRoom]]) {
           continue
         } else {
@@ -205,7 +205,7 @@ Room.getScoutTarget = function (creep) {
   }
 
   if (!target) {
-    const adjacent = _.shuffle(Object.values(Game.map.describeExits(creep.room.name)))
+    const adjacent = _.shuffle(_.values(Game.map.describeExits(creep.room.name)))
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
@@ -214,7 +214,7 @@ Room.getScoutTarget = function (creep) {
       if (!roominfo) {
         age = Infinity
       } else {
-        age = assignedRooms.includes(testRoom) ? 0 : Game.time - roominfo[INTEL_UPDATED]
+        age = assignedRooms.indexOf(testRoom) >= 0 ? 0 : Game.time - roominfo[INTEL_UPDATED]
       }
       if (target && oldest === age) {
         let curDistance = Game.map.getRoomLinearDistance(creep.room.name, target)
