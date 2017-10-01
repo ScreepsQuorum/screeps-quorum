@@ -88,7 +88,7 @@ Creep.prototype.recycle = function () {
   if (storage) {
     spawn = storage.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
   } else {
-    spawn = this.room.structures[STRUCTURE_SPAWN]
+    spawn = this.room.structures[STRUCTURE_SPAWN][0]
   }
 
   // Pick the location immediately above the spawn and recycle there.
