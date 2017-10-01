@@ -1,8 +1,7 @@
 'use strict'
 
-
 /**
- * Attempts to prevent stalled rooms by launching filler creeps at 300 energy.
+ * Extracts minerals from the local room
  */
 
 class CityExtract extends kernel.process {
