@@ -44,7 +44,15 @@ class CityMine extends kernel.process {
 
     // Run miners.
     const miners = new qlib.Cluster('miners_' + source.id, this.room)
-    miners.sizeCluster('miner', 1, {'priority': 2})
+
+    // Check if a replacement miner is needed and spawn it early
+    const minerCreeps = miners.getCreeps()
+    let minerQuantity = 1
+    if (minerCreeps.length === 1 && minerCreeps[0].ticksToLive < 60) {
+      minerQuantity = 2
+    }
+
+    miners.sizeCluster('miner', minerQuantity, {'priority': 2})
     miners.forEach(function (miner) {
       if (!miner.pos.isNearTo(source)) {
         miner.travelTo(minerPos)
