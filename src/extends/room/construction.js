@@ -128,8 +128,8 @@ Room.prototype.isMissingStructures = function () {
   return this.getPracticalRoomLevel() < this.controller.level
 }
 
-Room.prototype.getStructureCount = function () {
-  const structures = this.find(FIND_MY_STRUCTURES)
+Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES) {
+  const structures = this.find(structureFind)
   const counts = {}
   let structure
   for (structure of structures) {
@@ -145,7 +145,7 @@ Room.prototype.getPracticalRoomLevel = function () {
   if (this.__level) {
     return this.__level
   }
-  const structureCount = this.getStructureCount()
+  const structureCount = this.getStructureCount(FIND_STRUCTURES)
   let level
   for (level = 1; level < 8; level++) {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])

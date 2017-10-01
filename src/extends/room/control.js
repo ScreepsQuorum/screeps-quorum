@@ -6,7 +6,9 @@ let roomLevelOptions = {
     'UPGRADERS_QUANTITY': 5
   },
   2: {},
-  3: {},
+  3: {
+    'SCOUTS': true
+  },
   4: {
     'DEDICATED_MINERS': true,
     'PURE_CARRY_FILLERS': true
