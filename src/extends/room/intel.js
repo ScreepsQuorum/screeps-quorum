@@ -206,6 +206,7 @@ Room.getScoutTarget = function (creep) {
 
   if (!target) {
     const adjacent = _.shuffle(_.values(Game.map.describeExits(creep.room.name)))
+    target = adjacent[0]
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
