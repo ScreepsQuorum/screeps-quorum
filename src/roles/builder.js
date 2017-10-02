@@ -10,7 +10,7 @@ class Builder extends MetaRole {
 
   manageCreep (creep) {
     if (creep.ticksToLive < 50) {
-      return this.recycle()
+      return creep.recycle()
     }
     if (creep.recharge()) {
       return
