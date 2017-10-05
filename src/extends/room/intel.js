@@ -97,8 +97,8 @@ Room.prototype.saveIntel = function (refresh = false) {
         }
       }
     }
-    roominfo[INTEL_WALKABILITY] = walkable / 2500
-    roominfo[INTEL_SWAMPINESS] = swamps / walkable
+    roominfo[INTEL_WALKABILITY] = Math.round((walkable / 2500) * 1000) / 1000
+    roominfo[INTEL_SWAMPINESS] = Math.round((swamps / walkable) * 1000) / 1000
   }
 
   // Record any portal destinations, distinguishing between inter and intra shard.
