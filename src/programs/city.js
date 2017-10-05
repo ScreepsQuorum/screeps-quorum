@@ -56,9 +56,12 @@ class City extends kernel.process {
     if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
       // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
       // conditions.
-      this.launchChildProcess('extraction', 'city_extract', {
-        'room': this.data.room
-      })
+      const mineral = this.room.find(FIND_MINERALS)[0]
+      if (mineral.mineralAmount > 0 && !mineral.ticksToRegeneration) {
+        this.launchChildProcess('extraction', 'city_extract', {
+          'room': this.data.room
+        })
+      }
     }
 
     // Launch upgraders
