@@ -78,6 +78,27 @@ Room.prototype.saveIntel = function (refresh = false) {
     }
   }
 
+  // Record terrain details for scoring algorithms
+  if (!roominfo[INTEL_SWAMPINESS] || !roominfo[INTEL_WALKABILITY]) {
+    let walkable = 0
+    let swamps = 0
+    let x
+    let y
+    for (x = 0; x < 50; x++) {
+      for (y = 0; y < 50; y++) {
+        const terrain = Game.map.getTerrainAt(x, y, this.name)
+        if (terrain === 'swamp' || terrain === 'plain') {
+          walkable++
+        }
+        if (terrain === 'swamp') {
+          swamps++
+        }
+      }
+    }
+    roominfo[INTEL_WALKABILITY] = walkable / 2500
+    roominfo[INTEL_SWAMPINESS] = swamps / walkable
+  }
+
   // Record any portal destinations, distinguishing between inter and intra shard.
   /*
   if (this.structures[STRUCTURE_PORTAL] && this.structures[STRUCTURE_PORTAL].length > 0) {
