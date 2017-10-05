@@ -14,6 +14,8 @@ global.INTEL_MINERAL = 'm'
 global.INTEL_SOURCES = 's'
 global.INTEL_UPDATED = 'u'
 global.INTEL_RESOURCE_POSITIONS = 'p'
+global.INTEL_WALKABILITY = 'w'
+global.INTEL_SWAMPINESS = 'a'
 
 Room.prototype.saveIntel = function (refresh = false) {
   if (!Memory.intel) {
@@ -29,7 +31,7 @@ Room.prototype.saveIntel = function (refresh = false) {
   if (refresh) {
     roominfo = {}
   } else {
-    roominfo = this.getIntel()
+    roominfo = this.getIntel({'skipRequest': true})
     if (!roominfo) {
       roominfo = {}
     }
@@ -139,14 +141,14 @@ Room.flushIntelToSegment = function () {
   }
 }
 
-Room.getIntel = function (roomname) {
+Room.getIntel = function (roomname, opts = {}) {
   if (Memory.intel && Memory.intel.buffer[roomname]) {
     return Memory.intel.buffer[roomname]
   }
 
   const intelmap = sos.lib.vram.getData(SEGMENT_INTEL)
   if (intelmap[roomname]) {
-    if (Game.time - intelmap[roomname][INTEL_UPDATED] > recheckInterval) {
+    if (!opts.skipRequest && Game.time - intelmap[roomname][INTEL_UPDATED] > recheckInterval) {
       Room.requestIntel(roomname)
     }
     return intelmap[roomname]
@@ -164,8 +166,8 @@ Room.getIntel = function (roomname) {
   return false
 }
 
-Room.prototype.getIntel = function () {
-  return Room.getIntel(this.name)
+Room.prototype.getIntel = function (opts = {}) {
+  return Room.getIntel(this.name, opts)
 }
 
 Room.getResourcesPositions = function (roomname) {
@@ -182,6 +184,10 @@ Room.getResourcesPositions = function (roomname) {
 }
 
 Room.requestIntel = function (roomname) {
+  if (Game.rooms[roomname]) {
+    Game.rooms[roomname].saveIntel()
+    return
+  }
   if (!Memory.intel) {
     Memory.intel = {
       buffer: {},
