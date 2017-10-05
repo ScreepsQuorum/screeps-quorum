@@ -24,7 +24,7 @@ class EmpireIntel extends kernel.process {
         continue
       }
       const roominfo = room.getIntel(roomname)
-      if (Game.time - roominfo[INTEL_UPDATED] > 1500) {
+      if (Game.time - roominfo[INTEL_UPDATED] > 500) {
         room.saveIntel()
       }
     }
