@@ -41,8 +41,12 @@ class Spook extends MetaRole {
     // Use cached construction site
     if (creep.memory.stomp) {
       let construction = Game.getObjectById(creep.memory.stomp)
-      creep.travelTo(construction)
-      return true
+      if (construction) {
+        creep.travelTo(construction)
+        return true
+      } else {
+        delete creep.memory.stomp
+      }
     }
     // Find a new site to stomp, excluding any being stood on.
     const construction = creep.pos.findClosestByRange(FIND_HOSTILE_CONSTRUCTION_SITES, {filter: function (site) {
