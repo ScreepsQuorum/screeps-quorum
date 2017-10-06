@@ -14,9 +14,10 @@ class Player extends kernel.process {
     this.launchChildProcess('respawner', 'respawner')
     this.launchChildProcess('intel', 'empire_intel')
 
+    const cities = Room.getCities()
     let roomname
-    for (roomname of Object.keys(Game.rooms)) {
-      /* Launch a "City" program for any room owned by this player */
+    for (roomname of cities) {
+      /* Launch a "City" program for each city saved in memory. `Room.addCity` to add new rooms. */
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
         this.launchChildProcess(`room_${roomname}`, 'city', {
           'room': roomname
