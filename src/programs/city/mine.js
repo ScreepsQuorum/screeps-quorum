@@ -95,7 +95,7 @@ class CityMine extends kernel.process {
 
     const storage = this.room.storage
     const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
-
+    let distance = 50
     if (this.mine.name === this.room.name) {
       haulers.sizeCluster('hauler', 1)
     } else {
@@ -108,6 +108,7 @@ class CityMine extends kernel.process {
           maxOps: 6000
         }).length
       }
+      distance = this.data.ssp[source.id]
       const carryAmount = (Math.ceil((this.data.ssp[source.id] * 20) / 100) * 100) + 200
       const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
       const maxEnergy = carryCost * (MAX_CREEP_SIZE / 2)
@@ -121,7 +122,7 @@ class CityMine extends kernel.process {
     }
 
     haulers.forEach(function (hauler) {
-      if (hauler.ticksToLive < 50) {
+      if (hauler.ticksToLive < (distance + 30)) {
         return hauler.recycle()
       }
       if (hauler.getCarryPercentage() > 0.8) {
