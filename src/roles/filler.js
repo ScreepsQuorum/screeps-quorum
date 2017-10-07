@@ -6,7 +6,7 @@ class Filler extends MetaRole {
   constructor () {
     super()
     this.defaultEnergy = 2200
-    this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION]
+    this.fillableStructures = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION, STRUCTURE_TERMINAL]
   }
 
   getBuild (room, options) {
@@ -43,6 +43,13 @@ class Filler extends MetaRole {
       creep.memory.ft = structure.id
       this.fillStructure(creep, structure)
       return
+    }
+
+    // If nothing else to fill, and structure is allowed, fill terminal.
+    if (this.fillableStructures.includes(STRUCTURE_TERMINAL) && creep.room.terminal) {
+      if (creep.room.terminal.store[RESOURCE_ENERGY] < 20000) {
+        this.fillStructure(creep, creep.room.terminal)
+      }
     }
 
     // Park
