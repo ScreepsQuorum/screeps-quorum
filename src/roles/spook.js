@@ -9,6 +9,11 @@ class Spook extends MetaRole {
   }
 
   manageCreep (creep) {
+    // Disable notifications of attack since this creep will head into hostile rooms.
+    if (!creep.memory.dn) {
+      creep.notifyWhenAttacked(false)
+    }
+
     // Delete current target if it is currently visible.
     if (creep.memory.starget && Game.rooms[creep.memory.starget]) {
       delete creep.memory.starget
