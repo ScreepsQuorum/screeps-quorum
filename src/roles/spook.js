@@ -11,6 +11,7 @@ class Spook extends MetaRole {
   manageCreep (creep) {
     // Disable notifications of attack since this creep will head into hostile rooms.
     if (!creep.memory.dn) {
+      creep.memory.dn = true
       creep.notifyWhenAttacked(false)
     }
 
