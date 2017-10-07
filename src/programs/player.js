@@ -13,6 +13,7 @@ class Player extends kernel.process {
   main () {
     this.launchChildProcess('respawner', 'respawner')
     this.launchChildProcess('intel', 'empire_intel')
+    this.launchChildProcess('market', 'empire_market')
 
     const cities = Room.getCities()
     let roomname

@@ -7,7 +7,9 @@ Room.prototype.getStructuresToFill = function (structureTypes) {
         if (structureTypes.indexOf(structure.structureType) === -1) {
           return false
         }
-
+        if (!structure.energyCapacity) {
+          return false
+        }
         return structure.energy < structure.energyCapacity
       }
     })
