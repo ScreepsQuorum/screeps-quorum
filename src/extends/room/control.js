@@ -3,22 +3,28 @@
 // at that level. Each higher level inherits the settings from the level below it.
 let roomLevelOptions = {
   1: {
-    'UPGRADERS_QUANTITY': 5
+    'UPGRADERS_QUANTITY': 5,
+    'RESERVER_COUNT': 0,
+    'SCOUTS': true
   },
   2: {},
   3: {
-    'SCOUTS': true
+    'REMOTE_MINES': true
   },
   4: {
     'DEDICATED_MINERS': true,
-    'PURE_CARRY_FILLERS': true
+    'PURE_CARRY_FILLERS': true,
+    'RESERVER_COUNT': 3
   },
   5: {},
   6: {
     'EXTRACT_MINERALS': true,
-    'UPGRADERS_QUANTITY': 3
+    'UPGRADERS_QUANTITY': 3,
+    'RESERVER_COUNT': 2
   },
-  7: {},
+  7: {
+    'RESERVER_COUNT': 1
+  },
   8: {
     'UPGRADERS_QUANTITY': 1
   }

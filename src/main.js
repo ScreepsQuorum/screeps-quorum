@@ -44,6 +44,7 @@ require('extends_room_logistics')
 require('extends_room_meta')
 require('extends_room_spawning')
 require('extends_room_structures')
+require('extends_room_territory')
 require('extends_roomposition')
 require('extends_source')
 

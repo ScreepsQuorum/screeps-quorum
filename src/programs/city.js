@@ -52,6 +52,22 @@ class City extends kernel.process {
       })
     }
 
+    if (this.room.getRoomSetting('REMOTE_MINES')) {
+      let remoteMines = this.room.getMines()
+      if (remoteMines.length <= 0) {
+        let mine = this.room.selectNextMine()
+        this.room.addMine(mine)
+        remoteMines = this.room.getMines
+      }
+      let mineRoomName
+      for (mineRoomName of remoteMines) {
+        this.launchChildProcess(`mine_${mineRoomName}`, 'city_mine', {
+          'room': this.data.room,
+          'mine': mineRoomName
+        })
+      }
+    }
+
     // Launch mineral extraction
     if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
       // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
