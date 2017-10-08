@@ -67,8 +67,10 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   // If this is a source keeper room include those resources
   if (!opts.ignoreSourceKeepers && Room.isSourcekeeper(roomname)) {
     const resourcePoses = Room.getResourcesPositions(roomname)
-    for (let pos of resourcePoses) {
-      setValuesInRange(cm, pos, 5, 15)
+    if (resourcePoses) {
+      for (let pos of resourcePoses) {
+        setValuesInRange(cm, pos, 5, 15)
+      }
     }
   }
 
