@@ -14,13 +14,6 @@ Room.getCostmatrix = function (roomname, opts = {}) {
     }
   }
 
-  // Set these positions to just use terrain score
-  if (opts.ignore) {
-    for (let pos of opts.ignore) {
-      cm.set(pos.x, pos.y, 0)
-    }
-  }
-
   // Block all of these positions as unwalkable
   if (opts.avoid) {
     for (let pos of opts.avoid) {
@@ -33,6 +26,13 @@ Room.getCostmatrix = function (roomname, opts = {}) {
     for (let avoid of opts.avoidRange) {
       const cost = avoid.value || 255
       setValuesInRange(cm, avoid.pos, avoid.range, cost)
+    }
+  }
+
+  // Set these positions to just use terrain score
+  if (opts.ignore) {
+    for (let pos of opts.ignore) {
+      cm.set(pos.x, pos.y, 0)
     }
   }
 
