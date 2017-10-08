@@ -25,6 +25,16 @@ class Player extends kernel.process {
         })
       }
     }
+
+    const monitorPriorities = _.uniq([
+      PRIORITIES_CREEP_DEFAULT,
+      PRIORITIES_DEFAULT
+    ])
+    for (let priority of monitorPriorities) {
+      this.launchChildProcess(`pmonitor_${priority}`, 'meta_monitor', {
+        'priority': priority
+      })
+    }
   }
 }
 
