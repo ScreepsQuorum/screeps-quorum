@@ -33,8 +33,10 @@ class Cluster {
     this.creeps = []
     for (var creepname of this.memory.creeps) {
       if (Game.creeps[creepname]) {
-        Game.creeps[creepname].cluster = this
-        this.creeps.push(Game.creeps[creepname])
+        if (!Game.creeps[creepname].spawning) {
+          Game.creeps[creepname].cluster = this
+          this.creeps.push(Game.creeps[creepname])
+        }
         continue
       }
       if (room) {
