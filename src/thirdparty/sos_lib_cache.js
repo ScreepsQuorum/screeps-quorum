@@ -1,4 +1,5 @@
 'use strict';
+const lib_lzstring = (global.SOS_LIB_PREFIX ? global.SOS_LIB_PREFIX : '') + 'lib_lzstring'
 
 var cache = {}
 
@@ -204,13 +205,13 @@ cache.getOrUpdate = function (label, updateFunc, opts) {
 }
 
 cache.__compress = function (value) {
-  var LZString = require('lib_lzstring')
+  var LZString = require(lib_lzstring)
   return LZString.compressToUTF16(JSON.stringify(value))
 }
 
 cache.__decompress = function (value) {
   try {
-    var LZString = require('lib_lzstring')
+    var LZString = require(lib_lzstring)
     var decompressed = LZString.decompressFromUTF16(value)
     var data = JSON.parse(decompressed)
     return data

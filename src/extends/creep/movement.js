@@ -10,6 +10,7 @@ const travelToDefaults = {
 }
 
 Creep.prototype.travelTo = function (pos, opts = {}) {
+  const that = this
   if (this.fatigue) {
     return ERR_TIRED
   }
@@ -64,6 +65,28 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
 
     // Save current location to compare to next move attempt.
     this.memory._lp = this.pos.serialize()
+  }
+
+  // If no cost matrix callback is defined use the default room one.
+  if (!moveToOpts.costCallback) {
+    moveToOpts.costCallback = function (roomname) {
+      // See if hostile cities or reservations are blocked
+      if (!opts.ignoreHostileCities || !opts.ignoreHostileReservations) {
+        // Make sure not to deny costmatrix data for the room the creep is in or going to.
+        if (pos.roomName !== roomname && that.pos.roomName !== roomname) {
+          const roominfo = Room.getIntel(roomname)
+          // Don't block rooms owner by the player
+          if (roominfo[INTEL_OWNER] && roominfo[INTEL_OWNER] !== USERNAME) {
+            if (roominfo[INTEL_LEVEL] && !opts.ignoreHostileCities) {
+              return false
+            } else if (!roominfo[INTEL_LEVEL] && !opts.ignoreHostileReservations) {
+              return false
+            }
+          }
+        }
+      }
+      return Room.getCostmatrix(roomname, opts)
+    }
   }
 
   // Run built in moveTo function for now. Once enough features (costmatrixes, internal pathcaching, global pathcaching)
