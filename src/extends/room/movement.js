@@ -14,18 +14,18 @@ Room.getCostmatrix = function (roomname, opts = {}) {
     }
   }
 
-  // Block all of these positions as unwalkable
-  if (opts.avoid) {
-    for (let pos of opts.avoid) {
-      cm.set(pos.x, pos.y, 255)
-    }
-  }
-
   // Allow avoid ranges to be set by range
   if (opts.avoidRange) {
     for (let avoid of opts.avoidRange) {
       const cost = avoid.value || 255
       setValuesInRange(cm, avoid.pos, avoid.range, cost)
+    }
+  }
+
+  // Block all of these positions as unwalkable
+  if (opts.avoid) {
+    for (let pos of opts.avoid) {
+      cm.set(pos.x, pos.y, 255)
     }
   }
 
