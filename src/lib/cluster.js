@@ -5,7 +5,7 @@ class Cluster {
     var clusters = Cluster.listAll()
     for (var clustername of clusters) {
       var cluster = new Cluster(clustername)
-      if (cluster.getCreeps().length <= 0) {
+      if (cluster.getClusterSize() <= 0) {
         delete Memory.clusters[clustername]
       }
     }
@@ -45,6 +45,10 @@ class Cluster {
         this.memory.creeps.splice(this.memory.creeps.indexOf(creepname), 1)
       }
     }
+  }
+
+  getClusterSize () {
+    return this.memory.creeps.length
   }
 
   sizeCluster (role, quantity, options = {}, room = false) {

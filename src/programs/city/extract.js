@@ -78,7 +78,7 @@ class CityExtract extends kernel.process {
 
     // If there is nothing left to extract and the existing creeps have recycled themselves
     if (canExtract) {
-      if (frackers.length <= 0 && haulerCluster.getCreeps().length <= 0) {
+      if (frackers.length <= 0 && haulerCluster.getClusterSize() <= 0) {
         this.suicide()
       }
     }
