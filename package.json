@@ -70,6 +70,7 @@
       "LOG_INFO",
       "LOG_DEBUG",
       "LOG_TRACE",
+      "USERNAME",
       "_",
       "__module",
       "ATTACK",

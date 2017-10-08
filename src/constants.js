@@ -1,4 +1,16 @@
 
+const creeps = Object.keys(Game.creeps)
+if (creeps.length > 0) {
+  global.USERNAME = Game.creeps[creeps[0]].owner.username
+} else {
+  const structures = Object.keys(Game.structures)
+  if (structures.length > 0) {
+    global.USERNAME = Game.structures[structures[0]].owner.username
+  } else {
+    global.USERNAME = false
+  }
+}
+
 global.PRIORITIES_DEFAULT = 6
 
 global.PRIORITIES_CREEP_DEFAULT = 4
