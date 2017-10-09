@@ -67,7 +67,7 @@ class CityMine extends kernel.process {
     // Check if a replacement miner is needed and spawn it early
     const minerCreeps = miners.getCreeps()
     let minerQuantity = 1
-    if (miners.getClusterSize() === 1 && minerCreeps[0].ticksToLive < 60) {
+    if (miners.getClusterSize() === 1 && minerCreeps.length > 0 && minerCreeps[0].ticksToLive < 60) {
       minerQuantity = 2
     }
 
