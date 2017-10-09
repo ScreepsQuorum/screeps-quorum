@@ -35,6 +35,9 @@ class Player extends kernel.process {
         'priority': priority
       })
     }
+    if (cities.length < Game.gcl.level) {
+      this.launchChildProcess('expand', 'empire_expand')
+    }
   }
 }
 
