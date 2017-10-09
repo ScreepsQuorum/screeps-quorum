@@ -46,9 +46,14 @@ Room.prototype.saveIntel = function (refresh = false) {
       roominfo[INTEL_PRACTICAL_LEVEL] = this.getPracticalRoomLevel()
     } else if (this.controller.reservation) {
       roominfo[INTEL_OWNER] = this.controller.reservation.username
+    } else if (roominfo[INTEL_OWNER]) {
+      delete roominfo[INTEL_OWNER]
+      delete roominfo[INTEL_PRACTICAL_LEVEL]
     }
     if (this.controller.level) {
       roominfo[[INTEL_LEVEL]] = this.controller.level
+    } else if (roominfo[INTEL_LEVEL]) {
+      delete roominfo[INTEL_LEVEL]
     }
   }
 
