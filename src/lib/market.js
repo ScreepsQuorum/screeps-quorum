@@ -32,7 +32,6 @@ module.exports.getCurrentPrice = function (resource, orderType) {
     return false
   }
 
-  Logger.highlight(orders.length)
   let price = false
 
   // Filter out the first few orders (by quantity) to prevent manipulation or confusion over phantom orders.
@@ -91,4 +90,19 @@ module.exports.transactImmediately = function (resource, room, quantity, orderTy
     }
   }
   return ERR_NOT_FOUND
+}
+
+module.exports.getHighestMineralValue = function (mineral) {
+  if (!this.highestValueMineral) {
+    this.highestValueMineral = Math.max(
+      module.exports.getAveragePrice(RESOURCE_CATALYST, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_OXYGEN, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_HYDROGEN, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_UTRIUM, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_LEMERGIUM, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_ZYNTHIUM, ORDER_SELL),
+      module.exports.getAveragePrice(RESOURCE_KEANIUM, ORDER_SELL)
+    )
+  }
+  return this.highestValueMineral
 }
