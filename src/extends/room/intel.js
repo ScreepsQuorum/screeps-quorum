@@ -188,6 +188,9 @@ Room.requestIntel = function (roomname) {
     Game.rooms[roomname].saveIntel()
     return
   }
+  if (!Game.map.isRoomAvailable(roomname)) {
+    return
+  }
   if (!Memory.intel) {
     Memory.intel = {
       buffer: {},
@@ -209,6 +212,11 @@ Room.getScoutTarget = function (creep) {
     let oldest = false
     let testRoom
     for (testRoom of targetRooms) {
+      // Filter out invalid rooms
+      if (!Game.map.isRoomAvailable(testRoom)) {
+        continue
+      }
+
       // Filter out rooms that already have a scount creep assigned to them.
       if (assignedRooms.indexOf(testRoom) >= 0) {
         if (Game.creeps[Memory.intel.active[testRoom]]) {
@@ -237,6 +245,9 @@ Room.getScoutTarget = function (creep) {
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
+      if (!Game.map.isRoomAvailable(testRoom)) {
+        continue
+      }
       const roominfo = Room.getIntel(testRoom)
       let age
       if (!roominfo) {
