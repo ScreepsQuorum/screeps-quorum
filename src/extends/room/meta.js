@@ -96,3 +96,10 @@ Room.isSourcekeeper = function (name) {
   let yMod = coords.y % 10
   return xMod >= 4 && xMod <= 6 && yMod >= 4 && yMod <= 6
 }
+
+Room.isHallway = function (name) {
+  const coords = Room.getCoordinates(name)
+  let xMod = coords.x % 10
+  let yMod = coords.y % 10
+  return xMod === 0 || yMod === 0
+}
