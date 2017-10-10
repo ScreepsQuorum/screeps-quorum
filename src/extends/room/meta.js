@@ -119,6 +119,9 @@ Room.isHallway = function (name) {
 }
 
 Room.isClaimable = function (name) {
+  if (!Game.map.isRoomAvailable(name)) {
+    return false
+  }
   const coords = Room.getCoordinates(name)
   let xMod = coords.x % 10
   let yMod = coords.y % 10
