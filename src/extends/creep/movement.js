@@ -16,7 +16,21 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     return ERR_TIRED
   }
 
+  // Allow objects with a pos value to be passed in as destinations.
+  if (pos.pos) {
+    pos = pos.pos
+  }
+
   const moveToOpts = Object.assign({}, travelToDefaults, opts)
+
+  if (typeof moveToOpts.maxRooms === 'undefined') {
+    // If the destination is in the same room as the creep restrict pathfinding to that room.
+    if (this.room.name !== pos.roomName) {
+      moveToOpts.maxRooms = 1
+    } else {
+      moveToOpts.maxRooms = 16
+    }
+  }
 
   // Compute max operations based on number of rooms.
   if (typeof moveToOpts.maxOps === 'undefined') {
