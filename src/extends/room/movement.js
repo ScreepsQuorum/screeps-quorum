@@ -94,6 +94,24 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
     }
   }
 
+  // Penalize exit squares to prevent accidental room changes
+  if (!opts.ignoreExits) {
+    for (let n = 0; n <= 49; n++) {
+      if (Game.map.getTerrainAt(0, n) === 'plain') {
+        cm.set(0, n, 15)
+      }
+      if (Game.map.getTerrainAt(49, n) === 'plain') {
+        cm.set(49, n, 15)
+      }
+      if (Game.map.getTerrainAt(n, 0) === 'plain') {
+        cm.set(n, 0, 15)
+      }
+      if (Game.map.getTerrainAt(n, 49) === 'plain') {
+        cm.set(n, 49, 15)
+      }
+    }
+  }
+
   sos.lib.cache.set(cacheLabel, cm.serialize(), {
     persist: true,
     maxttl: 3000,

@@ -78,6 +78,9 @@ class Cluster {
         creepAction(creep)
       } catch (err) {
         Logger.log(err, LOG_ERROR)
+        if (err.stack) {
+          Logger.log(err.stack, LOG_ERROR)
+        }
       }
     }
   }

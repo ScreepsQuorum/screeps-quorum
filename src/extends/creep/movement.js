@@ -4,9 +4,10 @@ const struckThreshold = 2
 const struckRerouteThreshold = 4
 const travelToDefaults = {
   'reusePath': 1500,
-  'maxRooms': 16,
   'moveToOverride': true,
-  'ignoreStuck': false
+  'ignoreStuck': false,
+  'ignoreHostileCities': true,
+  'ignoreHostileReservations': true
 }
 
 Creep.prototype.travelTo = function (pos, opts = {}) {
@@ -15,7 +16,21 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     return ERR_TIRED
   }
 
+  // Allow objects with a pos value to be passed in as destinations.
+  if (pos.pos) {
+    pos = pos.pos
+  }
+
   const moveToOpts = Object.assign({}, travelToDefaults, opts)
+
+  if (typeof moveToOpts.maxRooms === 'undefined') {
+    // If the destination is in the same room as the creep restrict pathfinding to that room.
+    if (this.room.name !== pos.roomName) {
+      moveToOpts.maxRooms = 1
+    } else {
+      moveToOpts.maxRooms = 16
+    }
+  }
 
   // Compute max operations based on number of rooms.
   if (typeof moveToOpts.maxOps === 'undefined') {
@@ -67,9 +82,29 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     this.memory._lp = this.pos.serialize()
   }
 
+  if (!moveToOpts.direct && this.room.name !== pos.roomName) {
+    if (!moveToOpts.allowedRooms) {
+      moveToOpts.allowedRooms = []
+    }
+    const worldRoute = qlib.map.findRoute(this.room.name, pos.roomName)
+    for (let pathPiece of worldRoute) {
+      if (moveToOpts.allowedRooms.indexOf(pathPiece['room']) < 0) {
+        moveToOpts.allowedRooms.push(pathPiece['room'])
+      }
+    }
+  }
+
+  // Make sure the current room is always allowed
+  if (moveToOpts.allowedRooms && moveToOpts.allowedRooms.indexOf(this.room.name) < 0) {
+    moveToOpts.allowedRooms.push(this.room.name)
+  }
+
   // If no cost matrix callback is defined use the default room one.
   if (!moveToOpts.costCallback) {
     moveToOpts.costCallback = function (roomname) {
+      if (moveToOpts.allowedRooms && moveToOpts.allowedRooms.indexOf(roomname) < 0) {
+        return false
+      }
       // See if hostile cities or reservations are blocked
       if (!opts.ignoreHostileCities || !opts.ignoreHostileReservations) {
         // Make sure not to deny costmatrix data for the room the creep is in or going to.
