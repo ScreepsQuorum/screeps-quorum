@@ -87,6 +87,9 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
       moveToOpts.allowedRooms = []
     }
     const worldRoute = qlib.map.findRoute(this.room.name, pos.roomName)
+    if (Number.isInteger(worldRoute)) {
+      return worldRoute
+    }
     for (let pathPiece of worldRoute) {
       if (moveToOpts.allowedRooms.indexOf(pathPiece['room']) < 0) {
         moveToOpts.allowedRooms.push(pathPiece['room'])
