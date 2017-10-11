@@ -163,7 +163,7 @@ class CityMine extends kernel.process {
     const controller = this.mine.controller
     const timeout = controller.reservation ? controller.reservation.ticksToEnd : 0
     let quantity = 0
-    if (timeout < 4000) {
+    if (timeout < 3500) {
       quantity = Math.min(this.room.getRoomSetting('RESERVER_COUNT'), controller.pos.getSteppableAdjacent().length)
     }
 
