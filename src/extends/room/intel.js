@@ -16,6 +16,7 @@ global.INTEL_UPDATED = 'u'
 global.INTEL_RESOURCE_POSITIONS = 'p'
 global.INTEL_WALKABILITY = 'w'
 global.INTEL_SWAMPINESS = 'a'
+global.INTEL_BLOCKED_EXITS = 'b'
 
 Room.prototype.saveIntel = function (refresh = false) {
   if (!Memory.intel) {
@@ -39,21 +40,54 @@ Room.prototype.saveIntel = function (refresh = false) {
 
   roominfo[INTEL_UPDATED] = Game.time
 
-  // Record room owner, level.
+  // Record room owner, level, and blocked exits
   if (this.controller) {
     if (this.controller.owner) {
       roominfo[INTEL_OWNER] = this.controller.owner.username
-      roominfo[INTEL_PRACTICAL_LEVEL] = this.getPracticalRoomLevel()
     } else if (this.controller.reservation) {
       roominfo[INTEL_OWNER] = this.controller.reservation.username
     } else if (roominfo[INTEL_OWNER]) {
       delete roominfo[INTEL_OWNER]
-      delete roominfo[INTEL_PRACTICAL_LEVEL]
     }
     if (this.controller.level) {
       roominfo[[INTEL_LEVEL]] = this.controller.level
+      roominfo[INTEL_PRACTICAL_LEVEL] = this.getPracticalRoomLevel()
     } else if (roominfo[INTEL_LEVEL]) {
       delete roominfo[INTEL_LEVEL]
+      delete roominfo[INTEL_PRACTICAL_LEVEL]
+    }
+
+    let candidates = this.find(FIND_SOURCES)
+    candidates.push(this.controller)
+    const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates).pos
+    const exits = _.values(Game.map.describeExits(this.name))
+    const name = this.name
+    let blocked = []
+    for (let exit of exits) {
+      const targetPos = new RoomPosition(25, 25, exit)
+      const path = PathFinder.search(centerish, {pos: targetPos, range: 24},
+        {
+          swampCost: 1,
+          maxRooms: 2,
+          maxCost: 2500,
+          roomCallback: function (roomName) {
+            if (roomName !== name && roomName !== exit) {
+              return false
+            }
+            return Room.getCostmatrix(roomName, {
+              ignoreSourceKeepers: true,
+              ignoreCreeps: true
+            })
+          }
+        })
+      if (path.incomplete) {
+        blocked.push(exit)
+      }
+    }
+    if (blocked.length > 0) {
+      roominfo[INTEL_BLOCKED_EXITS] = blocked
+    } else if (roominfo[INTEL_BLOCKED_EXITS]) {
+      delete roominfo[INTEL_BLOCKED_EXITS]
     }
   }
 
