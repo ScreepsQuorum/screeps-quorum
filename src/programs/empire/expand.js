@@ -34,28 +34,45 @@ class EmpireExpand extends kernel.process {
     }
     this.colony = Game.rooms[this.data.colony]
 
-    Logger.highlight(this.data.colony)
-
     // Don't continue futher until the room is claimed
     if (!this.colony.controller.my) {
-      Logger.highlight('Claiming Room')
       this.claim()
       return
     }
-    Logger.highlight('Room Claimed')
 
-    return
-    /*
     this.upgrade()
-    this.mine()
+    const sources = this.colony.find(FIND_SOURCES)
+    for (let source of sources) {
+      this.mine(source)
+    }
 
     // Destroy all neutral and hostile structures immediately
     if (!this.data.hascleared) {
+      const structures = this.colony.find(FIND_STRUCTURES)
+      for (let structure of structures) {
+        if (structure.structureType === STRUCTURE_CONTROLLER) {
+          continue
+        }
+        structure.destroy()
+      }
+      const sites = this.colony.find(FIND_HOSTILE_CONSTRUCTION_SITES)
+      for (let site of sites) {
+        site.remove()
+      }
+      this.data.hascleared = true
       return
     }
 
-    // If the room isn't planned launch the room layout program, otherwise launch construction program
+    this.hostileSpawns = this.colony.find(FIND_HOSTILE_SPAWNS)
     this.build()
+
+    if (this.hostileSpawns.length > 0) {
+      return
+    }
+
+
+    // If the room isn't planned launch the room layout program, otherwise launch construction program
+
     if (!this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('layout', 'city_layout', {
         'room': this.data.colony
@@ -71,11 +88,10 @@ class EmpireExpand extends kernel.process {
         Room.addCity(this.data.colony)
         this.data.deathwatch = Game.time
       }
-      if (Game.time - this.data.deathwatch > 1600) {
+      if (Game.time - this.data.deathwatch > 1800) {
         this.suicide()
       }
     }
-    */
   }
 
   getNextCandidate () {
@@ -104,7 +120,6 @@ class EmpireExpand extends kernel.process {
     }
 
     const scores = this.data.candidateScores
-    Logger.highlightData(scores)
     this.data.candidates = Object.keys(this.data.candidateScores)
     this.data.candidates.sort(function (a, b) {
       return scores[a] - scores[b]
@@ -172,17 +187,15 @@ class EmpireExpand extends kernel.process {
   }
 
   claim () {
-    Logger.highlight('starting claim')
     const controller = this.colony.controller
     if (this.colony.controller.my) {
       return
     }
-    Logger.highlight('making cluster')
     const closestCity = this.getClosestCity(this.data.colony)
     const claimer = new qlib.Cluster('claimers_' + this.data.colony, closestCity)
 
     // Give up 1000 ticks after launching the last claimer and move on to the next candidate room.
-    /*
+
     if (this.data.attemptedClaim < 3) {
       if (!this.data.lastClaimAttempt || Game.time - this.data.lastClaimAttempt > 1000) {
         this.data.attemptedClaim++
@@ -195,10 +208,7 @@ class EmpireExpand extends kernel.process {
         return
       }
     }
-    */
-    claimer.sizeCluster('claimer', 1)
     claimer.forEach(function (claimer) {
-      Logger.highlight(claimer.room.name)
       if (!claimer.pos.isNearTo(controller)) {
         claimer.travelTo(controller)
       } else if (!controller.my) {
@@ -234,17 +244,17 @@ class EmpireExpand extends kernel.process {
         miner.travelTo(minerPos)
         return
       }
+      if (miner.carry[RESOURCE_ENERGY] > 0) {
+        if (construction) {
+          miner.build(construction)
+          return
+        } else if (source.energy <= 0 && container && container.hits < container.hitsMax) {
+          miner.repair(container)
+          return
+        }
+      }
       if (source.energy > 0) {
         miner.harvest(source)
-        return
-      }
-      if (miner.carry[RESOURCE_ENERGY] <= 0) {
-        return
-      }
-      if (construction) {
-        miner.build(construction)
-      } else if (container && container.hits < container.hitsMax) {
-        miner.repair(container)
       }
     })
   }
@@ -255,21 +265,50 @@ class EmpireExpand extends kernel.process {
     const builders = new qlib.Cluster('builers_' + this.data.colony, closestCity)
     const constructionSites = this.colony.find(FIND_MY_CONSTRUCTION_SITES)
     const site = constructionSites.length > 0 ? constructionSites[0] : false
+    const hostileSpawns = this.hostileSpawns
     if (!this.data.deathwatch) {
       builders.sizeCluster('builder', 2)
     }
     builders.forEach(function (builder) {
-      if (!builder.room.name !== controller.room.name) {
+      if (builder.room.name !== controller.room.name) {
         builder.travelTo(controller)
         return
       }
+
+      if (hostileSpawns.length > 0) {
+        const closestSpawn = builder.pos.findClosestByRange(hostileSpawns)
+        if (!builder.pos.isNearTo(closestSpawn)) {
+          builder.travelTo(closestSpawn)
+        } else {
+          builder.dismantle(closestSpawn)
+        }
+        return
+      }
+
       if (builder.recharge()) {
+        return
+      }
+
+      if (builder.room.energyAvailable < builder.room.energyCapacityAvailable) {
+        const structures = builder.room.find(FIND_MY_STRUCTURES, {filter: function (structure) {
+          if (structure.structureType !== STRUCTURE_EXTENSION && structure.structureType !== STRUCTURE_SPAWN) {
+            return false
+          }
+          return structure.energyCapacity && structure.energy < structure.energyCapacity
+        }})
+        const structure = builder.pos.findClosestByRange(structures)
+
+        if (!builder.pos.isNearTo(structure)) {
+          builder.travelTo(structure)
+        } else {
+          builder.transfer(structure, RESOURCE_ENERGY)
+        }
         return
       }
 
       // If there's a construction site buildit
       if (site) {
-        const siteDistance = builder.getRangeTo(site)
+        const siteDistance = builder.pos.getRangeTo(site)
         if (siteDistance > 2) {
           builder.travelTo(site)
         }
@@ -280,7 +319,7 @@ class EmpireExpand extends kernel.process {
       }
 
       // As a last resort upgrade controller
-      const controllerDistance = builder.getRangeTo(controller)
+      const controllerDistance = builder.pos.getRangeTo(controller)
       if (controllerDistance > 2) {
         builder.travelTo(controller)
       }
@@ -298,15 +337,15 @@ class EmpireExpand extends kernel.process {
       upgraders.sizeCluster('upgrader', 2)
     }
     upgraders.forEach(function (upgrader) {
-      if (!upgrader.room.name !== controller.room.name) {
+      if (upgrader.room.name !== controller.room.name) {
         upgrader.travelTo(controller)
         return
       }
       if (upgrader.recharge()) {
         return
       }
-      const distance = upgrader.getRangeTo(controller)
-      if (distance < 2) {
+      const distance = upgrader.pos.getRangeTo(controller)
+      if (distance > 2) {
         upgrader.travelTo(controller)
       }
       if (distance < 3) {
