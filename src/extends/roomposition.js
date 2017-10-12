@@ -44,6 +44,20 @@ RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false) {
   })
 }
 
+RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
+  const left = Math.max(this.x - range, 0)
+  const right = Math.min(this.x + range, 49)
+  const top = Math.max(this.y - range, 0)
+  const bottom = Math.min(this.y + range, 49)
+  let positions = []
+  for (let x = left; x <= right; x++) {
+    for (let y = top; y <= bottom; y++) {
+      positions.push(new RoomPosition(x, y, this.roomName))
+    }
+  }
+  return positions
+}
+
 RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
   if (this.getTerrainAt() === 'wall') {
     return false
