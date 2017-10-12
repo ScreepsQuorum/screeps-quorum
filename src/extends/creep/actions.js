@@ -47,6 +47,11 @@ Creep.prototype.recharge = function () {
     return true
   }
   const sources = this.room.find(FIND_SOURCES_ACTIVE)
+  if (sources.length <= 0) {
+    // Still returning true since energy is still needed
+    return true
+  }
+
   sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
   const idx = parseInt(this.name[this.name.length - 1], 36)
   const source = sources[idx % sources.length]
