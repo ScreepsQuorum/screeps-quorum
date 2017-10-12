@@ -447,7 +447,7 @@ class CityLayout extends kernel.process {
       }
     }
     if (this.room.controller) {
-      const poses = this.room.controller.pos.getAdjacent()
+      const poses = this.room.controller.pos.getAdjacentInRange(3)
       let pos
       for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
