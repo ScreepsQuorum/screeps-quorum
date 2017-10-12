@@ -90,6 +90,20 @@ Room.getRoomsInRange = function (name, range) {
   return rooms
 }
 
+Room.getManhattanDistance = function (startRoomName, endRoomName) {
+  const startCoords = Room.getCoordinates(startRoomName)
+  const endCoords = Room.getCoordinates(endRoomName)
+  let score = Math.abs(startCoords.x - endCoords.x) + Math.abs(startCoords.y - endCoords.y)
+  // Check to see if the distance crosses quadrants and compensate for the double zero hallway
+  if (startCoords.x_dir !== endCoords.x_dir) {
+    score++
+  }
+  if (startCoords.y_dir !== endCoords.y_dir) {
+    score++
+  }
+  return score
+}
+
 Room.isSourcekeeper = function (name) {
   const coords = Room.getCoordinates(name)
   let xMod = coords.x % 10
@@ -102,4 +116,21 @@ Room.isHallway = function (name) {
   let xMod = coords.x % 10
   let yMod = coords.y % 10
   return xMod === 0 || yMod === 0
+}
+
+Room.isClaimable = function (name) {
+  const coords = Room.getCoordinates(name)
+  let xMod = coords.x % 10
+  let yMod = coords.y % 10
+  if (xMod >= 4 && xMod <= 6 && yMod >= 4 && yMod <= 6) {
+    return false
+  }
+  return yMod !== 0 && xMod !== 0
+}
+
+Room.isCuldesac = function (roomName, entrance) {
+  const exits = Game.map.describeExits(roomName)
+  // This will just detected direct one room uldesacs. A better approach would be to follow the exits a hallway, source
+  // keeper room, or dead end appeared.
+  return Object.keys(exits).length === 1
 }
