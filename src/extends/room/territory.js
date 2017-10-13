@@ -149,10 +149,11 @@ Room.prototype.getMineScore = function (roomName) {
 
 /* Resources - 22 - 55% of total score not counting penalties */
 /* No penalties */
-const CITY_WEIGHTS_TWO_SOURCES = 10 // Will be zero if less than 2 sources.
-const CITY_WEIGHTS_MINERAL_MARKET = 5
+const CITY_WEIGHTS_TWO_SOURCES = 9 // Will be zero if less than 2 sources.
+const CITY_WEIGHTS_MINERAL_MARKET = 4
 const CITY_WEIGHTS_MINERAL_EMPIRE_NEED = 3
-const CITY_WEIGHTS_REGION_RESOURCES = 4
+const CITY_WEIGHTS_REGION_RESOURCES = 2
+const CITY_WEIGHTS_NEIGHBOR_SOURCES = 4
 
 /* Terrain - 6 - 15% of total score not counting penalties  */
 /* Up to 5 points in penalties */
@@ -240,6 +241,7 @@ Room.getCityScore = function (roomName) {
   score += getEmpireClutterScore(roomName) * CITY_WEIGHTS_EMPIRE_CLUTTERED
   score += getEmpireDefenseScore(roomName) * CITY_WEIGHTS_EMPIRE_DEFENSE
   score += getRegionResourcesScore(roomName, 2) * CITY_WEIGHTS_REGION_RESOURCES
+  score += getNeighborSourcesScore(roomName) * CITY_WEIGHTS_NEIGHBOR_SOURCES
   score += getRegionDensityScore(roomName, 2) * CITY_WEIGHTS_REGION_DENSITY
   score += getCityDistanceScore(roomName) * CITY_WEIGHT_CITY_DISTANCE
   return score
@@ -390,6 +392,19 @@ function getRegionResourcesScore (centerRoomName, range) {
     return 0
   }
   return sourceCount / (regionRoomCount * 2)
+}
+
+// How many neighboring rooms have two sources
+function getNeighborSourcesScore (room) {
+  const neighbors = _.values(Game.map.describeExits(room))
+  let twoSource = 0
+  for (let neighbor of neighbors) {
+    const neighborIntel = Room.getIntel(neighbor)
+    if (neighborIntel[INTEL_SOURCES] >= 2) {
+      twoSource++
+    }
+  }
+  return twoSource / 4
 }
 
 // How many rooms in range (allowance for one, presumably the claimer)
