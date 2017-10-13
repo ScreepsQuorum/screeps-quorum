@@ -10,6 +10,10 @@ class CityReboot extends kernel.process {
     this.priority = PRIORITIES_CITY_REBOOT
   }
 
+  getDescriptor () {
+    return this.data.room
+  }
+
   main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
