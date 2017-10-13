@@ -54,11 +54,20 @@ class City extends kernel.process {
 
     if (this.room.getRoomSetting('REMOTE_MINES')) {
       let remoteMines = this.room.getMines()
-      if (remoteMines.length <= 0) {
-        let mine = this.room.selectNextMine()
-        this.room.addMine(mine)
-        remoteMines = this.room.getMines
+
+      if (remoteMines.length <= 3) {
+        const cpuUsage = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
+        if (cpuUsage && cpuUsage['long'] <= 1.25) {
+          if (remoteMines.length <= 0 || !this.data.lastadd || Game.time - this.data.lastadd >= 2000) {
+            Logger.log(`Adding mine to ${this.data.room}`)
+            let mine = this.room.selectNextMine()
+            this.room.addMine(mine)
+            remoteMines = this.room.getMines()
+            this.data.lastadd = Game.time
+          }
+        }
       }
+
       let mineRoomName
       for (mineRoomName of remoteMines) {
         this.launchChildProcess(`mine_${mineRoomName}`, 'city_mine', {
