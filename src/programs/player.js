@@ -35,8 +35,12 @@ class Player extends kernel.process {
         'priority': priority
       })
     }
-    if (cities.length < Game.gcl.level) {
-      this.launchChildProcess('expand', 'empire_expand')
+
+    const defaultPriorityStats = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
+    if (defaultPriorityStats && defaultPriorityStats['long'] <= 1.25) {
+      if (cities.length < Game.gcl.level) {
+        this.launchChildProcess('expand', 'empire_expand')
+      }
     }
   }
 }
