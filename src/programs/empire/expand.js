@@ -70,7 +70,6 @@ class EmpireExpand extends kernel.process {
       return
     }
 
-
     // If the room isn't planned launch the room layout program, otherwise launch construction program
 
     if (!this.colony.getLayout().isPlanned()) {
@@ -155,6 +154,14 @@ class EmpireExpand extends kernel.process {
     let candidates = []
 
     for (let city of cities) {
+      if (!Game.rooms[city]) {
+        continue
+      }
+      const room = Game.rooms[city]
+      if (!room.getRoomSetting('EXPAND_FROM') || !room.isEconomyCapable('EXPAND_FROM')) {
+        continue
+      }
+
       let rooms = Room.getRoomsInRange(city, 10)
       for (let room of rooms) {
         if (candidates.indexOf(room) >= 0 || !Room.isClaimable(room)) {
