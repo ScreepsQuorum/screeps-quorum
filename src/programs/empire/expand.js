@@ -167,7 +167,7 @@ class EmpireExpand extends kernel.process {
         if (candidates.indexOf(room) >= 0 || !Room.isClaimable(room)) {
           continue
         }
-        if (Room.getManhattanDistance(city, room) <= 9) {
+        if (Room.getManhattanDistance(city, room) <= 8) {
           candidates.push(room)
         }
       }
@@ -313,7 +313,7 @@ class EmpireExpand extends kernel.process {
         return
       }
 
-      // If there's a construction site buildit
+      // If there's a construction site build it
       if (site) {
         const siteDistance = builder.pos.getRangeTo(site)
         if (siteDistance > 2) {

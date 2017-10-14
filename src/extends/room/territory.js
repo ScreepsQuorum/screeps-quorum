@@ -302,7 +302,7 @@ function getMineralEmpireNeedsScore (mineral) {
 
 function getDefensibilityScore (room) {
   let score = 0
-  let totalEdge = 47 * 4
+  let totalEdge = 48 * 4
   let exits = Game.map.describeExits(room)
   let exitIds = Object.keys(exits)
 
