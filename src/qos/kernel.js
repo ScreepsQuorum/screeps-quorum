@@ -1,6 +1,7 @@
 'use strict'
 
 const Scheduler = require('qos_scheduler')
+const Performance = require('qos_performance')
 const Process = require('qos_process')
 
 const BUCKET_FLOOR = 2000
@@ -18,6 +19,7 @@ class QosKernel {
     }
     this.simulation = !!Game.rooms['sim']
     this.scheduler = new Scheduler()
+    this.performance = new Performance()
     this.process = Process
   }
 
@@ -70,7 +72,14 @@ class QosKernel {
         }
 
         Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_INFO, 'kernel')
+        const startCpu = Game.cpu.getUsed()
         runningProcess.run()
+        let performanceName = runningProcess.name
+        const performanceDescriptor = runningProcess.getPerformanceDescriptor()
+        if (performanceDescriptor) {
+          performanceName += ' ' + performanceDescriptor
+        }
+        this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
       } catch (err) {
         Logger.log('program error occurred', LOG_ERROR)
         Logger.log(`process ${runningProcess.pid}: ${runningProcess.name}`, LOG_ERROR)
@@ -120,6 +129,13 @@ class QosKernel {
     Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
     Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')
     Logger.log(`Bucket: ${Game.cpu.bucket}`, LOG_INFO, 'kernel')
+
+    if (Game.time % 50 === 0) {
+      this.performance.reportHtml()
+    }
+    if (Game.time % 3000 === 0) {
+      this.performance.clear()
+    }
   }
 }
 

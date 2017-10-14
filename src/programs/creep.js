@@ -12,6 +12,10 @@ class ProgramCreep extends kernel.process {
     return this.data.creep
   }
 
+  getPerformanceDescriptor () {
+    return this.data.creep.split('_', 1)[0]
+  }
+
   main () {
     // See if creep is dead and if so close this process
     if (!Game.creeps[this.data.creep]) {

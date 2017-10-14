@@ -36,6 +36,10 @@ class Process {
     return false
   }
 
+  getPerformanceDescriptor () {
+    return false
+  }
+
   launchChildProcess (label, name, data = {}) {
     if (!this.data.children) {
       this.data.children = {}

@@ -95,9 +95,9 @@ Monitor.prototype.getPriorityRunStats = function (priority) {
   }
 
   return {
-    short: (this.short + currticks) / shortticks,
-    medium: (this.medium + currticks) / mediumticks,
-    long: (this.long + currticks) / longticks,
+    short: Math.max((this.short + currticks) / shortticks, 1),
+    medium: Math.max((this.medium + currticks) / mediumticks, 1),
+    long: Math.max((this.long + currticks) / longticks, 1),
   }
 }
 
