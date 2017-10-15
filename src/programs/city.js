@@ -52,13 +52,19 @@ class City extends kernel.process {
       })
     }
 
-    if (this.room.getRoomSetting('REMOTE_MINES')) {
+    const mineCount = this.room.getRoomSetting('REMOTE_MINES')
+    const lastAdd = qlib.events.getTimeSinceEvent('addmine')
+    if (mineCount && lastAdd >= 2000) {
       let remoteMines = this.room.getMines()
-      if (remoteMines.length <= 0) {
-        let mine = this.room.selectNextMine()
-        this.room.addMine(mine)
-        remoteMines = this.room.getMines
+      if (remoteMines.length <= mineCount) {
+        const cpuUsage = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
+        if (cpuUsage && cpuUsage['long'] <= 1.25) {
+          let mine = this.room.selectNextMine()
+          this.room.addMine(mine)
+          remoteMines = this.room.getMines()
+        }
       }
+
       let mineRoomName
       for (mineRoomName of remoteMines) {
         this.launchChildProcess(`mine_${mineRoomName}`, 'city_mine', {
