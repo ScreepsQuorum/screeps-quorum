@@ -39,3 +39,9 @@ global.MARKET_STATS_INTERVAL = 750
 global.MARKET_STATS_MAXECORD = 50
 // Percentage of records to drop. This prevents outliers from skewing results.
 global.MARKET_STATS_DROP = 0.10
+
+// Which priorities to monitor.
+global.MONITOR_PRIORITIES = _.uniq([
+  PRIORITIES_CREEP_DEFAULT,
+  PRIORITIES_DEFAULT
+])
