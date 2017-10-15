@@ -19,6 +19,8 @@ Room.getCities = function () {
 Room.addCity = function (roomName) {
   if (!Memory.territory[roomName]) {
     Memory.territory[roomName] = {}
+    Logger.log(`Adding city ${roomName}`)
+    qlib.events.recordEvent('addcity')
   }
 }
 
@@ -40,6 +42,8 @@ Room.prototype.addMine = function (mine) {
     Memory.territory[this.name].mines = []
   }
   Memory.territory[this.name].mines.push(mine)
+  Logger.log(`Adding mine from ${this.name} to ${mine}`)
+  qlib.events.recordEvent('addmine')
 }
 
 Room.getMineOwner = function (mine) {

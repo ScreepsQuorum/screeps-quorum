@@ -18,6 +18,13 @@ class CityMine extends kernel.process {
     }
   }
 
+  getPerformanceDescriptor () {
+    if (this.data.mine) {
+      return 'remote'
+    }
+    return false
+  }
+
   main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()

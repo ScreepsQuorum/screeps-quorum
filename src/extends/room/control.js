@@ -9,7 +9,8 @@ let roomLevelOptions = {
   },
   2: {},
   3: {
-    'SELF_SUFFICIENT': true
+    'SELF_SUFFICIENT': true,
+    'REMOTE_MINES': 1
   },
   4: {
     'DEDICATED_MINERS': true,
@@ -25,10 +26,12 @@ let roomLevelOptions = {
     'RESERVER_COUNT': 2
   },
   7: {
-    'RESERVER_COUNT': 1
+    'RESERVER_COUNT': 1,
+    'REMOTE_MINES': 2
   },
   8: {
-    'UPGRADERS_QUANTITY': 1
+    'UPGRADERS_QUANTITY': 1,
+    'REMOTE_MINES': 3
   }
 }
 
