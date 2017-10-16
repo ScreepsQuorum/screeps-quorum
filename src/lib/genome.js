@@ -4,10 +4,10 @@
  *
  * This library can be used to add "personality" to bots. An instance of Genome takes a string (such as the bot name) as
  * a constructor argument which feeds into a Lehmer RNG (thus giving it repeatable results). The `trait` function uses
- * this to return `phenotype` data, which is representated as an integer and can restricted to specific ranges. Traits
- * are weighted towards the center of the range (a range of 0-9 will have a 66.82% change of being 4, 5, or 6 and a less
- * than 10% chance of getting 1, 2, 8 or 9. This makes extreme traits less likely to occur (but still possible). Each
- * trait also takes an `expected` value which will *always* be returned if the bot is named `Quorum`.
+ * this to return `phenotype` data, which is representated as an integer and can be restricted to specific ranges.
+ * Traits are weighted towards the center of the range (a range of 0-9 will have a 66.82% change of being 4, 5, or 6 and
+ * a less than 10% chance of getting 1, 2, 8 or 9. This makes extreme traits less likely to occur (but still possible).
+ * Each trait also takes an `expected` value which will *always* be returned if the bot is named `Quorum`.
  *
  * @example
  * let myGenome = new Genome('Bob')
@@ -98,7 +98,7 @@ class Genome {
 }
 
 // This is a simple command line tool called via node which outputs a table showing the distribution of results with
-// a variety of different "centering" values. To set the max value simple add an additional argument when calling.
+// a variety of different "centering" values. To set the max value simply add an additional argument when calling.
 if (typeof module !== 'undefined' && !module.parent) {
   const iterations = 1000000
   const max = process.argv.length >= 3 ? process.argv[2] : 10
@@ -131,15 +131,15 @@ if (typeof module !== 'undefined' && !module.parent) {
   }
 
   let weights = [1, 2, 3, 5, 10, 50]
-  let wieghtedResults = {}
+  let weightedResults = {}
   for (let weight of weights) {
-    wieghtedResults[weight] = {}
+    weightedResults[weight] = {}
     for (let i = 0; i < iterations; i++) {
       let ret = genome.randomCenterWeightedInt('apples' + i, 1, max, weight)
-      if (!wieghtedResults[weight][ret]) {
-        wieghtedResults[weight][ret] = 1
+      if (!weightedResults[weight][ret]) {
+        weightedResults[weight][ret] = 1
       } else {
-        wieghtedResults[weight][ret]++
+        weightedResults[weight][ret]++
       }
     }
   }
@@ -166,7 +166,7 @@ if (typeof module !== 'undefined' && !module.parent) {
     message += `\t\t${normalizeCount(trait[i])}`
 
     for (let weight of weights) {
-      message += `\t\t${normalizeCount(wieghtedResults[weight][i])}`
+      message += `\t\t${normalizeCount(weightedResults[weight][i])}`
     }
 
     console.log(message)
