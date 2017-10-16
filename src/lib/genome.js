@@ -30,7 +30,7 @@ class Genome {
     // defined for convenience, do not change without also changing Lehmer multiplier in `_getNumberFromSeed`
     this.max = 2147483647
     this.seed = this._getNumberFromString(initializer)
-    if (global.USERNAME && global.USERNAME === 'Quorum') {
+    if (initializer === 'Quorum') {
       this.returnDefault = true
     }
   }
