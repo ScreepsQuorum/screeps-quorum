@@ -9,6 +9,8 @@ const BUCKET_CEILING = 9500
 const CPU_BUFFER = 130
 const CPU_MINIMUM = 0.50
 const CPU_ADJUST = 0.05
+const CPU_GLOBAL_BOOST = 60
+const GLOBAL_LAST_RESET = Game.time
 
 class QosKernel {
   constructor () {
@@ -17,6 +19,7 @@ class QosKernel {
     if (!Memory.qos) {
       Memory.qos = {}
     }
+    this.newglobal = GLOBAL_LAST_RESET === Game.time
     this.simulation = !!Game.rooms['sim']
     this.scheduler = new Scheduler()
     this.performance = new Performance()
@@ -112,6 +115,9 @@ class QosKernel {
       const adjustedPercentage = (Game.cpu.bucket - (10000 - bucketRange)) / bucketRange
       const cpuPercentage = CPU_MINIMUM + ((1 - CPU_MINIMUM) * adjustedPercentage)
       this._cpuLimit = (Game.cpu.limit * (1 - CPU_ADJUST)) * cpuPercentage
+      if (this.newglobal) {
+        this._cpuLimit += CPU_GLOBAL_BOOST
+      }
     }
 
     return this._cpuLimit
