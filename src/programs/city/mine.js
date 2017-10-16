@@ -32,6 +32,7 @@ class CityMine extends kernel.process {
     this.room = Game.rooms[this.data.room]
 
     if (this.data.mine && this.data.mine !== this.data.room) {
+      this.remote = true
       this.scout()
       if (!Game.rooms[this.data.mine]) {
         return
@@ -100,7 +101,34 @@ class CityMine extends kernel.process {
       return
     }
 
-    const storage = this.room.storage
+    let storage = false
+    if (this.room.storage) {
+      storage = this.room.storage
+    } else if (this.room.terminal) {
+      storage = this.room.terminal
+    } else if (this.remote) {
+      const containers = this.room.structure[STRUCTURE_CONTAINER]
+      if (containers && containers.length > 0) {
+        if (containers.length > 1) {
+          containers.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY])
+        }
+        storage = containers[0]
+      } else {
+        const spawns = this.room.structure[STRUCTURE_SPAWN]
+        if (spawns) {
+          if (spawns.length > 1) {
+            spawns.sort((a, b) => a.energy - b.energy)
+          }
+          storage = containers[0]
+        }
+      }
+    }
+
+    // If using containers spawn haulers
+    if (!container || !storage) {
+      return
+    }
+
     const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
     let distance = 50
     if (this.mine.name === this.room.name) {
