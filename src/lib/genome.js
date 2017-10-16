@@ -151,7 +151,7 @@ if (typeof module !== 'undefined' && !module.parent) {
     return (((num / iterations) * 100).toFixed(2)) + '%'
   }
 
-  let header = 'Count'
+  let header = 'Value'
   header += '\tUnweighted'
   header += '\tTrait'
 
