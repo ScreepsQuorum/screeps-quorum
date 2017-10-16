@@ -90,8 +90,12 @@ class CityMine extends kernel.process {
       }
       if (source.energy > 0) {
         miner.harvest(source)
-      } else if (miner.carry[RESOURCE_ENERGY] && container && container.hits < container.hitsMax) {
-        miner.repair(container)
+      } else if (container && container.hits < container.hitsMax) {
+        if (miner.carry[RESOURCE_ENERGY] > 0) {
+          miner.repair(container)
+        } else if (container.store[RESOURCE_ENERGY] > 0) {
+          miner.withdraw(container, RESOURCE_ENERGY)
+        }
       }
     })
 
