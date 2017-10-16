@@ -32,6 +32,7 @@ class CityMine extends kernel.process {
     this.room = Game.rooms[this.data.room]
 
     if (this.data.mine && this.data.mine !== this.data.room) {
+      this.remote = true
       this.scout()
       if (!Game.rooms[this.data.mine]) {
         return
@@ -99,12 +100,34 @@ class CityMine extends kernel.process {
       }
     })
 
+    let storage = false
+    if (this.room.storage) {
+      storage = this.room.storage
+    } else if (this.room.terminal) {
+      storage = this.room.terminal
+    } else if (this.remote) {
+      const containers = this.room.structure[STRUCTURE_CONTAINER]
+      if (containers && containers.length > 0) {
+        if (containers.length > 1) {
+          containers.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY])
+        }
+        storage = containers[0]
+      } else {
+        const spawns = this.room.structure[STRUCTURE_SPAWN]
+        if (spawns) {
+          if (spawns.length > 1) {
+            spawns.sort((a, b) => a.energy - b.energy)
+          }
+          storage = spawns[0]
+        }
+      }
+    }
+
     // If using containers spawn haulers
-    if (!container || !this.room.storage) {
+    if (!container || !storage) {
       return
     }
 
-    const storage = this.room.storage
     const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
     let distance = 50
     if (this.mine.name === this.room.name) {
@@ -114,13 +137,15 @@ class CityMine extends kernel.process {
         this.data.ssp = {}
       }
       if (!this.data.ssp[source.id]) {
-        this.data.ssp[source.id] = this.room.findPath(this.room.storage, source, {
-          ignoreCreeps: true,
-          maxOps: 6000
-        }).length
+        if (this.room.storage) {
+          this.data.ssp[source.id] = this.room.findPath(this.room.storage, source, {
+            ignoreCreeps: true,
+            maxOps: 6000
+          }).length
+        }
       }
-      distance = this.data.ssp[source.id]
-      const carryAmount = (Math.ceil((this.data.ssp[source.id] * 20) / 100) * 100) + 200
+      distance = this.data.ssp[source.id] ? this.data.ssp[source.id] : 80
+      const carryAmount = (Math.ceil((distance * 20) / 100) * 100) + 200
       const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
       const maxEnergy = carryCost * (MAX_CREEP_SIZE / 2)
       let energy = (carryAmount / CARRY_CAPACITY) * carryCost // 50 carry == 1m1c == 100 energy
