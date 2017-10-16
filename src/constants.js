@@ -41,7 +41,6 @@ global.MARKET_STATS_MAXECORD = 50
 // Percentage of records to drop. This prevents outliers from skewing results.
 global.MARKET_STATS_DROP = 0.10
 
-
 global.MINERALS_EXTRACTABLE = [
   RESOURCE_HYDROGEN,
   RESOURCE_OXYGEN,
