@@ -4,6 +4,7 @@ const Scheduler = require('qos_scheduler')
 const Performance = require('qos_performance')
 const Process = require('qos_process')
 
+const BUCKET_EMERGENCY = 1000
 const BUCKET_FLOOR = 2000
 const BUCKET_CEILING = 9500
 const CPU_BUFFER = 130
@@ -104,6 +105,10 @@ class QosKernel {
   getCpuLimit () {
     if (Game.cpu.bucket > BUCKET_CEILING) {
       return Game.cpu.tickLimit - CPU_BUFFER
+    }
+
+    if (Game.cpu.bucket < BUCKET_EMERGENCY) {
+      return 0
     }
 
     if (Game.cpu.bucket < BUCKET_FLOOR) {

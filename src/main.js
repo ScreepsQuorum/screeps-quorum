@@ -52,6 +52,10 @@ require('extends_source')
 const QosKernel = require('qos_kernel')
 
 module.exports.loop = function () {
+  if (Game.cpu.bucket < 500) {
+    Logger.log('Extremely low bucket - aborting script run at start of loop', LOG_FATAL)
+    return
+  }
   const kernel = new QosKernel()
   kernel.start()
   kernel.run()
