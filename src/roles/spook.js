@@ -87,6 +87,7 @@ class Spook extends MetaRole {
       target = creep.memory.starget
     } else {
       target = Room.getScoutTarget(creep)
+      creep.memory.starget = target
     }
     if (creep.travelTo(new RoomPosition(25, 25, target), {range: 23}) === ERR_NO_PATH) {
       delete creep.memory.starget
