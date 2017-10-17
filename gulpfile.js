@@ -5,11 +5,16 @@ let gulp = require('gulp')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
+let clean = require('gulp-clean');
 let minimist = require('minimist')
 
 let args = minimist(process.argv.slice(2))
 
-gulp.task('copy', () => {
+gulp.task('clean', () => {
+  return gulp.src('dist/', { read: false }).pipe(clean());
+})
+
+gulp.task('copy', ['clean'], () => {
   return gulp.src('src/**/*.js').pipe(rename((path) => {
     let parts = path.dirname.match(/[^/\\]+/g)
     let name = ''
@@ -80,4 +85,4 @@ gulp.task('ci-version', (cb) => {
   pkg.version = `${year}.${month}.${day}-${seconds}`
   fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
 })
-gulp.task('default', ['copy', 'deploy'])
+gulp.task('default', ['clean', 'copy', 'deploy'])
