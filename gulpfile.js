@@ -11,7 +11,7 @@ let minimist = require('minimist')
 let args = minimist(process.argv.slice(2))
 
 gulp.task('clean', () => {
-  return gulp.src('dist/', { read: false }).pipe(clean());
+  return gulp.src('dist/', { read: false }).pipe(clean())
 })
 
 gulp.task('copy', ['clean'], () => {
