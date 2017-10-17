@@ -4,6 +4,20 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
     opts.routeCallback = function (toRoom, fromRoom) {
       return module.exports.getRoomScore(toRoom, fromRoom)
     }
+    if (!opts.ignoreCache) {
+      const cacheLabel = `route_${Room.serializeName(fromRoom)}_${Room.serializeName(toRoom)}`
+      const cachedPath = sos.lib.cache.get(cacheLabel)
+      if (cachedPath) {
+        return cachedPath
+      }
+      const newPath = Game.map.findRoute(fromRoom, toRoom, opts)
+      let options = {maxttl: 150}
+      if (newPath.length >= 4) {
+        options.persist = true
+      }
+      sos.lib.cache.set(cacheLabel, newPath, options)
+      return newPath
+    }
   }
   return Game.map.findRoute(fromRoom, toRoom, opts)
 }
