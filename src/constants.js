@@ -26,6 +26,7 @@ global.PRIORITIES_DEFENSE = 3
 global.PRIORITIES_EMPIRE_INTEL = 4
 global.PRIORITIES_CITY = 7
 
+global.PRIORITIES_EXPAND = 8
 global.PRIORITIES_CONSTRUCTION = 8
 global.PRIORITIES_PLAYER = 8
 
@@ -39,6 +40,16 @@ global.MARKET_STATS_INTERVAL = 750
 global.MARKET_STATS_MAXECORD = 50
 // Percentage of records to drop. This prevents outliers from skewing results.
 global.MARKET_STATS_DROP = 0.10
+
+global.MINERALS_EXTRACTABLE = [
+  RESOURCE_HYDROGEN,
+  RESOURCE_OXYGEN,
+  RESOURCE_UTRIUM,
+  RESOURCE_LEMERGIUM,
+  RESOURCE_KEANIUM,
+  RESOURCE_ZYNTHIUM,
+  RESOURCE_CATALYST
+]
 
 // Which priorities to monitor.
 global.MONITOR_PRIORITIES = _.uniq([

@@ -10,6 +10,10 @@ class CityConstruct extends kernel.process {
     this.priority = PRIORITIES_CONSTRUCTION
   }
 
+  getDescriptor () {
+    return this.data.room
+  }
+
   main () {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()

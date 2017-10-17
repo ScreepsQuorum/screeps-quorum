@@ -212,6 +212,7 @@ Room.prototype.getIntel = function (opts = {}) {
 Room.getResourcesPositions = function (roomname) {
   const roominfo = Room.getIntel(roomname)
   if (!roominfo[INTEL_RESOURCE_POSITIONS]) {
+    Room.requestIntel(roomname)
     return false
   }
   let positions = []

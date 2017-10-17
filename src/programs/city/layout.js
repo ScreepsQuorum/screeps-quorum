@@ -447,7 +447,7 @@ class CityLayout extends kernel.process {
       }
     }
     if (this.room.controller) {
-      const poses = this.room.controller.pos.getAdjacent()
+      const poses = this.room.controller.pos.getAdjacentInRange(3)
       let pos
       for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
@@ -457,7 +457,7 @@ class CityLayout extends kernel.process {
     let source,
       pos
     for (source of sources) {
-      const poses = source.pos.getAdjacent()
+      const poses = source.pos.getAdjacentInRange(2)
       for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }
@@ -465,7 +465,7 @@ class CityLayout extends kernel.process {
     const minerals = this.room.find(FIND_MINERALS)
     let mineral
     for (mineral of minerals) {
-      const poses = mineral.pos.getAdjacent()
+      const poses = mineral.pos.getAdjacentInRange(2)
       for (pos of poses) {
         costMatrix.set(pos.x, pos.y, 0)
       }

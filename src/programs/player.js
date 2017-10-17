@@ -31,6 +31,18 @@ class Player extends kernel.process {
         'priority': priority
       })
     }
+
+    const lastAdd = qlib.events.getTimeSinceEvent('addcity')
+    if (lastAdd > 2000) {
+      const defaultPriorityStats = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
+      if (defaultPriorityStats && defaultPriorityStats['long'] <= 1.25) {
+        if (cities.length < Game.gcl.level) {
+          if (cities.length > 1 || Game.rooms[cities[0]].getRoomSetting('EXPAND_FROM')) {
+            this.launchChildProcess('expand', 'empire_expand')
+          }
+        }
+      }
+    }
   }
 }
 
