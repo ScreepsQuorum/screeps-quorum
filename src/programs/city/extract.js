@@ -15,8 +15,8 @@ class CityExtract extends kernel.process {
     const mineral = this.room.find(FIND_MINERALS)[0]
     const storage = this.room.terminal ? this.room.terminal : this.room.storage
     const canExtract = extractor && mineral.mineralAmount > 0 && !mineral.ticksToRegeneration
-    const frackerCluster = new qlib.Cluster('Extract_frackers_' + this.data.room, this.room)
-    const haulerCluster = new qlib.Cluster('Extract_Haulers_' + this.data.room, this.room)
+    const frackerCluster = this.getCluster('frackers', this.room)
+    const haulerCluster = this.getCluster('haulers', this.room)
     const frackers = frackerCluster.getCreeps()
     const frackersToEmpty = _.filter(frackers, function (fracker) {
       if (!fracker.pos.isNearTo(mineral)) {

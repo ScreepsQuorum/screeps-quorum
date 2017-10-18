@@ -84,6 +84,10 @@ class Process {
     }
   }
 
+  getCluster (name, room) {
+    return new qlib.Cluster(`${name}_${this.pid}`, room)
+  }
+
   period (interval, label = 'default') {
     if (!this.data.period) {
       this.data.period = {}

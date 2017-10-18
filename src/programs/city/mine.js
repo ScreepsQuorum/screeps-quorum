@@ -70,7 +70,7 @@ class CityMine extends kernel.process {
     }
 
     // Run miners.
-    const miners = new qlib.Cluster('miners_' + source.id, this.room)
+    const miners = this.getCluster(`miners_${source.id}`, this.room)
 
     // Check if a replacement miner is needed and spawn it early
     const minerCreeps = miners.getCreeps()
@@ -128,7 +128,7 @@ class CityMine extends kernel.process {
       return
     }
 
-    const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
+    const haulers = this.getCluster(`haulers_${source.id}`, this.room)
     let distance = 50
     if (this.mine.name === this.room.name) {
       haulers.sizeCluster('hauler', 1)
@@ -183,7 +183,7 @@ class CityMine extends kernel.process {
   scout () {
     const center = new RoomPosition(25, 25, this.data.mine)
     const quantity = Game.rooms[this.data.mine] ? 0 : 1
-    const scouts = new qlib.Cluster('scout_' + this.data.mine, this.room)
+    const scouts = this.getCluster(`scout`, this.room)
     scouts.sizeCluster('spook', quantity)
     scouts.forEach(function (scout) {
       if (scout.room.name === center.roomName) {
@@ -203,7 +203,7 @@ class CityMine extends kernel.process {
       quantity = Math.min(this.room.getRoomSetting('RESERVER_COUNT'), controller.pos.getSteppableAdjacent().length)
     }
 
-    const reservists = new qlib.Cluster('reservists_' + this.mine.name, this.room)
+    const reservists = this.getCluster(`reservists`, this.room)
     reservists.sizeCluster('reservist', quantity)
     reservists.forEach(function (reservist) {
       if (!reservist.pos.isNearTo(controller)) {

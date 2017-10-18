@@ -179,7 +179,7 @@ class EmpireExpand extends kernel.process {
     const closestCity = this.getClosestCity(this.data.colony)
     const center = new RoomPosition(25, 25, this.data.colony)
     const quantity = Game.rooms[this.data.colony] ? 0 : 1
-    const scouts = new qlib.Cluster('scout_' + this.data.colony, closestCity)
+    const scouts = this.getCluster(`scout`, closestCity)
     if (!Game.rooms[this.data.colony]) {
       scouts.sizeCluster('spook', quantity)
     }
@@ -199,7 +199,7 @@ class EmpireExpand extends kernel.process {
       return
     }
     const closestCity = this.getClosestCity(this.data.colony)
-    const claimer = new qlib.Cluster('claimers_' + this.data.colony, closestCity)
+    const claimer = this.getCluster(`claimers`, closestCity)
 
     // Give up 1000 ticks after launching the last claimer and move on to the next candidate room.
 
@@ -242,7 +242,7 @@ class EmpireExpand extends kernel.process {
       }
     }
 
-    const miners = new qlib.Cluster('miner_' + source.id, spawnRoom)
+    const miners = this.getCluster(`miner_${source.id}`, spawnRoom)
     if (!this.data.deathwatch) {
       miners.sizeCluster('miner', 1)
     }
@@ -269,7 +269,7 @@ class EmpireExpand extends kernel.process {
   build () {
     const controller = this.colony.controller
     const closestCity = this.getClosestCity(this.data.colony)
-    const builders = new qlib.Cluster('builers_' + this.data.colony, closestCity)
+    const builders = this.getCluster(`builders`, closestCity)
     const constructionSites = this.colony.find(FIND_MY_CONSTRUCTION_SITES)
     const site = constructionSites.length > 0 ? constructionSites[0] : false
     const hostileSpawns = this.hostileSpawns
@@ -339,7 +339,7 @@ class EmpireExpand extends kernel.process {
   upgrade () {
     const controller = this.colony.controller
     const closestCity = this.getClosestCity(this.data.colony)
-    const upgraders = new qlib.Cluster('upgraders_' + this.data.colony, closestCity)
+    const upgraders = this.getCluster(`upgraders`, closestCity)
     if (!this.data.deathwatch) {
       upgraders.sizeCluster('upgrader', 2)
     }
