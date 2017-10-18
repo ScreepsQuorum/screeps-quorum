@@ -16,7 +16,7 @@ let roomLevelOptions = {
     'DEDICATED_MINERS': true,
     'PURE_CARRY_FILLERS': true,
     'RESERVER_COUNT': 3,
-    'REMOTE_MINES': true,
+    'REMOTE_MINES': 2,
     'EXPAND_FROM': true
   },
   5: {},
@@ -26,8 +26,7 @@ let roomLevelOptions = {
     'RESERVER_COUNT': 2
   },
   7: {
-    'RESERVER_COUNT': 1,
-    'REMOTE_MINES': 2
+    'RESERVER_COUNT': 1
   },
   8: {
     'UPGRADERS_QUANTITY': 1,
