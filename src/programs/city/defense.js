@@ -46,7 +46,7 @@ class CityDefense extends kernel.process {
       this.launchCreepProcess('loader', 'replenisher', this.data.room, 1)
     }
 
-    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader' && c.isPotentialHazard())
+    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader' && this.isPotentialHazard(c))
 
     if (playerHostiles.length > 0) {
       Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)
@@ -128,10 +128,15 @@ class CityDefense extends kernel.process {
   }
 
   isPotentialHazard (hostile) {
-    return hostile.getActiveBodyparts(ATTACK) > 0 ||
-    hostile.getActiveBodyparts(RANGED_ATTACK) > 0 ||
-    hostile.getActiveBodyparts(HEAL) > 0 ||
-    hostile.getActiveBodyparts(WORK) > 0
+    const hazardTypes = [ATTACK, RANGED_ATTACK, HEAL, WORK]
+
+    hostile.body.forEach(function (bodyPart) {
+      if (hazardTypes.includes(bodyPart.type) && bodyPart.hits > 0) {
+        return true
+      }
+    })
+
+    return false
   }
 }
 
