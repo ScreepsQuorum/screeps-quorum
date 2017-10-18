@@ -131,7 +131,7 @@ class CityDefense extends kernel.process {
     const hazardTypes = [ATTACK, RANGED_ATTACK, HEAL, WORK]
 
     hostile.body.forEach(function (bodyPart) {
-      if (hazardTypes.includes(bodyPart.type) && bodyPart.hits > 0) {
+      if (bodyPart.hits > 0 && hazardTypes.includes(bodyPart.type)) {
         return true
       }
     })
