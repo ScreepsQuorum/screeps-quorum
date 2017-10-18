@@ -110,14 +110,15 @@ class CityMine extends kernel.process {
     } else if (this.room.terminal) {
       storage = this.room.terminal
     } else if (this.remote) {
-      const containers = this.room.structure[STRUCTURE_CONTAINER]
+      const containers = this.room.structures[STRUCTURE_CONTAINER]
+
       if (containers && containers.length > 0) {
         if (containers.length > 1) {
           containers.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY])
         }
         storage = containers[0]
       } else {
-        const spawns = this.room.structure[STRUCTURE_SPAWN]
+        const spawns = this.room.structures[STRUCTURE_SPAWN]
         if (spawns) {
           if (spawns.length > 1) {
             spawns.sort((a, b) => a.energy - b.energy)
