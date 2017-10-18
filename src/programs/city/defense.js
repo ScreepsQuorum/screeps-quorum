@@ -128,15 +128,10 @@ class CityDefense extends kernel.process {
   }
 
   isPotentialHazard (hostile) {
-    const hazardTypes = [ATTACK, RANGED_ATTACK, HEAL, WORK]
-
-    hostile.body.forEach(function (bodyPart) {
-      if (bodyPart.hits > 0 && hazardTypes.includes(bodyPart.type)) {
-        return true
-      }
-    })
-
-    return false
+    return hostile.getActiveBodyparts(ATTACK) > 0 ||
+    hostile.getActiveBodyparts(RANGED_ATTACK) > 0 ||
+    hostile.getActiveBodyparts(HEAL) > 0 ||
+    hostile.getActiveBodyparts(WORK) > 0
   }
 }
 
