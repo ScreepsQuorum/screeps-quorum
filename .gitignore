@@ -57,6 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# intellij environment settings
+.idea
+
 # project specific ignores
 .screeps.json
 /dist
