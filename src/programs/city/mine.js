@@ -38,6 +38,12 @@ class CityMine extends kernel.process {
         return
       }
       this.mine = Game.rooms[this.data.mine]
+
+      // Don't send reservers or other creeps to their death. Eventually trigger defense.
+      if (this.mine.find(FIND_HOSTILE_CREEPS).length > 0) {
+        return
+      }
+
       this.reserveRoom()
     } else {
       this.mine = this.room
