@@ -38,12 +38,7 @@ class CityMine extends kernel.process {
         return
       }
       this.mine = Game.rooms[this.data.mine]
-
-      // Don't send reservers or other creeps to their death. Eventually trigger defense.
-      if (this.mine.find(FIND_HOSTILE_CREEPS).length > 0) {
-        return
-      }
-
+      this.underAttack = this.mine.find(FIND_HOSTILE_CREEPS).length > 0
       this.reserveRoom()
     } else {
       this.mine = this.room
@@ -83,6 +78,9 @@ class CityMine extends kernel.process {
     let minerQuantity = 1
     if (miners.getClusterSize() === 1 && minerCreeps.length > 0 && minerCreeps[0].ticksToLive < 60) {
       minerQuantity = 2
+    }
+    if (this.underAttack) {
+      minerQuantity = 0
     }
 
     miners.sizeCluster('miner', minerQuantity, {'priority': 2})
@@ -136,9 +134,9 @@ class CityMine extends kernel.process {
 
     const haulers = new qlib.Cluster('haulers_' + source.id, this.room)
     let distance = 50
-    if (this.mine.name === this.room.name) {
+    if (!this.underAttack && this.mine.name === this.room.name) {
       haulers.sizeCluster('hauler', 1)
-    } else {
+    } else if (!this.underAttack) {
       if (!this.data.ssp) {
         this.data.ssp = {}
       }
@@ -202,6 +200,9 @@ class CityMine extends kernel.process {
   }
 
   reserveRoom () {
+    if (this.underAttack) {
+      return
+    }
     const controller = this.mine.controller
     const timeout = controller.reservation ? controller.reservation.ticksToEnd : 0
     let quantity = 0
