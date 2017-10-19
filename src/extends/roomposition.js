@@ -134,7 +134,7 @@ RoomPosition.deserialize = function (string) {
   return new RoomPosition(x, y, roomname)
 }
 
-RoomPosition.lookAroundFor = function (type, range = 1) {
+RoomPosition.prototype.lookAroundFor = function (type, range = 1) {
   if (!Game.rooms[this.roomName]) {
     return ERR_INVALID_TARGET
   }
@@ -146,7 +146,7 @@ RoomPosition.lookAroundFor = function (type, range = 1) {
   return room.lookForAtArea(type, top, left, bottom, right, true)
 }
 
-RoomPosition.lookAround = function (range = 1) {
+RoomPosition.prototype.lookAround = function (range = 1) {
   if (!Game.rooms[this.roomName]) {
     return ERR_INVALID_TARGET
   }
