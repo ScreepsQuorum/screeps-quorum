@@ -157,10 +157,11 @@ RoomPosition.prototype.lookAround = function (range = 1) {
  * @returns {{left: number, right: number, top: number, bottom: number}}
  */
 function createBoundingBoxForRange (x, y, range) {
-  const left = Math.max(x - range, 0)
-  const right = Math.min(x + range, 49)
-  const top = Math.max(y - range, 0)
-  const bottom = Math.min(y + range, 49)
+  const absRange = Math.abs(range)
+  const left = Math.min(Math.max(x - absRange, 0), 49)
+  const right = Math.max(Math.min(x + absRange, 49), 0)
+  const top = Math.min(Math.max(y - absRange, 0), 49)
+  const bottom = Math.max(Math.min(y + absRange, 49), 0)
   return {left, right, top, bottom}
 }
 
