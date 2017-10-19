@@ -268,9 +268,9 @@ Room.getScoutTarget = function (creep) {
       if (Game.map.getRoomLinearDistance(creep.room.name, testRoom) > maxScoutDistance) {
         continue
       }
-      if (!oldest || oldest > Memory.intel.targets[creep.room.name]) {
-        oldest = Memory.intel.targets[creep.room.name]
-        target = creep.room.name
+      if (!oldest || oldest > Memory.intel.targets[testRoom]) {
+        oldest = Memory.intel.targets[testRoom]
+        target = testRoom
       }
     }
   }
