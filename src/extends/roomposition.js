@@ -133,3 +133,27 @@ RoomPosition.deserialize = function (string) {
   const y = coordraw % 50
   return new RoomPosition(x, y, roomname)
 }
+
+RoomPosition.lookAroundFor = function (type, range = 1) {
+  if (!Game.rooms[this.roomName]) {
+    return ERR_INVALID_TARGET
+  }
+  const room = Game.rooms[this.roomName]
+  const left = Math.max(this.x - range, 0)
+  const right = Math.min(this.x + range, 49)
+  const top = Math.max(this.y - range, 0)
+  const bottom = Math.min(this.y + range, 49)
+  return room.lookForAtArea(type, top, left, bottom, right, true)
+}
+
+RoomPosition.lookAround = function (range = 1) {
+  if (!Game.rooms[this.roomName]) {
+    return ERR_INVALID_TARGET
+  }
+  const room = Game.rooms[this.roomName]
+  const left = Math.max(this.x - range, 0)
+  const right = Math.min(this.x + range, 49)
+  const top = Math.max(this.y - range, 0)
+  const bottom = Math.min(this.y - range, 49)
+  return room.lookAtArea(top, left, bottom, right, true)
+}
