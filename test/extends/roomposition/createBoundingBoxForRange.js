@@ -21,7 +21,7 @@ function testMacro (t, x, y, range) {
   // @todo add some assertions based on range
 }
 
-test('Works for x great than y', testMacro, 20, 10, 10)
+test('Works for x greater than y', testMacro, 20, 10, 10)
 
 test('Works for x less than y', testMacro, 10, 20, 10)
 
