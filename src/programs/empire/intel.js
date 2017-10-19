@@ -13,6 +13,10 @@ class EmpireIntel extends kernel.process {
   main () {
     this.gatherIntel()
     this.flushIntel()
+    if (!this.data.lastclean || Game.time - this.data.lastclean > 100) {
+      this.cleanTargets()
+      this.data.lastclean = Game.time
+    }
   }
 
   gatherIntel () {
@@ -40,6 +44,15 @@ class EmpireIntel extends kernel.process {
     }
     if (!this.data.lastflush || Game.time - this.data.lastflush > 50 || buffersize > 80) {
       Room.flushIntelToSegment()
+    }
+  }
+
+  cleanTargets () {
+    const targets = Object.keys(Memory.intel.targets)
+    for (let target of targets) {
+      if (Game.time - Memory.intel.targets[target] > 5000) {
+        delete Memory.intel.targets[target]
+      }
     }
   }
 }
