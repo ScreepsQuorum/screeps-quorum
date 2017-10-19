@@ -163,3 +163,7 @@ function createBoundingBoxForRange (x, y, range) {
   const bottom = Math.min(y + range, 49)
   return {left, right, top, bottom}
 }
+
+module.exports = {
+  createBoundingBoxForRange
+}
