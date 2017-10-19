@@ -178,6 +178,11 @@ class CityMine extends kernel.process {
         hauler.travelTo(container)
       }
       if (hauler.pos.isNearTo(container)) {
+        const localResources = hauler.pos.lookAroundFor(LOOK_RESOURCES)
+        if (localResources.length > 0) {
+          hauler.pickup(localResources[0].resource)
+          return
+        }
         if (container.store[RESOURCE_ENERGY]) {
           hauler.withdraw(container, RESOURCE_ENERGY)
         }
