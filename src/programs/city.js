@@ -59,9 +59,11 @@ class City extends kernel.process {
       if (remoteMines.length <= mineCount) {
         const cpuUsage = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
         if (cpuUsage && cpuUsage['long'] <= 1.25) {
-          let mine = this.room.selectNextMine()
-          this.room.addMine(mine)
-          remoteMines = this.room.getMines()
+          const mine = this.room.selectNextMine()
+          if (mine) {
+            this.room.addMine(mine)
+            remoteMines = this.room.getMines()
+          }
         }
       }
 
