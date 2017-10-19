@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "license": "MIT",
   "devDependencies": {
+    "ava": "^0.22.0",
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
-    "gulp-clean": "^0.3.2",
     "gulp-screeps": "^1.0.3",
     "minimist": "^1.2.0",
     "standard": "^10.0.3"
@@ -14,7 +15,8 @@
   "screeps_bot": true,
   "main": "dist/main.js",
   "scripts": {
-    "test": "standard",
+    "test": "standard && ava test",
+    "watch": "ava test --watch",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
     "2npm": "npm publish"
@@ -408,6 +410,5 @@
       "WORK",
       "WORLD_HEIGHT"
     ]
-  },
-  "dependencies": {}
+  }
 }
