@@ -45,13 +45,10 @@ RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false) {
 }
 
 RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
-  const left = Math.max(this.x - range, 0)
-  const right = Math.min(this.x + range, 49)
-  const top = Math.max(this.y - range, 0)
-  const bottom = Math.min(this.y + range, 49)
+  const bounds = createBoundingBoxForRange(this.x, this.y, range)
   let positions = []
-  for (let x = left; x <= right; x++) {
-    for (let y = top; y <= bottom; y++) {
+  for (let x = bounds.left; x <= bounds.right; x++) {
+    for (let y = bounds.top; y <= bounds.bottom; y++) {
       positions.push(new RoomPosition(x, y, this.roomName))
     }
   }
@@ -139,11 +136,8 @@ RoomPosition.prototype.lookAroundFor = function (type, range = 1) {
     return ERR_INVALID_TARGET
   }
   const room = Game.rooms[this.roomName]
-  const left = Math.max(this.x - range, 0)
-  const right = Math.min(this.x + range, 49)
-  const top = Math.max(this.y - range, 0)
-  const bottom = Math.min(this.y + range, 49)
-  return room.lookForAtArea(type, top, left, bottom, right, true)
+  const bounds = createBoundingBoxForRange(this.x, this.y, range)
+  return room.lookForAtArea(type, bounds.top, bounds.left, bounds.bottom, bounds.right, true)
 }
 
 RoomPosition.prototype.lookAround = function (range = 1) {
@@ -151,9 +145,26 @@ RoomPosition.prototype.lookAround = function (range = 1) {
     return ERR_INVALID_TARGET
   }
   const room = Game.rooms[this.roomName]
-  const left = Math.max(this.x - range, 0)
-  const right = Math.min(this.x + range, 49)
-  const top = Math.max(this.y - range, 0)
-  const bottom = Math.min(this.y - range, 49)
-  return room.lookAtArea(top, left, bottom, right, true)
+  const bounds = createBoundingBoxForRange(this.x, this.y, range)
+  return room.lookAtArea(bounds.top, bounds.left, bounds.bottom, bounds.right, true)
+}
+
+/**
+ * Creates a bounding box clamped inside the borders of the room
+ * @param {number} x position to get bounds-range from
+ * @param {number} y position to get bounds-range from
+ * @param {number} range of the bounding box
+ * @returns {{left: number, right: number, top: number, bottom: number}}
+ */
+function createBoundingBoxForRange (x, y, range) {
+  const absRange = Math.abs(range)
+  const left = Math.min(Math.max(x - absRange, 0), 49)
+  const right = Math.max(Math.min(x + absRange, 49), 0)
+  const top = Math.min(Math.max(y - absRange, 0), 49)
+  const bottom = Math.max(Math.min(y + absRange, 49), 0)
+  return {left, right, top, bottom}
+}
+
+module.exports = {
+  createBoundingBoxForRange
 }
