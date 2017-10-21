@@ -21,6 +21,7 @@ Room.addCity = function (roomName) {
     Memory.territory[roomName] = {}
     Logger.log(`Adding city ${roomName}`)
     qlib.events.recordEvent('addcity')
+    qlib.notify.send(`Adding city ${roomName} to empire`)
   }
 }
 
@@ -44,6 +45,7 @@ Room.prototype.addMine = function (mine) {
   Memory.territory[this.name].mines.push(mine)
   Logger.log(`Adding mine from ${this.name} to ${mine}`)
   qlib.events.recordEvent('addmine')
+  qlib.notify.send(`Adding mine from ${this.name} to ${mine}`)
 }
 
 Room.getMineOwner = function (mine) {

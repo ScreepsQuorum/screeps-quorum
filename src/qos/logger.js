@@ -31,6 +31,10 @@ class Logger {
       message = group + ': ' + message
     }
 
+    if (severity >= LOG_ERROR) {
+      qlib.notify.send(message, 500)
+    }
+
     let attributes = ''
     let tag
     if (tags) {
