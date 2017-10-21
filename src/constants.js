@@ -14,6 +14,7 @@ if (!Memory.username) {
   }
 }
 global.USERNAME = Memory.username
+global.PUBLIC_ACCOUNT = USERNAME === 'Quorum'
 
 global.PRIORITIES_DEFAULT = 6
 

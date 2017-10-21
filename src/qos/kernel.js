@@ -59,6 +59,7 @@ class QosKernel {
     }
 
     sos.lib.cache.clean()
+    qlib.notify.clean()
   }
 
   run () {
