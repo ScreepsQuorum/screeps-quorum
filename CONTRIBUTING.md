@@ -7,7 +7,7 @@
 
 ### Documentation
 
-The [developer wiki](https://github.com/ScreepsQuorum/screeps-quorum/wiki) is completely community run, and documentaiton contributions are always appreciated.
+The [developer wiki](https://github.com/ScreepsQuorum/screeps-quorum/wiki) is completely community run, and documentation contributions are always appreciated.
 
 
 ### Reporting Bugs and Suggesting Enhancements

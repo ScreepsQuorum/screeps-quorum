@@ -37,7 +37,7 @@ View the [Quorum Dashboard](http://quorum.tedivm.com/) for all the information o
 
 This project does everything but code itself- that part comes from community pull requests.
 
-The [developer wiki](https://github.com/ScreepsQuorum/screeps-quorum/wiki) should be the first stop before diving into the code. Like the project itself this is completely community run, and documentaiton contributions are always appreciated.
+The [developer wiki](https://github.com/ScreepsQuorum/screeps-quorum/wiki) should be the first stop before diving into the code. Like the project itself this is completely community run, and documentation contributions are always appreciated.
 
 Not sure where to get started? The github project has a [list of needed features](https://github.com/ScreepsQuorum/screeps-quorum/issues) specifically to give people a jumping off point for getting into the project.
 
