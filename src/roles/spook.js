@@ -1,7 +1,12 @@
 'use strict'
 
 const MetaRole = require('roles_meta')
-const CONTROLLER_MESSAGE = '* Self Managed Code * quorum.tedivm.com * #quorum in Slack *'
+let CONTROLLER_MESSAGE
+if (PUBLIC_ACCOUNT) {
+  CONTROLLER_MESSAGE = 'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+} else {
+  CONTROLLER_MESSAGE = 'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+}
 
 class Spook extends MetaRole {
   getBuild (room, options) {
@@ -70,7 +75,7 @@ class Spook extends MetaRole {
     if (!creep.room.controller) {
       return false
     }
-    if (creep.room.controller.sign && creep.room.controller.sign.text === CONTROLLER_MESSAGE) {
+    if (creep.room.controller.sign && creep.room.controller.sign.username === USERNAME) {
       return false
     }
     if (creep.pos.isNearTo(creep.room.controller)) {
