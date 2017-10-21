@@ -35,6 +35,25 @@ const skipStructures = [
   STRUCTURE_RAMPART,
   STRUCTURE_CONTAINER
 ]
+
+const orderStructures = [
+  STRUCTURE_SPAWN,
+  STRUCTURE_TOWER,
+  STRUCTURE_EXTENSION,
+  STRUCTURE_CONTAINER,
+  STRUCTURE_STORAGE,
+  STRUCTURE_LINK,
+  STRUCTURE_WALL,
+  STRUCTURE_EXTRACTOR,
+  STRUCTURE_TERMINAL,
+  STRUCTURE_LAB,
+  STRUCTURE_RAMPART,
+  STRUCTURE_OBSERVER,
+  STRUCTURE_NUKER,
+  STRUCTURE_POWER_SPAWN,
+  STRUCTURE_ROAD
+]
+
 global.LEVEL_BREAKDOWN = {}
 let structure
 for (structure of structures) {
@@ -109,6 +128,12 @@ Room.prototype.getNextMissingStructureType = function () {
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
 
+  // Priority.
+  structures.sort(function (a, b) {
+    return (orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1)
+  })
+
+  // Build all other structures.
   let structureType
   for (structureType of structures) {
     if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
