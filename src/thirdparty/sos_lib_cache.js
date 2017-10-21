@@ -175,10 +175,10 @@ cache.__cleankey = function (object, key) {
     for(var label in object[key]) {
       if(object[key][label]) {
         if(object[key][label].tick) {
-          if(object[key][label].exp && object[key][label].exp < Game.time) {
+          if(object[key][label] && object[key][label].exp && object[key][label].exp < Game.time) {
             delete object[key][label]
           }
-          if(object[key][label].lu && object[key][label].lu < Game.time) {
+          if(object[key][label] && object[key][label].lu && object[key][label].lu < Game.time) {
             delete object[key][label]
           }
         } else {
