@@ -48,6 +48,9 @@ class EmpireIntel extends kernel.process {
   }
 
   cleanTargets () {
+    if (!Memory.intel) {
+      return
+    }
     const targets = Object.keys(Memory.intel.targets)
     for (let target of targets) {
       if (Game.time - Memory.intel.targets[target] > 5000) {
