@@ -11,6 +11,11 @@ class Player extends kernel.process {
   }
 
   main () {
+    if (!qlib.events.hasEventHappened('epoch')) {
+      qlib.events.recordEvent('epoch')
+    }
+    const empireAge = qlib.events.getTimeSinceEvent('epoch')
+
     this.launchChildProcess('respawner', 'respawner')
     this.launchChildProcess('intel', 'empire_intel')
     this.launchChildProcess('market', 'empire_market')
@@ -32,8 +37,12 @@ class Player extends kernel.process {
       })
     }
 
+    if (qlib.events.getTimeSinceEvent('epoch') < 3000) {
+      return
+    }
+
     const lastAdd = qlib.events.getTimeSinceEvent('addcity')
-    if (lastAdd > 2000) {
+    if (empireAge > 10000 && lastAdd > 2000) {
       const defaultPriorityStats = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
       if (defaultPriorityStats && defaultPriorityStats['long'] <= 1.25) {
         if (cities.length < Game.gcl.level) {

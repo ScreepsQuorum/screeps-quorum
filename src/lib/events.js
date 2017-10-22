@@ -21,6 +21,10 @@ class Events {
   getTimeSinceEvent (event) {
     return Game.time - this.getEventTime()
   }
+
+  hasEventHappened (event) {
+    return Boolean(this.memory[event])
+  }
 }
 
 module.exports = new Events()
