@@ -51,6 +51,24 @@ class Process {
     return this.data.children[label]
   }
 
+  getChildProcessPid (label) {
+    if (!this.data.children) {
+      return false
+    }
+    if (!this.data.children[label]) {
+      return false
+    }
+    return this.data.children[label]
+  }
+
+  isChildProcessRunning (label) {
+    const pid = this.getChildProcessPid(label)
+    if (!pid) {
+      return false
+    }
+    return kernel.scheduler.isPidActive(pid)
+  }
+
   launchProcess (label, name, data = {}) {
     if (!this.data.processes) {
       this.data.processes = {}
@@ -61,6 +79,24 @@ class Process {
     }
     this.data.processes[label] = kernel.scheduler.launchProcess(name, data)
     return this.data.processes[label]
+  }
+
+  getProcessPid (label) {
+    if (!this.data.processes) {
+      return false
+    }
+    if (!this.data.processes[label]) {
+      return false
+    }
+    return this.data.processes[label]
+  }
+
+  isProcessRunning (label) {
+    const pid = this.getProcessPid(label)
+    if (!pid) {
+      return false
+    }
+    return kernel.scheduler.isPidActive(pid)
   }
 
   launchCreepProcess (label, role, roomname, quantity = 1, options = {}) {
