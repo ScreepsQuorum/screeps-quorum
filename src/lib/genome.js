@@ -26,13 +26,11 @@
  * myGenome.trait('aggression', 5, {min: 1, max: 9})
  */
 class Genome {
-  constructor (initializer) {
+  constructor (initializer, returnExpected = false) {
     // defined for convenience, do not change without also changing Lehmer multiplier in `_getNumberFromSeed`
     this.max = 2147483647
     this.seed = this._getNumberFromString(initializer)
-    if (initializer === 'Quorum') {
-      this.returnDefault = true
-    }
+    this.returnDefault = returnExpected
   }
 
   trait (name, expected, opts) {
@@ -173,9 +171,6 @@ if (typeof module !== 'undefined' && !module.parent) {
   }
 } else {
   // Use the botname as the seed.
-  let botname = 'Quorum'
-  if (global.USERNAME) {
-    botname = global.USERNAME
-  }
-  module.exports = new Genome(botname)
+  let botname = global.USERNAME ? global.USERNAME : 'Quorum'
+  module.exports = new Genome(botname, PUBLIC_ACCOUNT)
 }
