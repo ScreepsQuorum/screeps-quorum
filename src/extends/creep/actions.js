@@ -28,6 +28,39 @@ Creep.prototype.recharge = function () {
     return true
   }
 
+  // Check for qualifying dropped energy.
+  const resources = this.room.find(FIND_DROPPED_RESOURCES, {filter: function (resource) {
+    if (resource.resourceType !== RESOURCE_ENERGY) {
+      return false
+    }
+
+    // Is resource on top of container?
+    const structures = resource.pos.lookFor(LOOK_STRUCTURES)
+    for (let structure of structures) {
+      if (structure.structureType === STRUCTURE_CONTAINER) {
+        return true
+      }
+    }
+
+    // Is the resource near the room storage?
+    if (this.room.storage && this.room.storage.pos.getRangeTo(resource) <= 2) {
+      return true
+    }
+
+    return false
+  }})
+
+  if (resources.length > 0) {
+    const resource = this.pos.findClosestByRange(resources)
+    if (!this.pos.isNearTo(resource)) {
+      this.travelTo(resource)
+    }
+    if (this.pos.isNearTo(resource)) {
+      this.pickup(resource)
+    }
+    return true
+  }
+
   // If there is no storage check for containers.
   const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > 200)
   if (containers.length > 0) {
