@@ -68,33 +68,13 @@ class CityDefense extends kernel.process {
   }
 
   fireTowers (towers, hostiles) {
-    const attackFunc = (attackTargets) => {
-      let usableTowers = _.countBy(towers, (tower) => tower.energy < TOWER_ENERGY_COST)
-
-      while (usableTowers > 0) {
-        const closest = _.min(attackTargets, c => c.pos.getRangeTo(towers[0].pos))
-
-        if (!closest) {
-          break
+    const attackFunc = (attackTarget) => {
+      for (let tower of towers) {
+        if (tower.energy < TOWER_ENERGY_COST) {
+          continue
         }
 
-        let hitpoints = closest.hits
-
-        for (let tower of towers) {
-          if (tower.energy < TOWER_ENERGY_COST) {
-            continue
-          }
-
-          if (usableTowers === 0 || hitpoints <= 0) {
-            break
-          }
-
-          const distance = tower.pos.getRangeTo(closest.pos)
-          hitpoints -= global.TOWER_DAMAGE_EFFECT[distance]
-          usableTowers -= 1
-
-          tower.attack(closest)
-        }
+        tower.attack(attackTarget)
       }
     }
 
@@ -113,7 +93,8 @@ class CityDefense extends kernel.process {
     }
 
     if (hostiles.length > 0) {
-      attackFunc(hostiles)
+      const closestHostile = _.min(hostiles, c => c.pos.getRangeTo(towers[0].pos))
+      attackFunc(closestHostile)
       return
     }
 
