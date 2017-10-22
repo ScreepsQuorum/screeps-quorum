@@ -40,6 +40,26 @@ class EmpireExpand extends kernel.process {
       return
     }
 
+    // First run after claiming- record tick and launch layout process
+    if (!this.data.claimedAt) {
+      if (!this.colony.getLayout().isPlanned()) {
+        this.launchChildProcess('layout', 'city_layout', {
+          'room': this.data.colony
+        })
+      }
+      this.data.claimedAt = Game.time
+    }
+
+    // If layout isn't complete after a full generation unclaim and try again somewhere else.
+    if (Game.time - this.data.claimedAt > 1500) {
+      if (!this.colony.getLayout().isPlanned()) {
+        this.colony.controller.unclaim()
+        delete this.data.claimedAt
+        delete this.data.colony
+        return
+      }
+    }
+
     this.upgrade()
     const sources = this.colony.find(FIND_SOURCES)
     for (let source of sources) {
@@ -70,13 +90,8 @@ class EmpireExpand extends kernel.process {
       return
     }
 
-    // If the room isn't planned launch the room layout program, otherwise launch construction program
-
-    if (!this.colony.getLayout().isPlanned()) {
-      this.launchChildProcess('layout', 'city_layout', {
-        'room': this.data.colony
-      })
-    } else {
+    // If the room planned launch the construction program
+    if (this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.colony
       })
