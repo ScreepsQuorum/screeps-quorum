@@ -230,14 +230,6 @@ Room.getCityScore = function (roomName) {
     return false
   }
 
-  // As written the INTEL_SOURCES check should cover this, hoever these were added after so for the current running user
-  // this check is required until the intel tills in. This check should be safe to remove a week or so after this code
-  // is pushed up.
-  if (!intel[INTEL_WALKABILITY] || !intel[INTEL_WALKABILITY]) {
-    Room.requestIntel(roomName)
-    return false
-  }
-
   // Make sure the room has enough free space.
   if (intel[INTEL_WALKABILITY] < CITY_MIN_WALKABILITY) {
     return false
