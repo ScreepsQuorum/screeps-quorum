@@ -90,7 +90,7 @@ class EmpireExpand extends kernel.process {
       return
     }
 
-    // If the room planned launch the construction program
+    // If the room layout is planned launch the construction program
     if (this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.colony
