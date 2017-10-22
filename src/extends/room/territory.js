@@ -25,6 +25,10 @@ Room.addCity = function (roomName) {
   }
 }
 
+Room.isCity = function (roomName) {
+  return Boolean(Memory.territory[roomName])
+}
+
 Room.prototype.getMines = function () {
   if (!Memory.territory || !Memory.territory[this.name]) {
     return []
