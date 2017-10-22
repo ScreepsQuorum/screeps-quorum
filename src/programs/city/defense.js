@@ -69,14 +69,32 @@ class CityDefense extends kernel.process {
 
   fireTowers (towers, hostiles) {
     const attackFunc = (attackTargets) => {
-      // for now, just shoot closest for each tower
-      for (let tower of towers) {
-        if (tower.energy < TOWER_ENERGY_COST) {
-          continue
+      let usableTowers = _.countBy(towers, (tower) => tower.energy < TOWER_ENERGY_COST)
+
+      while(usableTowers > 0){
+        const closest = _.min(attackTargets, c => c.pos.getRangeTo(towers[0].pos))
+
+        if(!closest){
+          break
         }
 
-        const closest = _.min(attackTargets, c => c.pos.getRangeTo(tower.pos))
-        tower.attack(closest)
+        let hitpoints = closest.hits
+        
+        for (let tower of towers) {
+          if (tower.energy < TOWER_ENERGY_COST) {
+            continue
+          }
+
+          if(usableTowers === 0 || hitpoints <= 0){
+            break
+          }
+  
+          const distance = tower.pos.getRangeTo(healTarget.pos)
+          hitpoints -= global.TOWER_DAMAGE_EFFECT[distance]
+          usableTowers -= 1
+
+          tower.attack(closest)
+        }
       }
     }
 
