@@ -86,14 +86,10 @@ class QosKernel {
         }
         this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
       } catch (err) {
-        Logger.log('program error occurred', LOG_ERROR)
-        Logger.log(`process ${runningProcess.pid}: ${runningProcess.name}`, LOG_ERROR)
-        if (!!err && !!err.stack) {
-          Logger.log(err.stack, LOG_ERROR)
-        } else {
-          Logger.log(err.toString(), LOG_ERROR)
-        }
-        // (!!err && !!err.stack) ? Logger.log(err.stack, LOG_ERROR) : Logger.log(err.toString(), LOG_ERROR)
+        let message = 'program error occurred\n'
+        message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
+        message += !!err && !!err.stack ? err.stack : err.toString()
+        Logger.log(message, LOG_ERROR)
       }
       Logger.defaultLogGroup = 'default'
     }
