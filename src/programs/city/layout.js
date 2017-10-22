@@ -209,7 +209,8 @@ class CityLayout extends kernel.process {
     }
     if (this.data.plan >= plans.length) {
       // Room probably can't support things
-      this.suicide()
+      Logger.log(`Unable to come up with a layout for ${this.room.name}`, LOG_ERROR)
+      return this.suicide()
     }
 
     // Actually run layout planning attempt.
