@@ -14,24 +14,26 @@ var Notify = function (message, limit=false, groups=false) {
   // In cases where there are limits we have to record the history.
 
   var queue_message = message + '::' + groups.join('_')
+  // Normalize digits to prevent subtly changing numbers (increasing pids) from bypassing ratelimiting.
+  var history_message = queue_message.replace(/\s(\d+)/g, 'X')
 
   if(!Memory.__notify_history) {
     Memory.__notify_history = {}
   }
 
   // If the message was sent in the last LIMIT ticks then don't send again.
-  if(!!Memory.__notify_history[queue_message]) {
-    var lastSent = Memory.__notify_history[queue_message]
+  if(!!Memory.__notify_history[history_message]) {
+    var lastSent = Memory.__notify_history[history_message]
     if(lastSent >= Game.time - limit) {
       return
     } else {
       // History is older than limit so delete it.
-      delete Memory.__notify_history[message]
+      delete Memory.__notify_history[history_message]
     }
   }
 
   // Record message in history and send it.
-  Memory.__notify_history[queue_message] = Game.time
+  Memory.__notify_history[history_message] = Game.time
   Notify.queueMessage(message, groups)
   return 0
 }
