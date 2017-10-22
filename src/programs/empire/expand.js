@@ -262,7 +262,7 @@ class EmpireExpand extends kernel.process {
     }
 
     const miners = this.getCluster(`miner_${source.id}`, spawnRoom)
-    if (!this.data.deathwatch) {
+    if (!this.data.deathwatch && !this.colony.getRoomSetting('SELF_SUFFICIENT')) {
       miners.sizeCluster('miner', 1)
     }
     miners.forEach(function (miner) {
