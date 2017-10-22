@@ -5,6 +5,11 @@
 
 ## How Can I Contribute?
 
+### Documentation
+
+The [developer wiki](https://github.com/ScreepsQuorum/screeps-quorum/wiki) is completely community run, and documentation contributions are always appreciated.
+
+
 ### Reporting Bugs and Suggesting Enhancements
 
 Bug Reports and Feature Requests are extremely important to a project like this. As it is completely volunteer run, with no leaders, it's important to give people projects they can use to jump right into the code base. When submitting a new issue please take care to -
