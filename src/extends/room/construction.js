@@ -129,7 +129,7 @@ Room.prototype.getNextMissingStructureType = function () {
   structures.sort(function (a, b) {
     return (orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1)
   })
-  
+
   // Get room layout, if it exists, and use that to check which planned structureTypes are missing.
   const layout = this.getLayout()
   if (!layout.isPlanned()) {
