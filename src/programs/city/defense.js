@@ -155,17 +155,14 @@ class CityDefense extends kernel.process {
   }
 
   calculateWithFallOff (optimalValue, distance) {
-    let factor = 0.0
-
-    if (distance < TOWER_OPTIMAL_RANGE) {
-      factor = 1
-    } else if (distance >= TOWER_FALLOFF_RANGE) {
-      factor = 1 - TOWER_FALLOFF
-    } else {
-      factor = 1 - (distance - TOWER_OPTIMAL_RANGE) * (TOWER_FALLOFF / (TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE))
+    let effect = optimalValue
+    if (distance > TOWER_OPTIMAL_RANGE) {
+      if (distance > TOWER_FALLOFF_RANGE) {
+          distance = TOWER_FALLOFF_RANGE
+      }
+      effect -= effect * TOWER_FALLOFF * (distance - TOWER_OPTIMAL_RANGE) / (TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE)
     }
-
-    return Math.round(optimalValue * factor)
+    return Math.floor(effect)
   }
 }
 
