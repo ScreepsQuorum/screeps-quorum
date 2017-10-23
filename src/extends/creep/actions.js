@@ -5,7 +5,7 @@ Creep.prototype.recharge = function () {
     this.memory.recharge = true
   }
   if (this.carry[RESOURCE_ENERGY] >= this.carryCapacity) {
-    this.memory.recharge = false
+    delete this.memory.recharge
   }
   if (!this.memory.recharge) {
     return false
