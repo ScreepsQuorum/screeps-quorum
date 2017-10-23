@@ -30,6 +30,7 @@ const structureMap = [
 
 const structures = Object.keys(CONTROLLER_STRUCTURES)
 const skipStructures = [
+  STRUCTURE_ROAD,
   STRUCTURE_WALL,
   STRUCTURE_RAMPART,
   STRUCTURE_CONTAINER
@@ -119,10 +120,7 @@ Room.prototype.constructNextMissingStructure = function () {
 }
 
 Room.prototype.getNextMissingStructureType = function () {
-  if (!this.isMissingStructures()) {
-    return false
-  }
-  const structureCount = this.getStructureCount()
+  const structureCount = this.getStructureCount(FIND_STRUCTURES)
   const nextLevel = this.getPracticalRoomLevel() + 1
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
@@ -131,25 +129,25 @@ Room.prototype.getNextMissingStructureType = function () {
   structures.sort(function (a, b) {
     return (orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1)
   })
+  
+  // Get room layout, if it exists, and use that to check which planned structureTypes are missing.
+  const layout = this.getLayout()
+  if (!layout.isPlanned()) {
+    return false
+  }
+  const allStructurePositions = layout.getAllStructures()
 
   // Build all other structures.
   let structureType
   for (structureType of structures) {
-    if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
+    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0) {
       continue
     }
-    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
-      continue
-    }
-    if (!structureCount[structureType] || structureCount[structureType] < nextLevelStructureCount[structureType]) {
+    if (!structureCount[structureType] || (structureCount[structureType] < nextLevelStructureCount[structureType] && structureCount[structureType] < allStructurePositions[structureType].length)) {
       return structureType
     }
   }
   return false
-}
-
-Room.prototype.isMissingStructures = function () {
-  return this.getPracticalRoomLevel() < this.controller.level
 }
 
 Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES) {
