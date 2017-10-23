@@ -43,7 +43,7 @@ Creep.prototype.recharge = function () {
     }
 
     // Is the resource near the room storage?
-    if (this.room.storage && this.room.storage.pos.getRangeTo(resource) <= 2) {
+    if (resource.room.storage && resource.room.storage.pos.getRangeTo(resource) <= 2) {
       return true
     }
 
