@@ -25,6 +25,10 @@ Room.addCity = function (roomName) {
   }
 }
 
+Room.isCity = function (roomName) {
+  return Boolean(Memory.territory[roomName])
+}
+
 Room.prototype.getMines = function () {
   if (!Memory.territory || !Memory.territory[this.name]) {
     return []
@@ -195,6 +199,9 @@ const CITY_MIN_WALKABILITY = 0.4
 // Claim creeps will not be able to go further than this.
 const CITY_MAX_REACHABILITY_DISTANCE = Math.floor(CREEP_CLAIM_LIFE_TIME / 50)
 
+// Number of 2 source cities needed before the system is willing to consider one source rooms
+const CITY_MINIMUM_CITIES_BEFORE_ONE_SOURCE = 5
+
 Room.getCityScore = function (roomName) {
   // Skip rooms that can not be claimed.
   if (!Room.isClaimable(roomName)) {
@@ -223,16 +230,12 @@ Room.getCityScore = function (roomName) {
     return false
   }
 
-  // As written the INTEL_SOUrCES check should cover this, hoever these were added after so for the current running user
-  // this check is required until the intel tills in. This check should be safe to remove a week or so after this code
-  // is pushed up.
-  if (!intel[INTEL_WALKABILITY] || !intel[INTEL_WALKABILITY]) {
-    Room.requestIntel(roomName)
+  // Make sure the room has enough free space.
+  if (intel[INTEL_WALKABILITY] < CITY_MIN_WALKABILITY) {
     return false
   }
 
-  // Make sure the room has enough free space.
-  if (intel[INTEL_WALKABILITY] < CITY_MIN_WALKABILITY) {
+  if (intel[INTEL_SOURCES] < 2 && Room.getCities().length < CITY_MINIMUM_CITIES_BEFORE_ONE_SOURCE) {
     return false
   }
 

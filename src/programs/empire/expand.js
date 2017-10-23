@@ -98,12 +98,16 @@ class EmpireExpand extends kernel.process {
     }
 
     if (this.colony.getRoomSetting('SELF_SUFFICIENT')) {
-      if (!this.data.deathwatch) {
+      if (!Room.isCity(this.data.colony)) {
         Room.addCity(this.data.colony)
-        this.data.deathwatch = Game.time
       }
-      if (Game.time - this.data.deathwatch > 1800) {
-        this.suicide()
+      if (this.colony.storage) {
+        if (!this.data.deathwatch) {
+          this.data.deathwatch = Game.time
+        }
+        if (Game.time - this.data.deathwatch > 1800) {
+          this.suicide()
+        }
       }
     }
   }
@@ -258,7 +262,7 @@ class EmpireExpand extends kernel.process {
     }
 
     const miners = this.getCluster(`miner_${source.id}`, spawnRoom)
-    if (!this.data.deathwatch) {
+    if (!this.data.deathwatch && !this.colony.getRoomSetting('SELF_SUFFICIENT')) {
       miners.sizeCluster('miner', 1)
     }
     miners.forEach(function (miner) {
