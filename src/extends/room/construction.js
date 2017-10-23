@@ -30,7 +30,6 @@ const structureMap = [
 
 const structures = Object.keys(CONTROLLER_STRUCTURES)
 const skipStructures = [
-  STRUCTURE_ROAD,
   STRUCTURE_WALL,
   STRUCTURE_RAMPART,
   STRUCTURE_CONTAINER
