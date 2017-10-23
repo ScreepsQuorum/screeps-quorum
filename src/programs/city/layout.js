@@ -340,9 +340,9 @@ class CityLayout extends kernel.process {
 
     const flower2Adjusted = new RoomPosition(flower2Pos.x - LAYOUT_FLOWER_BUFFER, flower2Pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
     this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
-    
+
     this.planRoads(layout, corePos, flower1Pos, flower2Pos)
-    
+
     layout.save()
     Logger.log(`Room planning for room ${this.data.room} has successfully completed`)
     return this.suicide()
@@ -373,7 +373,7 @@ class CityLayout extends kernel.process {
       }
     }
   }
-  
+
   /**
    * Plan roads from the core to the flowers and major room features (controller, sources, minerals).
    */
@@ -395,21 +395,21 @@ class CityLayout extends kernel.process {
       this.planRoad(layout, corePos, mineral.pos, matrix)
     }
   }
-  
+
   /*
    * Plan a road between the given two positions within the same room.
    * If a costMatrix is given, that will be used instead of generating a new one from the given layout's current state.
    */
   planRoad (layout, fromPos, toPos, matrix) {
     if (!matrix) matrix = this.getConstructionMatrix(layout)
-    let path = PathFinder.search(fromPos, {pos: toPos, range: 1}, {plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => {if(roomName !== this.room.name) {return false} else {return matrix}}})
-    if (!path || path.incomplete) path = PathFinder.search(fromPos, {pos: toPos, range: 1}, {plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => {if(roomName !== this.room.name) {return false} else {return matrix}}, heuristicWeight: 1.5})
+    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.room.name) { return false } else { return matrix } } })
+    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.room.name) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
-    for(spot of path.path) {
+    for (spot of path.path) {
       if (layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
     }
   }
-  
+
   /**
    * Generate a road construction costMatrix from the given layout.
    * Only structures in the layout are taken into consideration, unplanned existing structures are ignored. (maybe not ideal, discuss)
@@ -466,7 +466,7 @@ class CityLayout extends kernel.process {
 
     return costMatrix
   }
-  
+
   /**
    * Return positions with the required amount of room around them. A random result from all possible matches is
    * returned, or if a sort function is provided it will be run *after* a shuffle is applied (so positions with the same
