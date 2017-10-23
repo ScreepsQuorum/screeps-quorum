@@ -59,6 +59,9 @@ Room.getCoordinates = function (name) {
 }
 
 Room.getRoomsInRange = function (name, range) {
+  if (name === 'sim') {
+    return []
+  }
   const coords = Room.getCoordinates(name)
   const startXdir = coords.x_dir
   const startYdir = coords.y_dir
@@ -121,6 +124,9 @@ Room.isSourcekeeper = function (name) {
 }
 
 Room.isHallway = function (name) {
+  if (name === 'sim') {
+    return false
+  }
   const coords = Room.getCoordinates(name)
   let xMod = coords.x % 10
   let yMod = coords.y % 10
