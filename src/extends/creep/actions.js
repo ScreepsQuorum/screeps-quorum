@@ -41,6 +41,27 @@ Creep.prototype.recharge = function () {
     return true
   }
 
+  // If there are no containers check for large piles of energy.
+  const droppedEnergyPiles = this.room.find(FIND_DROPPED_RESOURCES, {
+    filter: { resourceType: RESOURCE_ENERGY }
+  })
+  if (droppedEnergyPiles.length > 0) {
+    const largestPile = _.max(droppedEnergyPiles, (e) => e.amount)
+    const distanceToPile = this.pos.getManhattanDistance(largestPile)
+    const minimumDecayValue = Math.ceil(largestPile.amount / 1000) * distanceToPile
+    const optimisticAmountOnArrive = Math.max(0, largestPile.amount - minimumDecayValue)
+
+    if (optimisticAmountOnArrive >= this.carryCapacity) {
+      if (!this.pos.isNearTo(largestPile)) {
+        this.travelTo(largestPile)
+      }
+      if (this.pos.isNearTo(largestPile)) {
+        this.pickup(largestPile)
+      }
+      return true
+    }
+  }
+
   // As a last resort harvest energy from the active sources.
   if (this.getActiveBodyparts(WORK) <= 0) {
     // Still returning true because the creep still does need to recharge.
