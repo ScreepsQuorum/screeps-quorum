@@ -158,7 +158,7 @@ class CityDefense extends kernel.process {
     let effect = optimalValue
     if (distance > TOWER_OPTIMAL_RANGE) {
       if (distance > TOWER_FALLOFF_RANGE) {
-          distance = TOWER_FALLOFF_RANGE
+        distance = TOWER_FALLOFF_RANGE
       }
       effect -= effect * TOWER_FALLOFF * (distance - TOWER_OPTIMAL_RANGE) / (TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE)
     }
