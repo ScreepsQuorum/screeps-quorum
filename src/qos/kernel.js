@@ -95,6 +95,14 @@ class QosKernel {
     }
   }
 
+  sigmoid (x) {
+    return 1.0 / (1.0 + Math.exp(-x))
+  }
+
+  sigmoidSkewed (x) {
+    return this.sigmoid((x * 12.0) - 6.0)
+  }
+
   shouldContinue () {
     return !!this.simulation || Game.cpu.getUsed() < this.getCpuLimit()
   }
@@ -114,9 +122,10 @@ class QosKernel {
 
     if (!this._cpuLimit) {
       const bucketRange = BUCKET_CEILING - BUCKET_FLOOR
-      const adjustedPercentage = (Game.cpu.bucket - (10000 - bucketRange)) / bucketRange
-      const cpuPercentage = CPU_MINIMUM + ((1 - CPU_MINIMUM) * adjustedPercentage)
-      this._cpuLimit = (Game.cpu.limit * (1 - CPU_ADJUST)) * cpuPercentage
+      const depthInRange = (Game.cpu.bucket - BUCKET_FLOOR) / bucketRange
+      const minToAllocate = Game.cpu.limit * CPU_MINIMUM
+      const maxToAllocate = Game.cpu.limit
+      this._cpuLimit = (minToAllocate + this.sigmoidSkewed(depthInRange) * (maxToAllocate - minToAllocate)) * (1 - CPU_ADJUST)
       if (this.newglobal) {
         this._cpuLimit += CPU_GLOBAL_BOOST
       }
