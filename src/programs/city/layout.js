@@ -367,7 +367,7 @@ class CityLayout extends kernel.process {
         }
         const structure = matrix[row][column]
         layout.planStructureAt(structure, leftCorner.x + column, leftCorner.y + row)
-        if (structure !== STRUCTURE_ROAD && !OBSTACLE_OBJECT_TYPES.contains(structure)) {
+        if (structure !== STRUCTURE_ROAD && OBSTACLE_OBJECT_TYPES.indexOf(structure) === -1) {
           layout.planStructureAt(STRUCTURE_ROAD, leftCorner.x + column, leftCorner.y + row)
         }
       }
@@ -426,10 +426,10 @@ class CityLayout extends kernel.process {
           costMatrix.set(x, y, 30)
         }
         if (layout) {
-          plannedStruct = layout.get(x, y)
+          plannedStruct = layout.getStructureAt(x, y)
           if (plannedStruct === 3) { // magic number due to lacking access to structureMap
             costMatrix.set(x, y, 1)
-          } else if (![0, 3, 5, 7, 16, 17].contains(plannedStruct)) { // magic numbers due to lacking access to structureMap
+          } else if ([0, 3, 5, 7, 16, 17].indexOf(plannedStruct) === -1) { // magic numbers due to lacking access to structureMap
             costMatrix.set(x, y, 0xff)
           }
         }
