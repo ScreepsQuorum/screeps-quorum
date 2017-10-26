@@ -46,8 +46,8 @@ class City extends kernel.process {
     const fillerQuantity = this.room.getRoomSetting('ADDITIONAL_FILLERS') ? 4 : 2
     this.launchCreepProcess('fillers', 'filler', this.data.room, fillerQuantity, options)
 
-    // Launch mining
-    if (this.room.energyCapacityAvailable >= 800) {
+    // Launch mining if all level 2 extensions are build.
+    if (this.room.energyCapacityAvailable > 500) {
       this.launchChildProcess('mining', 'city_mine', {
         'room': this.data.room
       })

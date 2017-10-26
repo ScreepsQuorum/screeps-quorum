@@ -89,18 +89,17 @@ class CityMine extends kernel.process {
         miner.travelTo(minerPos)
         return
       }
+
+      let needsRepairs = container && container.hits < container.hitsMax
+
       if (construction && miner.carry[RESOURCE_ENERGY]) {
         miner.build(construction)
         return
       }
-      if (source.energy > 0) {
+      if (needsRepairs && miner.carry[RESOURCE_ENERGY] > 0) {
+        miner.repair(container)
+      } else if (source.energy > 0) {
         miner.harvest(source)
-      } else if (container && container.hits < container.hitsMax) {
-        if (miner.carry[RESOURCE_ENERGY] > 0) {
-          miner.repair(container)
-        } else if (container.store[RESOURCE_ENERGY] > 0) {
-          miner.withdraw(container, RESOURCE_ENERGY)
-        }
       }
     })
 
