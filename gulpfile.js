@@ -53,7 +53,7 @@ gulp.task('deploy', ['copy'], () => {
 
   options.ptr = opts.ptr || false
   options.branch = opts.branch || 'default'
-  options.email = opts.email
+  options.email = opts.email || opts.username
   options.password = opts.password
   options.host = opts.host || 'screeps.com'
   options.secure = !!opts.ssl || (options.host === 'screeps.com')
