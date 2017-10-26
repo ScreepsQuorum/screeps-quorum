@@ -406,7 +406,7 @@ class CityLayout extends kernel.process {
     if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.room.name) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
     for (spot of path.path) {
-      if (layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
+      if (spot.isSteppable() && !spot.isExit() && layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
     }
   }
 
@@ -422,7 +422,7 @@ class CityLayout extends kernel.process {
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (pos.inFrontOfExit()) {
+        if (pos.isExit() || (pos.isSteppable() && pos.inFrontOfExit())) {
           costMatrix.set(x, y, 30)
         }
         if (layout) {
@@ -440,27 +440,27 @@ class CityLayout extends kernel.process {
      * these may not even be needed for just planning roads.
      */
     if (this.room.controller) {
-      const poses = this.room.controller.pos.getAdjacentInRange(2)
+      const poses = this.room.controller.pos.getSteppableAdjacentInRange(2)
       let pos
       for (pos of poses) {
-        costMatrix.set(pos.x, pos.y, 10)
+        costMatrix.set(pos.x, pos.y, 30)
       }
     }
     const sources = this.room.find(FIND_SOURCES)
     let source,
       pos
     for (source of sources) {
-      const poses = source.pos.getAdjacentInRange(1)
+      const poses = source.pos.getSteppableAdjacentInRange(1)
       for (pos of poses) {
-        costMatrix.set(pos.x, pos.y, 10)
+        costMatrix.set(pos.x, pos.y, 30)
       }
     }
     const minerals = this.room.find(FIND_MINERALS)
     let mineral
     for (mineral of minerals) {
-      const poses = mineral.pos.getAdjacentInRange(1)
+      const poses = mineral.pos.getSteppableAdjacentInRange(1)
       for (pos of poses) {
-        costMatrix.set(pos.x, pos.y, 10)
+        costMatrix.set(pos.x, pos.y, 30)
       }
     }
 
