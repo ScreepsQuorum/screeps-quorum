@@ -55,6 +55,19 @@ RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
   return positions
 }
 
+RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
+  const bounds = createBoundingBoxForRange(this.x, this.y, range)
+  let positions = [],
+	position
+  for (let x = bounds.left; x <= bounds.right; x++) {
+    for (let y = bounds.top; y <= bounds.bottom; y++) {
+	  position = new RoomPosition(x, y, this.roomName)
+      if (position.isSteppable()) positions.push(position)
+    }
+  }
+  return positions
+}
+
 RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
   if (this.getTerrainAt() === 'wall') {
     return false
