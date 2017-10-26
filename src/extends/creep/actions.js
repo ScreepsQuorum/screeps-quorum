@@ -62,7 +62,7 @@ Creep.prototype.recharge = function () {
   }
 
   // If there is no storage check for containers.
-  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > 200)
+  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > Math.min(a.storageCapacity, this.carryCapacity))
   if (containers.length > 0) {
     const container = this.pos.findClosestByRange(containers)
     if (!this.pos.isNearTo(container)) {
