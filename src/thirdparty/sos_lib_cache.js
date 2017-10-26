@@ -167,8 +167,7 @@ cache.__cleankey = function (object, key) {
   if(object[key].tick) {
     if(object[key].exp && object[key].exp < Game.time) {
       delete object[key]
-    }
-    if(object[key].lu && object[key].lu < Game.time) {
+    } else if(object[key].lu && object[key].lu < Game.time) {
       delete object[key]
     }
   } else {
@@ -177,8 +176,7 @@ cache.__cleankey = function (object, key) {
         if(object[key][label].tick) {
           if(object[key][label] && object[key][label].exp && object[key][label].exp < Game.time) {
             delete object[key][label]
-          }
-          if(object[key][label] && object[key][label].lu && object[key][label].lu < Game.time) {
+          } else if(object[key][label] && object[key][label].lu && object[key][label].lu < Game.time) {
             delete object[key][label]
           }
         } else {
