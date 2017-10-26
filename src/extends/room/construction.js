@@ -87,6 +87,7 @@ Room.prototype.constructNextMissingStructure = function () {
   if (!layout.isPlanned()) {
     return false
   }
+  if (Game.cpu.bucket > 9500 || Game.time % 1000 < 100) layout.visualize()
   const allStructurePositions = layout.getAllStructures()
   if (!allStructurePositions[structureType]) {
     return false
