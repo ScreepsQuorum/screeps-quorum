@@ -85,7 +85,7 @@ class CityMine extends kernel.process {
 
     miners.sizeCluster('miner', minerQuantity, {'priority': 2})
     miners.forEach(function (miner) {
-      if (!miner.pos.isNearTo(source)) {
+      if (miner.pos.getRangeTo(minerPos) !== 0) {
         miner.travelTo(minerPos)
         return
       }
