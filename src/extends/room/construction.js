@@ -118,6 +118,7 @@ Room.prototype.constructNextMissingStructure = function () {
 
 Room.prototype.getNextMissingStructureType = function () {
   const structureCount = this.getStructureCount(FIND_STRUCTURES)
+  const constructionCount = this.getConstructionCount()
   const nextLevel = this.getPracticalRoomLevel() + 1
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
@@ -137,10 +138,10 @@ Room.prototype.getNextMissingStructureType = function () {
   // Build all other structures.
   let structureType
   for (structureType of structures) {
-    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0) {
+    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0 || (this.controller && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) >= LEVEL_BREAKDOWN[this.controller.level][structureType])) {
       continue
     }
-    if ((structureCount[structureType] || 0) < nextLevelStructureCount[structureType] && structureCount[structureType] < allStructurePositions[structureType].length) {
+    if ((structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < nextLevelStructureCount[structureType] && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < allStructurePositions[structureType].length) {
       return structureType
     }
   }
@@ -156,6 +157,19 @@ Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES)
       counts[structure.structureType] = 0
     }
     counts[structure.structureType]++
+  }
+  return counts
+}
+
+Room.prototype.getConstructionCount = function (constructionFind = FIND_MY_CONSTRUCTION_SITES) {
+  const sites = this.find(constructionFind)
+  const counts = {}
+  let site
+  for (site of sites) {
+    if (!counts[site.structureType]) {
+      counts[site.structureType] = 0
+    }
+    counts[site.structureType]++
   }
   return counts
 }
