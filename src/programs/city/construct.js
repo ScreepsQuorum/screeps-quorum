@@ -20,11 +20,7 @@ class CityConstruct extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
-      filter: function (site) {
-        return site.structureType !== STRUCTURE_ROAD && site.structureType !== STRUCTURE_CONTAINER
-      }
-    })
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES)
     if (sites.length <= 0) {
       let result = this.room.constructNextMissingStructure()
       if (Number.isInteger(result) && result < 0) {
