@@ -57,9 +57,6 @@ const orderStructures = [
 global.LEVEL_BREAKDOWN = {}
 let structure
 for (structure of structures) {
-  if (skipStructures.indexOf(structure) !== -1) {
-    continue
-  }
   const levels = Object.keys(CONTROLLER_STRUCTURES[structure])
   let level
   for (level of levels) {
@@ -143,7 +140,7 @@ Room.prototype.getNextMissingStructureType = function () {
     if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0) {
       continue
     }
-    if (!structureCount[structureType] || (structureCount[structureType] < nextLevelStructureCount[structureType] && structureCount[structureType] < allStructurePositions[structureType].length)) {
+    if ((structureCount[structureType] || 0) < nextLevelStructureCount[structureType] && structureCount[structureType] < allStructurePositions[structureType].length) {
       return structureType
     }
   }
@@ -173,7 +170,7 @@ Room.prototype.getPracticalRoomLevel = function () {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])
     let structureType
     for (structureType of neededStructures) {
-      if (structureType === STRUCTURE_LINK) {
+      if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
         continue
       }
       if (LEVEL_BREAKDOWN[level + 1][structureType] > 0) {
