@@ -57,11 +57,11 @@ RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
 
 RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
-  let positions = [],
-	position
+  let positions = []
+  let position
   for (let x = bounds.left; x <= bounds.right; x++) {
     for (let y = bounds.top; y <= bounds.bottom; y++) {
-	  position = new RoomPosition(x, y, this.roomName)
+      position = new RoomPosition(x, y, this.roomName)
       if (position.isSteppable()) positions.push(position)
     }
   }
