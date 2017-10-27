@@ -57,9 +57,6 @@ const orderStructures = [
 global.LEVEL_BREAKDOWN = {}
 let structure
 for (structure of structures) {
-  if (skipStructures.indexOf(structure) !== -1) {
-    continue
-  }
   const levels = Object.keys(CONTROLLER_STRUCTURES[structure])
   let level
   for (level of levels) {
@@ -120,10 +117,8 @@ Room.prototype.constructNextMissingStructure = function () {
 }
 
 Room.prototype.getNextMissingStructureType = function () {
-  if (!this.isMissingStructures()) {
-    return false
-  }
-  const structureCount = this.getStructureCount()
+  const structureCount = this.getStructureCount(FIND_STRUCTURES)
+  const constructionCount = this.getConstructionCount()
   const nextLevel = this.getPracticalRoomLevel() + 1
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
@@ -133,24 +128,24 @@ Room.prototype.getNextMissingStructureType = function () {
     return (orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1)
   })
 
+  // Get room layout, if it exists, and use that to check which planned structureTypes are missing.
+  const layout = this.getLayout()
+  if (!layout.isPlanned()) {
+    return false
+  }
+  const allStructurePositions = layout.getAllStructures()
+
   // Build all other structures.
   let structureType
   for (structureType of structures) {
-    if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
+    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0 || (this.controller && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) >= LEVEL_BREAKDOWN[this.controller.level][structureType])) {
       continue
     }
-    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
-      continue
-    }
-    if (!structureCount[structureType] || structureCount[structureType] < nextLevelStructureCount[structureType]) {
+    if ((structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < nextLevelStructureCount[structureType] && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < allStructurePositions[structureType].length) {
       return structureType
     }
   }
   return false
-}
-
-Room.prototype.isMissingStructures = function () {
-  return this.getPracticalRoomLevel() < this.controller.level
 }
 
 Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES) {
@@ -166,6 +161,19 @@ Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES)
   return counts
 }
 
+Room.prototype.getConstructionCount = function (constructionFind = FIND_MY_CONSTRUCTION_SITES) {
+  const sites = this.find(constructionFind)
+  const counts = {}
+  let site
+  for (site of sites) {
+    if (!counts[site.structureType]) {
+      counts[site.structureType] = 0
+    }
+    counts[site.structureType]++
+  }
+  return counts
+}
+
 Room.prototype.getPracticalRoomLevel = function () {
   if (this.__level) {
     return this.__level
@@ -176,7 +184,7 @@ Room.prototype.getPracticalRoomLevel = function () {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])
     let structureType
     for (structureType of neededStructures) {
-      if (structureType === STRUCTURE_LINK) {
+      if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
         continue
       }
       if (LEVEL_BREAKDOWN[level + 1][structureType] > 0) {

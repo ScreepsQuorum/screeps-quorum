@@ -12,6 +12,9 @@ const CPU_MINIMUM = 0.50
 const CPU_ADJUST = 0.05
 const CPU_GLOBAL_BOOST = 60
 const GLOBAL_LAST_RESET = Game.time
+global.BUCKET_EMERGENCY = BUCKET_EMERGENCY
+global.BUCKET_FLOOR = BUCKET_FLOOR
+global.BUCKET_CEILING = BUCKET_CEILING
 
 class QosKernel {
   constructor () {
