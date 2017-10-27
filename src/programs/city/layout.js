@@ -341,7 +341,7 @@ class CityLayout extends kernel.process {
     const flower2Adjusted = new RoomPosition(flower2Pos.x - LAYOUT_FLOWER_BUFFER, flower2Pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
     this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
 
-    this.planRoads(layout, corePos, flower1Pos, flower2Pos)
+    if(!this.planRoads(layout, corePos, flower1Pos, flower2Pos)) return this.suicide()
 
     layout.save()
     Logger.log(`Room planning for room ${this.data.room} has successfully completed`)
@@ -378,22 +378,24 @@ class CityLayout extends kernel.process {
    * Plan roads from the core to the flowers and major room features (controller, sources, minerals).
    */
   planRoads (layout, corePos, flower1Pos, flower2Pos) {
+	Logger.log(`Planning roads for room: ${this.data.room}`, LOG_INFO, 'layout')
     let matrix = this.getConstructionMatrix(layout)
     this.planRoad(layout, corePos, flower1Pos, matrix)
     this.planRoad(layout, corePos, flower2Pos, matrix)
     if (this.room.controller) {
-      this.planRoad(layout, corePos, this.room.controller.pos, matrix)
+      if (!this.planRoad(layout, corePos, this.room.controller.pos, matrix)) return false
     }
     const sources = this.room.find(FIND_SOURCES)
     let source
     for (source of sources) {
-      this.planRoad(layout, corePos, source.pos, matrix)
+      if (!this.planRoad(layout, corePos, source.pos, matrix)) return false
     }
     const minerals = this.room.find(FIND_MINERALS)
     let mineral
     for (mineral of minerals) {
-      this.planRoad(layout, corePos, mineral.pos, matrix)
+      if(!this.planRoad(layout, corePos, mineral.pos, matrix)) return false
     }
+    return true
   }
 
   /*
@@ -401,13 +403,19 @@ class CityLayout extends kernel.process {
    * If a costMatrix is given, that will be used instead of generating a new one from the given layout's current state.
    */
   planRoad (layout, fromPos, toPos, matrix) {
-    if (!matrix) matrix = this.getConstructionMatrix(layout)
-    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.room.name) { return false } else { return matrix } } })
-    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.room.name) { return false } else { return matrix } }, heuristicWeight: 1.5 })
+	if (!matrix) matrix = this.getConstructionMatrix(layout)
+    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
+    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
+	if (!path.path || path.path.length < 1) {
+      Logger.log(`Unable to find path for road from: ${fromPos} to: ${toPos} in room: ${this.data.room} path returned was: ${JSON.stringify(path)}`, LOG_ERROR, 'layout')
+      return false
+	}
+    else Logger.log(`Planning road from: ${fromPos} to: ${toPos} in room: ${this.data.room} with length ${path.path.length}`, LOG_INFO, 'layout')
     for (spot of path.path) {
       if (spot.isSteppable() && !spot.isExit() && layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
     }
+    return true
   }
 
   /**
@@ -429,7 +437,7 @@ class CityLayout extends kernel.process {
           plannedStruct = layout.getStructureAt(x, y)
           if (plannedStruct === 3) { // magic number due to lacking access to structureMap
             costMatrix.set(x, y, 1)
-          } else if ([0, 3, 5, 7, 16, 17].indexOf(plannedStruct) === -1) { // magic numbers due to lacking access to structureMap
+          } else if ([1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].indexOf(plannedStruct) > -1) { // magic numbers due to lacking access to structureMap
             costMatrix.set(x, y, 0xff)
           }
         }
@@ -463,7 +471,6 @@ class CityLayout extends kernel.process {
         costMatrix.set(pos.x, pos.y, 30)
       }
     }
-
     return costMatrix
   }
 
