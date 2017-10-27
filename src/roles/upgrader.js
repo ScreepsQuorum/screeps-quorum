@@ -2,7 +2,12 @@
 
 const MetaRole = require('roles_meta')
 
-const CONTROLLER_MESSAGE = '* Self Managed Code * quorum.tedivm.com * #quorum in Slack *'
+let CONTROLLER_MESSAGE
+if (PUBLIC_ACCOUNT) {
+  CONTROLLER_MESSAGE = 'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+} else {
+  CONTROLLER_MESSAGE = 'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+}
 
 class Upgrader extends MetaRole {
   getBuild (room, options) {

@@ -5,7 +5,7 @@ Creep.prototype.recharge = function () {
     this.memory.recharge = true
   }
   if (this.carry[RESOURCE_ENERGY] >= this.carryCapacity) {
-    this.memory.recharge = false
+    delete this.memory.recharge
   }
   if (!this.memory.recharge) {
     return false
@@ -24,6 +24,39 @@ Creep.prototype.recharge = function () {
     }
     if (this.pos.isNearTo(storage)) {
       this.withdraw(storage, RESOURCE_ENERGY)
+    }
+    return true
+  }
+
+  // Check for qualifying dropped energy.
+  const resources = this.room.find(FIND_DROPPED_RESOURCES, {filter: function (resource) {
+    if (resource.resourceType !== RESOURCE_ENERGY) {
+      return false
+    }
+
+    // Is resource on top of container?
+    const structures = resource.pos.lookFor(LOOK_STRUCTURES)
+    for (let structure of structures) {
+      if (structure.structureType === STRUCTURE_CONTAINER) {
+        return true
+      }
+    }
+
+    // Is the resource near the room storage?
+    if (resource.room.storage && resource.room.storage.pos.getRangeTo(resource) <= 2) {
+      return true
+    }
+
+    return false
+  }})
+
+  if (resources.length > 0) {
+    const resource = this.pos.findClosestByRange(resources)
+    if (!this.pos.isNearTo(resource)) {
+      this.travelTo(resource)
+    }
+    if (this.pos.isNearTo(resource)) {
+      this.pickup(resource)
     }
     return true
   }

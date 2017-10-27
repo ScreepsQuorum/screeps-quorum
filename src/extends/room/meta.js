@@ -21,6 +21,9 @@ const quadrantMap = {
 }
 
 Room.serializeName = function (name) {
+  if (name === 'sim') {
+    return 'sim'
+  }
   const coords = Room.getCoordinates(name)
   let quad
   if (coords.x_dir === 'E') {
@@ -34,6 +37,9 @@ Room.serializeName = function (name) {
 }
 
 Room.deserializeName = function (sName) {
+  if (sName === 'sim') {
+    return 'sim'
+  }
   const xDir = quadrantMap[sName[0]].x
   const yDir = quadrantMap[sName[0]].y
   const x = sName.codePointAt(1) - unicodeModifier
@@ -53,6 +59,9 @@ Room.getCoordinates = function (name) {
 }
 
 Room.getRoomsInRange = function (name, range) {
+  if (name === 'sim') {
+    return []
+  }
   const coords = Room.getCoordinates(name)
   const startXdir = coords.x_dir
   const startYdir = coords.y_dir
@@ -105,6 +114,9 @@ Room.getManhattanDistance = function (startRoomName, endRoomName) {
 }
 
 Room.isSourcekeeper = function (name) {
+  if (name === 'sim') {
+    return true
+  }
   const coords = Room.getCoordinates(name)
   let xMod = coords.x % 10
   let yMod = coords.y % 10
@@ -112,6 +124,9 @@ Room.isSourcekeeper = function (name) {
 }
 
 Room.isHallway = function (name) {
+  if (name === 'sim') {
+    return false
+  }
   const coords = Room.getCoordinates(name)
   let xMod = coords.x % 10
   let yMod = coords.y % 10

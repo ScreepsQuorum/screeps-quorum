@@ -8,6 +8,19 @@ class CityDefense extends kernel.process {
   constructor (...args) {
     super(...args)
     this.priority = PRIORITIES_DEFENSE
+
+    // Pre-load all effect values.
+    if (!global.TOWER_DAMAGE_EFFECT || !global.TOWER_REPAIR_EFFECT || !global.TOWER_HEAL_EFFECT) {
+      global.TOWER_DAMAGE_EFFECT = []
+      global.TOWER_REPAIR_EFFECT = []
+      global.TOWER_HEAL_EFFECT = []
+
+      for (let i = 0; i < 50; i++) {
+        global.TOWER_DAMAGE_EFFECT[i] = this.calculateWithFallOff(TOWER_POWER_ATTACK, i)
+        global.TOWER_REPAIR_EFFECT[i] = this.calculateWithFallOff(TOWER_POWER_REPAIR, i)
+        global.TOWER_HEAL_EFFECT[i] = this.calculateWithFallOff(TOWER_POWER_HEAL, i)
+      }
+    }
   }
 
   getDescriptor () {
@@ -55,25 +68,34 @@ class CityDefense extends kernel.process {
   }
 
   fireTowers (towers, hostiles) {
-    if (hostiles.length > 0) {
-      // for now, just shoot closest for each tower
-      let tower
-      for (tower of towers) {
+    const attackFunc = (attackTarget) => {
+      for (let tower of towers) {
         if (tower.energy < TOWER_ENERGY_COST) {
           continue
         }
-        const closest = _.min(hostiles, c => c.pos.getRangeTo(tower.pos))
-        tower.attack(closest)
+
+        tower.attack(attackTarget)
       }
-      return
     }
 
     const healFunc = (healTarget) => {
-      // TODO: clever calculations to avoid overheals
-      let tower
-      for (tower of towers) {
+      let damage = healTarget.hitsMax - healTarget.hits
+
+      for (let tower of towers) {
+        if (damage <= 0) {
+          break
+        }
+
+        const distance = tower.pos.getRangeTo(healTarget.pos)
+        damage -= global.TOWER_HEAL_EFFECT[distance]
         tower.heal(healTarget)
       }
+    }
+
+    if (hostiles.length > 0) {
+      const closestHostile = _.min(hostiles, c => c.pos.getRangeTo(towers[0].pos))
+      attackFunc(closestHostile)
+      return
     }
 
     if (this.data.healTarget !== undefined) {
@@ -130,6 +152,17 @@ class CityDefense extends kernel.process {
   isPotentialHazard (hostile) {
     const hazardTypes = [ATTACK, RANGED_ATTACK, HEAL, WORK, CLAIM]
     return _.some(hostile.body, b => _.include(hazardTypes, b.type))
+  }
+
+  calculateWithFallOff (optimalValue, distance) {
+    let effect = optimalValue
+    if (distance > TOWER_OPTIMAL_RANGE) {
+      if (distance > TOWER_FALLOFF_RANGE) {
+        distance = TOWER_FALLOFF_RANGE
+      }
+      effect -= effect * TOWER_FALLOFF * (distance - TOWER_OPTIMAL_RANGE) / (TOWER_FALLOFF_RANGE - TOWER_OPTIMAL_RANGE)
+    }
+    return Math.floor(effect)
   }
 }
 
