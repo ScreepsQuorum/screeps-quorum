@@ -87,8 +87,6 @@ Room.prototype.constructNextMissingStructure = function () {
   if (!layout.isPlanned()) {
     return false
   }
-  // Visualize layout when bucket is abundant, otherwise 10% of the time
-  if (Game.cpu.bucket > BUCKET_CEILING || Game.time % 1000 < 100) layout.visualize()
   const allStructurePositions = layout.getAllStructures()
   if (!allStructurePositions[structureType]) {
     return false
