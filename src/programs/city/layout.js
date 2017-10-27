@@ -341,7 +341,7 @@ class CityLayout extends kernel.process {
     const flower2Adjusted = new RoomPosition(flower2Pos.x - LAYOUT_FLOWER_BUFFER, flower2Pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
     this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
 
-    if(!this.planRoads(layout, corePos, flower1Pos, flower2Pos)) return this.suicide()
+    if (!this.planRoads(layout, corePos, flower1Pos, flower2Pos)) return this.suicide()
 
     layout.save()
     Logger.log(`Room planning for room ${this.data.room} has successfully completed`)
@@ -378,7 +378,7 @@ class CityLayout extends kernel.process {
    * Plan roads from the core to the flowers and major room features (controller, sources, minerals).
    */
   planRoads (layout, corePos, flower1Pos, flower2Pos) {
-	Logger.log(`Planning roads for room: ${this.data.room}`, LOG_INFO, 'layout')
+    Logger.log(`Planning roads for room: ${this.data.room}`, LOG_INFO, 'layout')
     let matrix = this.getConstructionMatrix(layout)
     this.planRoad(layout, corePos, flower1Pos, matrix)
     this.planRoad(layout, corePos, flower2Pos, matrix)
@@ -393,7 +393,7 @@ class CityLayout extends kernel.process {
     const minerals = this.room.find(FIND_MINERALS)
     let mineral
     for (mineral of minerals) {
-      if(!this.planRoad(layout, corePos, mineral.pos, matrix)) return false
+      if (!this.planRoad(layout, corePos, mineral.pos, matrix)) return false
     }
     return true
   }
@@ -403,15 +403,14 @@ class CityLayout extends kernel.process {
    * If a costMatrix is given, that will be used instead of generating a new one from the given layout's current state.
    */
   planRoad (layout, fromPos, toPos, matrix) {
-	if (!matrix) matrix = this.getConstructionMatrix(layout)
+    if (!matrix) matrix = this.getConstructionMatrix(layout)
     let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
     if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
-	if (!path.path || path.path.length < 1) {
+    if (!path.path || path.path.length < 1) {
       Logger.log(`Unable to find path for road from: ${fromPos} to: ${toPos} in room: ${this.data.room} path returned was: ${JSON.stringify(path)}`, LOG_ERROR, 'layout')
       return false
-	}
-    else Logger.log(`Planning road from: ${fromPos} to: ${toPos} in room: ${this.data.room} with length ${path.path.length}`, LOG_INFO, 'layout')
+    } else Logger.log(`Planning road from: ${fromPos} to: ${toPos} in room: ${this.data.room} with length ${path.path.length}`, LOG_INFO, 'layout')
     for (spot of path.path) {
       if (spot.isSteppable() && !spot.isExit() && layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
     }
