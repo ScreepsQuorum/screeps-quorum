@@ -27,10 +27,12 @@ Creep.prototype.recharge = function () {
     }
     return true
   }
+  // Create a bigger scope for this variable ( used here and in the filter in containers )
+  let carryCap = this.carryCapacity
 
   // Check for qualifying dropped energy.
   const resources = this.room.find(FIND_DROPPED_RESOURCES, {filter: function (resource) {
-    if (resource.resourceType !== RESOURCE_ENERGY) {
+    if (resource.resourceType !== RESOURCE_ENERGY || resource.amount < carryCap) {
       return false
     }
 
@@ -62,7 +64,7 @@ Creep.prototype.recharge = function () {
   }
 
   // If there is no storage check for containers.
-  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > 200)
+  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > Math.min(a.storeCapacity, carryCap))
   if (containers.length > 0) {
     const container = this.pos.findClosestByRange(containers)
     if (!this.pos.isNearTo(container)) {
