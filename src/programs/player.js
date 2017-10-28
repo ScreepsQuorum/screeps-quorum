@@ -24,7 +24,7 @@ class Player extends kernel.process {
     let roomname
     for (roomname of cities) {
       /* Launch a "City" program for each city saved in memory. `Room.addCity` to add new rooms. */
-      if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
+      if (Game.rooms[roomname] && Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
         this.launchChildProcess(`room_${roomname}`, 'city', {
           'room': roomname
         })
@@ -46,7 +46,7 @@ class Player extends kernel.process {
       const defaultPriorityStats = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
       if (defaultPriorityStats && defaultPriorityStats['long'] <= 1.25) {
         if (cities.length < Game.gcl.level) {
-          if (cities.length > 1 || Game.rooms[cities[0]].getRoomSetting('EXPAND_FROM')) {
+          if (cities.length > 1 || (Game.rooms[cities[0]] && Game.rooms[cities[0]].getRoomSetting('EXPAND_FROM'))) {
             this.launchChildProcess('expand', 'empire_expand')
           }
         }
