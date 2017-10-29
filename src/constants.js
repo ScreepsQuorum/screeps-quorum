@@ -1,7 +1,9 @@
 'use strict'
 
 if (!Memory.username) {
-  Memory.username = _.find(Game.structures).owner.username || _.find(Game.creeps).owner.username || false;
+  const struc = _.find(Game.structures)
+  const creep = _.find(Game.creeps)
+  Memory.username = (struc ? struc.owner.username : false) || (creep ? creep.owner.username : false)
 }
 
 global.USERNAME = Memory.username
