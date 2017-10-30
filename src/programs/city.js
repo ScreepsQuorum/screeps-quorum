@@ -57,7 +57,7 @@ class City extends kernel.process {
     const lastAdd = qlib.events.getTimeSinceEvent('addmine')
     if (mineCount && lastAdd >= 2000) {
       let remoteMines = this.room.getMines()
-      if (remoteMines.length <= mineCount) {
+      if (remoteMines.length < mineCount) {
         const cpuUsage = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
         if (cpuUsage && cpuUsage['long'] <= 1.25) {
           const mine = this.room.selectNextMine()
