@@ -95,6 +95,9 @@ class City extends kernel.process {
       if (this.room.isEconomyCapable('EXTRA_UPGRADERS')) {
         upgraderQuantity += 2
       }
+      if (this.room.isEconomyCapable('MORE_EXTRA_UPGRADERS')) {
+        upgraderQuantity += 2
+      }
       if (this.room.controller.level >= 8) {
         upgraderQuantity = 1
       }

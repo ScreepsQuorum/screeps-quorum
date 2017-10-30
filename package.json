@@ -42,6 +42,7 @@
       "PathCache",
       "SCRIPT_VERSION",
       "sos",
+      "ECONOMY_BURSTING",
       "ECONOMY_CRASHED",
       "ECONOMY_DEVELOPING",
       "ECONOMY_STABLE",
