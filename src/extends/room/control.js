@@ -19,16 +19,17 @@ let roomLevelOptions = {
     'ADDITIONAL_FILLERS': false,
     'RESERVER_COUNT': 3,
     'REMOTE_MINES': 2,
-    'EXPAND_FROM': true
+    'EXPAND_FROM': true,
+    'ALLOW_MINING_SCALEBACK': true
   },
   5: {},
   6: {
     'EXTRACT_MINERALS': true,
-    'UPGRADERS_QUANTITY': 3,
     'RESERVER_COUNT': 2
   },
   7: {
-    'RESERVER_COUNT': 1
+    'RESERVER_COUNT': 1,
+    'ALLOW_MINING_SCALEBACK': false
   },
   8: {
     'UPGRADERS_QUANTITY': 1,

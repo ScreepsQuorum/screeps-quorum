@@ -4,13 +4,15 @@ global.ECONOMY_CRASHED = 0
 global.ECONOMY_DEVELOPING = 1
 global.ECONOMY_STABLE = 2
 global.ECONOMY_SURPLUS = 3
+global.ECONOMY_BURSTING = 4
 
 const economySettings = {
   'EXPAND_FROM': ECONOMY_DEVELOPING,
   'BUILD_STRUCTURES': ECONOMY_STABLE,
   'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
   'EXTRACT_MINERALS': ECONOMY_STABLE,
-  'EXTRA_UPGRADERS': ECONOMY_SURPLUS
+  'EXTRA_UPGRADERS': ECONOMY_SURPLUS,
+  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING
 }
 
 Room.prototype.isEconomyCapable = function (key) {
@@ -40,6 +42,11 @@ Room.prototype.getEconomyLevel = function () {
   // When fully developed between 300000 and 320000
   if (energy < (desiredBuffer + 20000)) {
     return ECONOMY_STABLE
+  }
+
+  // Need to ditch energy as we have way too much in storage
+  if (_.sum(this.storage.storage) > this.storage.storeCapacity * 0.9) {
+    return ECONOMY_BURSTING
   }
 
   // When fully developed over 300000
