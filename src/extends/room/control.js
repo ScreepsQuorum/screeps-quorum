@@ -25,11 +25,11 @@ let roomLevelOptions = {
   5: {},
   6: {
     'EXTRACT_MINERALS': true,
-    'RESERVER_COUNT': 2,
-    'ALLOW_MINING_SCALEBACK': false
+    'RESERVER_COUNT': 2
   },
   7: {
-    'RESERVER_COUNT': 1
+    'RESERVER_COUNT': 1,
+    'ALLOW_MINING_SCALEBACK': false
   },
   8: {
     'UPGRADERS_QUANTITY': 1,
