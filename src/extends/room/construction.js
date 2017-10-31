@@ -120,6 +120,9 @@ Room.prototype.getNextMissingStructureType = function () {
   const structureCount = this.getStructureCount(FIND_STRUCTURES)
   const constructionCount = this.getConstructionCount()
   const nextLevel = this.getPracticalRoomLevel() + 1
+  if (!LEVEL_BREAKDOWN[nextLevel]) {
+    return false
+  }
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
 

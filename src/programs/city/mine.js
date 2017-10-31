@@ -40,6 +40,9 @@ class CityMine extends kernel.process {
       this.mine = Game.rooms[this.data.mine]
       this.underAttack = this.mine.find(FIND_HOSTILE_CREEPS).length > 0
       this.reserveRoom()
+      if (this.room.getEconomyLevel() >= ECONOMY_BURSTING) {
+        this.strictSpawning = this.room.getRoomSetting('ALLOW_MINING_SCALEBACK')
+      }
     } else {
       this.mine = this.room
     }
@@ -79,7 +82,7 @@ class CityMine extends kernel.process {
     if (miners.getClusterSize() === 1 && minerCreeps.length > 0 && minerCreeps[0].ticksToLive < 60) {
       minerQuantity = 2
     }
-    if (this.underAttack) {
+    if (this.underAttack || this.strictSpawning) {
       minerQuantity = 0
     }
 
@@ -134,9 +137,9 @@ class CityMine extends kernel.process {
 
     const haulers = this.getCluster(`haulers_${source.id}`, this.room)
     let distance = 50
-    if (!this.underAttack && this.mine.name === this.room.name) {
+    if (!this.underAttack && !this.strictSpawning && this.mine.name === this.room.name) {
       haulers.sizeCluster('hauler', 1)
-    } else if (!this.underAttack) {
+    } else if (!this.underAttack && !this.strictSpawning) {
       if (!this.data.ssp) {
         this.data.ssp = {}
       }
