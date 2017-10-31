@@ -27,7 +27,9 @@ class EmpireExpand extends kernel.process {
       }
       return
     }
-
+    if (!this.getClosestCity(this.data.colony)) {
+      return
+    }
     if (!this.data.recover) {
       this.scout()
     }
@@ -174,13 +176,16 @@ class EmpireExpand extends kernel.process {
       if (!Game.rooms[city]) {
         continue
       }
+      if (!Game.rooms[city].getRoomSetting('EXPAND_FROM')) {
+        continue
+      }
       const testDistance = Room.getManhattanDistance(city, roomName)
       if (distance > testDistance) {
         closest = city
         distance = testDistance
       }
     }
-    return Game.rooms[closest]
+    return closest ? Game.rooms[closest] : false
   }
 
   getCandidateList () {
