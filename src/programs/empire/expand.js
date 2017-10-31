@@ -380,7 +380,7 @@ class EmpireExpand extends kernel.process {
     const closestCity = this.getClosestCity(this.data.colony)
     const upgraders = this.getCluster(`upgraders`, closestCity)
     if (!this.data.deathwatch) {
-      upgraders.sizeCluster('upgrader', 2)
+      upgraders.sizeCluster('upgrader', this.data.recover ? 1 : 2)
     }
     upgraders.forEach(function (upgrader) {
       if (upgrader.room.name !== controller.room.name) {
