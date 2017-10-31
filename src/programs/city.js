@@ -18,7 +18,7 @@ class City extends kernel.process {
     this.room = Game.rooms[this.data.room]
 
     const spawns = this.room.find(FIND_MY_SPAWNS)
-    if (spawns.length < 0) {
+    if (spawns.length <= 0) {
       this.launchChildProcess('gethelp', 'empire_expand', {
         'colony': this.data.room,
         'recover': true
