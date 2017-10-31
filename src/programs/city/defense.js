@@ -63,6 +63,7 @@ class CityDefense extends kernel.process {
 
     if (playerHostiles.length > 0) {
       Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)
+      qlib.notify.send(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`)
       this.safeMode(playerHostiles)
     }
   }
