@@ -29,7 +29,7 @@ class Filler extends MetaRole {
     // Check to see if creep is already assigned a valid target and reuse.
     if (creep.memory.ft) {
       const cachedStructure = Game.getObjectById(creep.memory.ft)
-      if (cachedStructure.energy < cachedStructure.energyCapacity) {
+      if (cachedStructure && cachedStructure.energy < cachedStructure.energyCapacity) {
         this.fillStructure(creep, cachedStructure)
         return
       } else {
