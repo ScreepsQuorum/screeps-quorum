@@ -34,7 +34,7 @@ class CityMine extends kernel.process {
     if (this.data.mine && this.data.mine !== this.data.room) {
       // If main room can not support mines kill this program.
       if (this.room.getRoomSetting('REMOTE_MINES') <= 0) {
-        this.suicide()
+        return this.suicide()
       }
       this.remote = true
       this.scout()
