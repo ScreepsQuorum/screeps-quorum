@@ -25,6 +25,14 @@ Room.addCity = function (roomName) {
   }
 }
 
+Room.removeCity = function (roomName) {
+  if (Memory.territory && Memory.territory[roomName]) {
+    delete Memory.territory[roomName]
+    Logger.log(`Removing city ${roomName}`)
+    qlib.notify.send(`Removing city ${roomName} from empire`)
+  }
+}
+
 Room.isCity = function (roomName) {
   return Boolean(Memory.territory[roomName])
 }
