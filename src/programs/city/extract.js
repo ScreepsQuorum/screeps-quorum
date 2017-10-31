@@ -11,6 +11,10 @@ class CityExtract extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
+    if (!this.room.getRoomSetting('EXTRACT_MINERALS')) {
+      return this.suicide()
+    }
+
     const extractor = this.room.structures[STRUCTURE_EXTRACTOR] ? this.room.structures[STRUCTURE_EXTRACTOR][0] : false
     const mineral = this.room.find(FIND_MINERALS)[0]
     const storage = this.room.terminal ? this.room.terminal : this.room.storage

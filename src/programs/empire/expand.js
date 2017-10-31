@@ -72,12 +72,9 @@ class EmpireExpand extends kernel.process {
 
     this.upgrade()
 
-    // Don't mine from recovering rooms, as they will run their own mining operations once boosted up.
-    if (!this.data.recover) {
-      const sources = this.colony.find(FIND_SOURCES)
-      for (let source of sources) {
-        this.mine(source)
-      }
+    const sources = this.colony.find(FIND_SOURCES)
+    for (let source of sources) {
+      this.mine(source)
     }
 
     // Destroy all neutral and hostile structures immediately
