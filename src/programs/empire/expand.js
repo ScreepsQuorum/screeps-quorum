@@ -18,7 +18,7 @@ class EmpireExpand extends kernel.process {
   }
 
   main () {
-    if (!this.data.colony) {
+    if (!this.data.colony && !this.data.recover) {
       const candidate = this.getNextCandidate()
       if (candidate && this.validateRoom(candidate)) {
         this.data.colony = candidate
@@ -28,7 +28,10 @@ class EmpireExpand extends kernel.process {
       return
     }
 
-    this.scout()
+    if (!this.data.recover) {
+      this.scout()
+    }
+
     if (!Game.rooms[this.data.colony]) {
       return
     }
@@ -36,6 +39,11 @@ class EmpireExpand extends kernel.process {
 
     // Don't continue futher until the room is claimed
     if (!this.colony.controller.my) {
+      // If we're trying to recover a destroyed room and the controller times out just give up.
+      if (this.data.recover) {
+        this.suicide()
+        return
+      }
       this.claim()
       return
     }
@@ -51,7 +59,7 @@ class EmpireExpand extends kernel.process {
     }
 
     // If layout isn't complete after a full generation unclaim and try again somewhere else.
-    if (Game.time - this.data.claimedAt > 1500) {
+    if (!this.data.recover && Game.time - this.data.claimedAt > 1500) {
       if (!this.colony.getLayout().isPlanned() && !this.isChildProcessRunning('layout')) {
         this.colony.controller.unclaim()
         delete this.data.claimedAt
@@ -61,16 +69,23 @@ class EmpireExpand extends kernel.process {
     }
 
     this.upgrade()
-    const sources = this.colony.find(FIND_SOURCES)
-    for (let source of sources) {
-      this.mine(source)
+
+    // Don't mine from recovering rooms, as they will run their own mining operations once boosted up.
+    if (!this.data.recover) {
+      const sources = this.colony.find(FIND_SOURCES)
+      for (let source of sources) {
+        this.mine(source)
+      }
     }
 
     // Destroy all neutral and hostile structures immediately
-    if (!this.data.hascleared) {
+    if (!this.data.recover && !this.data.hascleared) {
       const structures = this.colony.find(FIND_STRUCTURES)
       for (let structure of structures) {
         if (structure.structureType === STRUCTURE_CONTROLLER) {
+          continue
+        }
+        if (structure.my) {
           continue
         }
         structure.destroy()
@@ -91,14 +106,14 @@ class EmpireExpand extends kernel.process {
     }
 
     // If the room layout is planned launch the construction program
-    if (this.colony.getLayout().isPlanned()) {
+    if (!this.data.recover && this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.colony
       })
     }
 
     if (this.colony.getRoomSetting('SELF_SUFFICIENT')) {
-      if (!Room.isCity(this.data.colony)) {
+      if (!this.data.recover && !Room.isCity(this.data.colony)) {
         Room.addCity(this.data.colony)
       }
       if (this.colony.storage) {

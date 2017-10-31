@@ -11,10 +11,20 @@ class City extends kernel.process {
   }
 
   main () {
-    if (!Game.rooms[this.data.room]) {
+    if (!Game.rooms[this.data.room] || !Game.rooms[this.data.room].controller.my) {
+      Room.removeCity(this.data.room)
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
+
+    const spawns = this.room.find(FIND_MY_SPAWNS)
+    if (spawns.length < 0) {
+      this.launchChildProcess('gethelp', 'empire_expand', {
+        'colony': this.data.room,
+        'recover': true
+      })
+      return
+    }
 
     this.launchChildProcess('spawns', 'spawns', {
       'room': this.data.room
