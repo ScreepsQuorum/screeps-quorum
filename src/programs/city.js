@@ -17,6 +17,16 @@ class City extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
+    // Detect when room level changes and clear spawnqueue.
+    if (!this.data.prl) {
+      this.data.prl = this.room.getPracticalRoomLevel()
+    }
+    const roomLevel = this.room.getPracticalRoomLevel()
+    if (this.data.prl !== roomLevel) {
+      this.data.prl = roomLevel
+      this.room.clearSpawnQueue()
+    }
+
     const spawns = this.room.find(FIND_MY_SPAWNS)
     if (spawns.length <= 0) {
       this.launchChildProcess('gethelp', 'empire_expand', {

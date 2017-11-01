@@ -24,6 +24,19 @@ Room.prototype.queueCreep = function (role, options = {}) {
   return name
 }
 
+Room.prototype.clearSpawnQueue = function () {
+  Room.clearSpawnQueue(this.name)
+}
+
+Room.clearSpawnQueue = function (roomname) {
+  if (!Memory.spawnqueue) {
+    return
+  }
+  if (Memory.spawnqueue[roomname]) {
+    delete Memory.spawnqueue[roomname]
+  }
+}
+
 Room.prototype.getQueuedCreep = function () {
   if (!Memory.spawnqueue) {
     return false
