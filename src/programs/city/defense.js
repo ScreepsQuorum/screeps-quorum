@@ -142,8 +142,9 @@ class CityDefense extends kernel.process {
       const closest = structure.pos.findClosestByRange(hostiles)
       if (structure.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
-        Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
-        room.controller.activateSafeMode()
+        if (room.controller.activateSafeMode() === OK) {
+          Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
+        }
         return true
       }
     }
