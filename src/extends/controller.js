@@ -22,7 +22,7 @@ StructureController.prototype.canSafemode = function () {
   if (this.upgradeBlocked) {
     return false
   }
-  if (CONTROLLER_DOWNGRADE[this.level] - this.ticksToDowngrade >= 5000) {
+  if (this.ticksToDowngrade && CONTROLLER_DOWNGRADE[this.level] - this.ticksToDowngrade >= 5000) {
     return false
   }
   return true
