@@ -131,11 +131,42 @@ class CityDefense extends kernel.process {
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true
     }
-    if (room.controller.safeModeAvailable <= 0 || room.controller.safeModeCooldown || room.controller.upgradeBlocked) {
+    if (!room.controller.canSafemode()) {
       return false
     }
 
     let safeStructures = room.find(FIND_MY_SPAWNS)
+
+    // If there are no spawns this room isn't worth protecting with a safemode.
+    if (safeStructures.length <= 0) {
+      return false
+    }
+
+    // If other rooms are more important than this one save the safemode
+    if (!room.getRoomSetting('ALWAYS_SAFEMODE')) {
+      const cities = Room.getCities()
+      let highestLevel = 0
+      for (let cityName of cities) {
+        if (!Game.rooms[cityName]) {
+          continue
+        }
+        let city = Game.rooms[cityName]
+        if (!city.controller.canSafemode()) {
+          continue
+        }
+        if (city.getRoomSetting('ALWAYS_SAFEMODE')) {
+          return false
+        }
+        let level = city.getPracticalRoomLevel()
+        if (highestLevel < level) {
+          highestLevel = level
+        }
+      }
+      if (room.getPracticalRoomLevel() < highestLevel) {
+        return false
+      }
+    }
+
     safeStructures.push(room.controller)
     let structure
     for (structure of safeStructures) {

@@ -29,7 +29,8 @@ let roomLevelOptions = {
   },
   7: {
     'RESERVER_COUNT': 1,
-    'ALLOW_MINING_SCALEBACK': false
+    'ALLOW_MINING_SCALEBACK': false,
+    'ALWAYS_SAFEMODE': true
   },
   8: {
     'UPGRADERS_QUANTITY': 1,
