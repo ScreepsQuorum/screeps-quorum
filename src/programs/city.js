@@ -112,6 +112,10 @@ class City extends kernel.process {
     // Launch upgraders
     if (this.room.isEconomyCapable('UPGRADE_CONTROLLERS')) {
       let upgraderQuantity = this.room.getRoomSetting('UPGRADERS_QUANTITY')
+      // If the room is not done being built up reduce the upgraders.
+      if (this.room.controller.level > this.room.getPracticalRoomLevel()) {
+        upgraderQuantity = 0
+      }
       if (this.room.isEconomyCapable('EXTRA_UPGRADERS')) {
         upgraderQuantity += 2
       }
