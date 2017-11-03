@@ -5,3 +5,25 @@ StructureController.prototype.isTimingOut = function () {
   }
   return CONTROLLER_DOWNGRADE[this.level] - this.ticksToDowngrade > 4000
 }
+
+StructureController.prototype.canSafemode = function () {
+  if (!this.level) {
+    return false
+  }
+  if (!this.my) {
+    return false
+  }
+  if (!this.safeModeAvailable) {
+    return false
+  }
+  if (this.safeModeCooldown) {
+    return false
+  }
+  if (this.upgradeBlocked) {
+    return false
+  }
+  if (CONTROLLER_DOWNGRADE[this.level] - this.ticksToDowngrade >= 5000) {
+    return false
+  }
+  return true
+}

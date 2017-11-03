@@ -131,7 +131,7 @@ class CityDefense extends kernel.process {
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true
     }
-    if (room.controller.safeModeAvailable <= 0 || room.controller.safeModeCooldown || room.controller.upgradeBlocked) {
+    if (!room.controller.canSafemode()) {
       return false
     }
 
@@ -151,6 +151,9 @@ class CityDefense extends kernel.process {
           continue
         }
         let city = Game.rooms[cityName]
+        if (!city.controller.canSafemode()) {
+          continue
+        }
         if (city.getRoomSetting('ALWAYS_SAFEMODE')) {
           return false
         }
