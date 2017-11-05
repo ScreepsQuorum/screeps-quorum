@@ -4,7 +4,7 @@
 
 Room.getCities = function () {
   // When respawning the first room has to be autodetected, after which new cities will need to added.
-  if (!Memory.territory) {
+  if (!Memory.territory || Object.keys(Memory.territory).length <= 0) {
     Memory.territory = {}
     for (let roomName of Object.keys(Game.rooms)) {
       const room = Game.rooms[roomName]
