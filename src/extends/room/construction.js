@@ -141,6 +141,9 @@ Room.prototype.getNextMissingStructureType = function () {
   // Build all other structures.
   let structureType
   for (structureType of structures) {
+    if (this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)) {
+      continue
+    }
     if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0 || (this.controller && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) >= LEVEL_BREAKDOWN[this.controller.level][structureType])) {
       continue
     }

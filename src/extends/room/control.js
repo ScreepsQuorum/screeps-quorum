@@ -5,14 +5,17 @@ let roomLevelOptions = {
   1: {
     'UPGRADERS_QUANTITY': 5,
     'RESERVER_COUNT': 0,
-    'SCOUTS': true
+    'SCOUTS': true,
+    'SKIP_STRUCTURE_ROAD': true,
+    'SKIP_STRUCTURE_CONTAINER': true
   },
   2: {},
   3: {
     'PURE_CARRY_FILLERS': true,
     'ADDITIONAL_FILLERS': true,
     'SELF_SUFFICIENT': true,
-    'REMOTE_MINES': 1
+    'REMOTE_MINES': 1,
+    'SKIP_STRUCTURE_CONTAINER': false
   },
   4: {
     'DEDICATED_MINERS': true,
@@ -20,7 +23,8 @@ let roomLevelOptions = {
     'RESERVER_COUNT': 3,
     'REMOTE_MINES': 2,
     'EXPAND_FROM': true,
-    'ALLOW_MINING_SCALEBACK': true
+    'ALLOW_MINING_SCALEBACK': true,
+    'SKIP_STRUCTURE_CONTAINER': false
   },
   5: {},
   6: {
@@ -52,5 +56,6 @@ for (let level = 0; level <= 8; level++) {
 
 Room.prototype.getRoomSetting = function (key) {
   const level = this.getPracticalRoomLevel()
+  key = key.toUpperCase()
   return roomLevelOptions[level][key] ? roomLevelOptions[level][key] : false
 }
