@@ -167,7 +167,9 @@ class CityFortify extends kernel.process {
       this.room.createConstructionSite(missing[0], type)
       return false
     }
-
+    if (!target) {
+      return false
+    }
     sos.lib.cache.set([this.data.room, 'rampartTarget'], target.id, {
       persist: true
     })
