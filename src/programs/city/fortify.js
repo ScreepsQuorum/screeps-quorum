@@ -10,7 +10,7 @@ const DECAY_LIMIT = 30000
 class CityFortify extends kernel.process {
   constructor (...args) {
     super(...args)
-    this.priority = PRIORITIES_CONSTRUCTION
+    this.priority = PRIORITIES_FORTIFY
   }
 
   getDescriptor () {
