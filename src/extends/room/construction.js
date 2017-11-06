@@ -480,7 +480,9 @@ class DefenseMap extends RoomLayout {
             x = position.x + (exit === LEFT ? 2 : -2)
             y = position.y
           }
-          map.set(x, y, type)
+          if (Game.map.getTerrainAt(x, y) !== 'wall') {
+            map.set(x, y, type)
+          }
         }
       }
     }
