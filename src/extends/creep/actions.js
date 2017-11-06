@@ -49,6 +49,12 @@ Creep.prototype.recharge = function () {
       return true
     }
 
+    // Is the resource on top of the suicide booth?
+    const suicideBooth = resource.room.getSuicideBooth()
+    if (suicideBooth && resource.pos.getRangeTo(suicideBooth) === 0) {
+      return true
+    }
+
     return false
   }})
 
@@ -123,19 +129,12 @@ Creep.prototype.recycle = function () {
     return
   }
 
-  // Identify spawn closest to storage, to make reclaimed energy easier to store.
-  let spawn = false
-  if (storage) {
-    spawn = storage.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
-  } else {
-    spawn = this.room.structures[STRUCTURE_SPAWN][0]
-  }
-
   // Pick the location immediately above the spawn and recycle there.
-  const suicideBooth = new RoomPosition(spawn.pos.x, spawn.pos.y - 1, spawn.room.name)
+  const suicideBooth = this.room.getSuicideBooth()
   if (this.pos.getRangeTo(suicideBooth) > 0) {
     this.travelTo(suicideBooth)
   } else {
+    let spawn = this.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
     spawn.recycleCreep(this)
   }
 }
