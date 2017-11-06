@@ -162,6 +162,14 @@ RoomPosition.prototype.lookAround = function (range = 1) {
   return room.lookAtArea(bounds.top, bounds.left, bounds.bottom, bounds.right, true)
 }
 
+RoomPosition.prototype.getStructureByType = function (structureType) {
+  let structures = this.lookFor(LOOK_STRUCTURES)
+  let filteredStructures = _.filter(structures, function (structure) {
+    return structure.structureType === structureType
+  })
+  return filteredStructures.length > 0 ? filteredStructures[0] : false
+}
+
 /**
  * Creates a bounding box clamped inside the borders of the room
  * @param {number} x position to get bounds-range from
