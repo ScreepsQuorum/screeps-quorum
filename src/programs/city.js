@@ -55,10 +55,15 @@ class City extends kernel.process {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.room
       })
+      this.launchChildProcess('fortify', 'city_fortify', {
+        'room': this.data.room
+      })
     }
 
     // Launch fillers
-    let options = {}
+    let options = {
+      'priority': 3
+    }
     if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
       options['carry_only'] = true
       options['energy'] = Math.max(Math.min(1600, this.room.energyCapacityAvailable / 2), 400)
