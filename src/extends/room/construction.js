@@ -118,6 +118,9 @@ Room.prototype.constructNextMissingStructure = function () {
 }
 
 Room.prototype.getNextMissingStructureType = function () {
+  if (!this.controller) {
+    return false
+  }
   const structureCount = this.getStructureCount(FIND_STRUCTURES)
   const constructionCount = this.getConstructionCount()
   const nextLevel = this.getPracticalRoomLevel() + 1
@@ -145,11 +148,26 @@ Room.prototype.getNextMissingStructureType = function () {
     if (this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)) {
       continue
     }
-    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0 || !allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0 || (this.controller && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) >= LEVEL_BREAKDOWN[this.controller.level][structureType])) {
+    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
       continue
     }
-    if ((structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < nextLevelStructureCount[structureType] && (structureCount[structureType] || 0) + (constructionCount[structureType] || 0) < allStructurePositions[structureType].length) {
-      return structureType
+    if (!allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0) {
+      if (structureType !== STRUCTURE_EXTRACTOR) {
+        continue
+      }
+    }
+    let currentStructures = structureCount[structureType] || 0
+    let constructionStructures = constructionCount[structureType] || 0
+    let totalStructures = currentStructures + constructionStructures
+
+    if (totalStructures >= LEVEL_BREAKDOWN[this.controller.level][structureType]) {
+      continue
+    }
+
+    if (totalStructures < nextLevelStructureCount[structureType]) {
+      if (structureType === STRUCTURE_EXTRACTOR || totalStructures < allStructurePositions[structureType].length) {
+        return structureType
+      }
     }
   }
   return false
