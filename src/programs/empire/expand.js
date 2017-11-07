@@ -214,9 +214,10 @@ class EmpireExpand extends kernel.process {
   scout () {
     const closestCity = this.getClosestCity(this.data.colony)
     const center = new RoomPosition(25, 25, this.data.colony)
-    const quantity = Game.rooms[this.data.colony] ? 0 : 1
     const scouts = this.getCluster(`scout`, closestCity)
-    if (!Game.rooms[this.data.colony]) {
+    if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
+      let creeps = scouts.getCreeps()
+      let quantity = creeps.length === 1 && creeps[0].ticksToLive < 750 ? 2 : 1
       scouts.sizeCluster('spook', quantity)
     }
     scouts.forEach(function (scout) {
