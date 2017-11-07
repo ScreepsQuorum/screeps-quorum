@@ -10,7 +10,7 @@ const DECAY_LIMIT = 30000
 class CityFortify extends kernel.process {
   constructor (...args) {
     super(...args)
-    this.priority = PRIORITIES_CONSTRUCTION
+    this.priority = PRIORITIES_FORTIFY
   }
 
   getDescriptor () {
@@ -167,7 +167,9 @@ class CityFortify extends kernel.process {
       this.room.createConstructionSite(missing[0], type)
       return false
     }
-
+    if (!target) {
+      return false
+    }
     sos.lib.cache.set([this.data.room, 'rampartTarget'], target.id, {
       persist: true
     })
