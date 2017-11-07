@@ -46,7 +46,6 @@ class CityFortify extends kernel.process {
 
     const target = this.getTarget()
     if (!target) {
-      Logger.highlightData(target)
       return
     }
 
