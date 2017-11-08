@@ -537,11 +537,17 @@ class CityLayout extends kernel.process {
     const costMatrix = new PathFinder.CostMatrix()
     let x,
       y
+    const exits = this.room.find(FIND_EXIT)
+    const minimumExitRange = 4
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (pos.inFrontOfExit()) {
-          continue
+        if (x < minimumExitRange || y < minimumExitRange) {
+          if (x > (49 - minimumExitRange) || y > (49 - minimumExitRange)) {
+            if (pos.findClosestByRange(exits).getRangeTo() <= minimumExitRange) {
+              continue
+            }
+          }
         }
         if (pos.getTerrainAt() !== 'wall') {
           costMatrix.set(x, y, 1)
