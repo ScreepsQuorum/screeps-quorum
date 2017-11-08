@@ -35,6 +35,9 @@ class EmpireExpand extends kernel.process {
     }
 
     if (!Game.rooms[this.data.colony]) {
+      if (!this.data.recover) {
+        this.claim()
+      }
       return
     }
     this.colony = Game.rooms[this.data.colony]
@@ -218,7 +221,7 @@ class EmpireExpand extends kernel.process {
     if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
       let creeps = scouts.getCreeps()
       let quantity = creeps.length === 1 && creeps[0].ticksToLive < 750 ? 2 : 1
-      scouts.sizeCluster('spook', quantity)
+      scouts.sizeCluster('spook', quantity, {'priority': 2})
     }
     scouts.forEach(function (scout) {
       if (scout.room.name === center.roomName) {
@@ -231,9 +234,12 @@ class EmpireExpand extends kernel.process {
   }
 
   claim () {
-    const controller = this.colony.controller
-    if (this.colony.controller.my) {
-      return
+    let controller = false
+    if (this.colony) {
+      if (this.colony.controller.my) {
+        return
+      }
+      controller = this.colony.controller
     }
     const closestCity = this.getClosestCity(this.data.colony)
     const claimer = this.getCluster(`claimers`, closestCity)
@@ -244,7 +250,7 @@ class EmpireExpand extends kernel.process {
       if (!this.data.lastClaimAttempt || Game.time - this.data.lastClaimAttempt > 1000) {
         this.data.attemptedClaim++
         this.data.lastClaimAttempt = Game.time
-        claimer.sizeCluster('claimer', 1)
+        claimer.sizeCluster('claimer', 1, {'priority': 2})
       }
     } else if (Game.time - this.data.lastClaimAttempt > 1000) {
       if (claimer.getCreeps().length < 1) {
@@ -252,7 +258,13 @@ class EmpireExpand extends kernel.process {
         return
       }
     }
+    const colonyName = this.data.colony
     claimer.forEach(function (claimer) {
+      if (!controller) {
+        let pos = new RoomPosition(25, 25, colonyName)
+        claimer.travelTo(pos, {range: 20})
+        return
+      }
       if (!claimer.pos.isNearTo(controller)) {
         claimer.travelTo(controller)
       } else if (!controller.my) {
