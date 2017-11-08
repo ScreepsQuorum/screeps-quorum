@@ -544,7 +544,7 @@ class CityLayout extends kernel.process {
         const pos = new RoomPosition(x, y, this.data.room)
         if (x < minimumExitRange || y < minimumExitRange) {
           if (x > (49 - minimumExitRange) || y > (49 - minimumExitRange)) {
-            if (pos.findClosestByRange(exits).getRangeTo() <= minimumExitRange) {
+            if (pos.findClosestByRange(exits).getRangeTo() < minimumExitRange) {
               continue
             }
           }
