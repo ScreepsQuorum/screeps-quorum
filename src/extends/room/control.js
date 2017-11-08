@@ -24,7 +24,7 @@ let roomLevelOptions = {
     'REMOTE_MINES': 2,
     'EXPAND_FROM': true,
     'ALLOW_MINING_SCALEBACK': true,
-    'SKIP_STRUCTURE_CONTAINER': false
+    'SKIP_STRUCTURE_ROAD': false
   },
   5: {},
   6: {
