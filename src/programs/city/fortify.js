@@ -44,6 +44,10 @@ class CityFortify extends kernel.process {
       return
     }
 
+    if (!_.values(this.rampartLevels).some(a => a > 0)) {
+      return
+    }
+
     const target = this.getTarget()
     if (!target) {
       return
