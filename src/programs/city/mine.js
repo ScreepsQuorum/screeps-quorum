@@ -151,9 +151,9 @@ class CityMine extends kernel.process {
         }).length
       }
     }
-    const distance = this.data.ssp[source.id] ? this.data.ssp[source.id] * 1.3 : 80
+    const distance = this.data.ssp[source.id] ? this.data.ssp[source.id] : 80
     if (!this.underAttack && !this.strictSpawning) {
-      const carryAmount = (Math.ceil((distance * 20) / 100) * 100)
+      const carryAmount = (Math.ceil(((distance * 1.3) * 20) / 100) * 100)
       const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
       const maxEnergy = carryCost * (MAX_CREEP_SIZE / 2)
       let energy = (carryAmount / CARRY_CAPACITY) * carryCost // 50 carry == 1m1c == 100 energy
