@@ -140,23 +140,20 @@ class CityMine extends kernel.process {
     }
 
     const haulers = this.getCluster(`haulers_${source.id}`, this.room)
-    let distance = 50
-    if (!this.underAttack && !this.strictSpawning && this.mine.name === this.room.name) {
-      haulers.sizeCluster('hauler', 1)
-    } else if (!this.underAttack && !this.strictSpawning) {
-      if (!this.data.ssp) {
-        this.data.ssp = {}
+    if (!this.data.ssp) {
+      this.data.ssp = {}
+    }
+    if (!this.data.ssp[source.id]) {
+      if (this.room.storage) {
+        this.data.ssp[source.id] = this.room.findPath(this.room.storage.pos, source.pos, {
+          ignoreCreeps: true,
+          maxOps: 6000
+        }).length
       }
-      if (!this.data.ssp[source.id]) {
-        if (this.room.storage) {
-          this.data.ssp[source.id] = this.room.findPath(this.room.storage, source, {
-            ignoreCreeps: true,
-            maxOps: 6000
-          }).length
-        }
-      }
-      distance = this.data.ssp[source.id] ? this.data.ssp[source.id] : 80
-      const carryAmount = (Math.ceil((distance * 20) / 100) * 100) + 200
+    }
+    const distance = this.data.ssp[source.id] ? this.data.ssp[source.id] * 1.3 : 80
+    if (!this.underAttack && !this.strictSpawning) {
+      const carryAmount = (Math.ceil((distance * 20) / 100) * 100)
       const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
       const maxEnergy = carryCost * (MAX_CREEP_SIZE / 2)
       let energy = (carryAmount / CARRY_CAPACITY) * carryCost // 50 carry == 1m1c == 100 energy
@@ -165,7 +162,7 @@ class CityMine extends kernel.process {
         quantity = 2
         energy = maxEnergy
       }
-      haulers.sizeCluster('hauler', quantity, {'energy': maxEnergy})
+      haulers.sizeCluster('hauler', quantity, {'energy': energy})
     }
 
     haulers.forEach(function (hauler) {
