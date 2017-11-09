@@ -135,7 +135,7 @@ class EmpireExpand extends kernel.process {
       return this.data.candidates.pop()
     }
 
-    if (typeof this.data.candidateList === 'undefined' || this.data.candidates.length <= 0) {
+    if (typeof this.data.candidateList === 'undefined' || !this.data.candidates || this.data.candidates.length <= 0) {
       this.data.candidateList = this.getCandidateList()
     }
     if (!this.data.candidateScores) {
