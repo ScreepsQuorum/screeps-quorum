@@ -57,7 +57,9 @@ gulp.task('deploy', ['copy'], () => {
   options.password = opts.password
   if (args.server && args.server !== 'main' && !opts.host) {
     options.host = args.server
-  } else { options.host = opts.host || 'screeps.com' }
+  } else {
+    options.host = opts.host || 'screeps.com'
+  }
   options.secure = !!opts.ssl || (options.host === 'screeps.com')
   options.port = opts.port || 443
 
