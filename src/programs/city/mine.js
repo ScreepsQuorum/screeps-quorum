@@ -162,7 +162,10 @@ class CityMine extends kernel.process {
         quantity = 2
         energy = maxEnergy
       }
-      haulers.sizeCluster('hauler', quantity, {'energy': energy})
+
+      const respawnTime = ((energy / carryCost) * 2) * CREEP_SPAWN_TIME
+      const respawnAge = respawnTime + (distance * 1.2)
+      haulers.sizeCluster('hauler', quantity, {'energy': energy, 'respawnAge': respawnAge})
     }
 
     haulers.forEach(function (hauler) {
