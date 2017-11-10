@@ -23,7 +23,7 @@ class City extends kernel.process {
     }
     const roomLevel = this.room.getPracticalRoomLevel()
     if (this.data.prl !== roomLevel) {
-      qlib.send(`${this.data.room} has changed from PRL${this.data.prl} to PRL${roomLevel}`)
+      qlib.notify.send(`${this.data.room} has changed from PRL${this.data.prl} to PRL${roomLevel}`)
       this.data.prl = roomLevel
       this.room.clearSpawnQueue()
     }
@@ -33,7 +33,7 @@ class City extends kernel.process {
       this.data.level = this.room.controller.level
     }
     if (this.data.level !== this.room.controller.level) {
-      qlib.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
+      qlib.notify.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
     }
 
     const spawns = this.room.find(FIND_MY_SPAWNS)
