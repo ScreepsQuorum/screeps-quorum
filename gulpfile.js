@@ -55,13 +55,7 @@ gulp.task('deploy', ['copy'], () => {
   options.branch = opts.branch || 'default'
   options.email = opts.email || opts.username
   options.password = opts.password
-  if (args.server && args.server !== 'main' && !opts.host)
-  {
-  options.host = args.server
-  } else
-  {
-    options.host = opts.host || 'screeps.com' || args.server
-  }
+  if (args.server && args.server !== 'main' && !opts.host) { options.host = args.server } else { options.host = opts.host || 'screeps.com' || args.server }
   options.secure = !!opts.ssl || (options.host === 'screeps.com')
   options.port = opts.port || 443
 
