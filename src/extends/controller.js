@@ -27,3 +27,15 @@ StructureController.prototype.canSafemode = function () {
   }
   return true
 }
+
+// Monkey patch unclaim function to send notification.
+if (!StructureController.prototype.unclaimOriginal__notifications) {
+  StructureController.prototype.unclaimOriginal__notifications = StructureController.prototype.unclaim
+  StructureController.prototype.unclaim = function () {
+    const ret = this.unclaimOriginal__notifications()
+    if (ret === OK) {
+      qlib.notify.send(`Unclaimed room ${this.room.name}`)
+    }
+    return ret
+  }
+}
