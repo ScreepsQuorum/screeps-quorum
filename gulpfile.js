@@ -55,7 +55,9 @@ gulp.task('deploy', ['copy'], () => {
   options.branch = opts.branch || 'default'
   options.email = opts.email || opts.username
   options.password = opts.password
-  options.host = opts.host || 'screeps.com'
+if (args.server && args.server !== 'main' && !opts.host) {
+  options.host = args.server } else
+  { options.host = opts.host || 'screeps.com' || args.server}
   options.secure = !!opts.ssl || (options.host === 'screeps.com')
   options.port = opts.port || 443
 
@@ -69,7 +71,7 @@ gulp.task('ci-config', ['ci-version'], (cb) => {
       branch: process.env.SCREEPS_BRANCH,
       email: process.env.SCREEPS_EMAIL,
       password: process.env.SCREEPS_PASSWORD,
-      host: process.env.SCREEPS_HOST,
+      host: (process.env.SCREEPS_HOST),
       ssl: !!process.env.SCREEPS_SSL,
       port: process.env.SCREEPS_PORT
     }
