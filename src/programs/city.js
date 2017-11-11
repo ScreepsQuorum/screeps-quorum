@@ -34,6 +34,7 @@ class City extends kernel.process {
     }
     if (this.data.level !== this.room.controller.level) {
       qlib.notify.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
+      this.data.level = this.room.controller.level
     }
 
     const spawns = this.room.find(FIND_MY_SPAWNS)
