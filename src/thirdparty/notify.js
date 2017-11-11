@@ -1,4 +1,6 @@
 
+const MAX_QUEUE_SIZE = 30
+
 var Notify = function (message, limit=false, groups=false) {
 
   if(!groups) {
@@ -33,8 +35,9 @@ var Notify = function (message, limit=false, groups=false) {
   }
 
   // Record message in history and send it.
-  Memory.__notify_history[history_message] = Game.time
-  Notify.queueMessage(message, groups)
+  if (Notify.queueMessage(message, groups)) {
+    Memory.__notify_history[history_message] = Game.time
+  }
   return 0
 }
 
@@ -43,11 +46,15 @@ Notify.queueMessage = function (message, groups) {
   if(!Memory.__notify) {
     Memory.__notify = []
   }
+  if (Memory.__notify.length >= MAX_QUEUE_SIZE) {
+    return false
+  }
   Memory.__notify.push({
     'message': message,
     'groups': groups,
     'tick': Game.time
   })
+  return true
 }
 
 // Clean up history instead of leaving old messages around
