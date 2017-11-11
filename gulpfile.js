@@ -73,7 +73,7 @@ gulp.task('ci-config', ['ci-version'], (cb) => {
       branch: process.env.SCREEPS_BRANCH,
       email: process.env.SCREEPS_EMAIL,
       password: process.env.SCREEPS_PASSWORD,
-      host: (process.env.SCREEPS_HOST),
+      host: process.env.SCREEPS_HOST,
       ssl: !!process.env.SCREEPS_SSL,
       port: process.env.SCREEPS_PORT
     }
