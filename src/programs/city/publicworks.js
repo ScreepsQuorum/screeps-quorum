@@ -59,7 +59,7 @@ class CityPublicWorks extends kernel.process {
       }
     }
     if (lowestHealth < healthThreshold && lowestStructure) {
-      _.shuffle(fullTowers)[0].repair(lowestStructure)
+      _.sample(fullTowers).repair(lowestStructure)
     }
   }
 }
