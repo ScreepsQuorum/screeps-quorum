@@ -48,11 +48,13 @@ class CityPublicWorks extends kernel.process {
     let lowestStructure = false
     for (const structureType of maintainStructures) {
       const structures = this.room.structures[structureType]
-      for (const structure of structures) {
-        const currentHealth = structure.hits / structure.hitsMax
-        if (currentHealth < lowestHealth) {
-          lowestHealth = currentHealth
-          lowestStructure = structure
+      if (structures) {
+        for (const structure of structures) {
+          const currentHealth = structure.hits / structure.hitsMax
+          if (currentHealth < lowestHealth) {
+            lowestHealth = currentHealth
+            lowestStructure = structure
+          }
         }
       }
     }
