@@ -60,7 +60,7 @@ class CityFortify extends kernel.process {
     let quantity = 0
     if (this.room.isEconomyCapable('WALLBUILDERS')) {
       if (target instanceof ConstructionSite || target.hits < desiredHitpoints) {
-        quantity += 2
+        quantity += 1
       }
       if (this.room.isEconomyCapable('EXTRA_WALLBUILDERS')) {
         quantity += 2
