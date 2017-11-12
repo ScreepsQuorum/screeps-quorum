@@ -1,5 +1,12 @@
 'use strict'
 
+const roomPrograms = {
+  'spawns': 'spawns',
+  'defense': 'city_defense',
+  'reboot': 'city_reboot',
+  'works': 'city_publicworks'
+}
+
 class City extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -46,15 +53,12 @@ class City extends kernel.process {
       return
     }
 
-    this.launchChildProcess('spawns', 'spawns', {
-      'room': this.data.room
-    })
-    this.launchChildProcess('defense', 'city_defense', {
-      'room': this.data.room
-    })
-    this.launchChildProcess('reboot', 'city_reboot', {
-      'room': this.data.room
-    })
+    // Launch children programs
+    for (const label in roomPrograms) {
+      this.launchChildProcess(label, roomPrograms[label], {
+        'room': this.data.room
+      })
+    }
 
     // If the room isn't planned launch the room layout program, otherwise launch construction program
     if (!this.room.getLayout().isPlanned()) {
@@ -152,7 +156,7 @@ class City extends kernel.process {
     }
 
     // Launch scouts to map out neighboring rooms
-    if (this.room.getRoomSetting('SCOUTS')) {
+    if (this.data.room !== 'sim' && this.room.getRoomSetting('SCOUTS')) {
       this.launchCreepProcess('scouts', 'spook', this.data.room, 1, {
         'priority': 4
       })
