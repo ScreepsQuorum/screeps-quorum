@@ -5,6 +5,7 @@ global.SEGMENT_RAMPARTS = 'ramparts'
 
 /* Room layouts are critical information so we want this segment available at all times */
 sos.lib.vram.markCritical(SEGMENT_CONSTRUCTION)
+sos.lib.vram.markCritical(SEGMENT_RAMPARTS)
 
 global.STRUCTURE_LOADER = 'loader'
 global.STRUCTURE_CRANE = 'crane'
