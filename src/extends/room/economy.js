@@ -1,20 +1,24 @@
 'use strict'
 
 global.ECONOMY_CRASHED = 0
-global.ECONOMY_DEVELOPING = 1
-global.ECONOMY_STABLE = 2
-global.ECONOMY_SURPLUS = 3
-global.ECONOMY_BURSTING = 4
+global.ECONOMY_FALTERING = 1
+global.ECONOMY_DEVELOPING = 2
+global.ECONOMY_STABLE = 3
+global.ECONOMY_SURPLUS = 4
+global.ECONOMY_BURSTING = 5
 
 const economySettings = {
   'EXPAND_FROM': ECONOMY_DEVELOPING,
-  'BUILD_STRUCTURES': ECONOMY_STABLE,
-  'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
+  'WALLBUILDERS': ECONOMY_DEVELOPING,
+  'BUILD_STRUCTURES': ECONOMY_DEVELOPING,
+
   'EXTRACT_MINERALS': ECONOMY_STABLE,
+  'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
+
   'EXTRA_UPGRADERS': ECONOMY_SURPLUS,
-  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING,
-  'EXTRA_WALLBUILDERS': ECONOMY_BURSTING,
-  'WALLBUILDERS': ECONOMY_STABLE
+  'EXTRA_WALLBUILDERS': ECONOMY_SURPLUS,
+
+  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING
 }
 
 Room.prototype.isEconomyCapable = function (key) {
@@ -36,8 +40,13 @@ Room.prototype.getEconomyLevel = function () {
     return ECONOMY_CRASHED
   }
 
-  // When fully developed between 15000 and 300000
-  if (energy < desiredBuffer) {
+  // When fully developed between 15000 and 280000
+  if (energy < (desiredBuffer - 20000)) {
+    return ECONOMY_FALTERING
+  }
+
+  // When fully developed between 280000 and 300000
+  if (energy < (desiredBuffer)) {
     return ECONOMY_DEVELOPING
   }
 
@@ -51,7 +60,7 @@ Room.prototype.getEconomyLevel = function () {
     return ECONOMY_BURSTING
   }
 
-  // When fully developed over 300000
+  // When fully developed over 320000
   return ECONOMY_SURPLUS
 }
 

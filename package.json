@@ -45,6 +45,7 @@
       "ECONOMY_BURSTING",
       "ECONOMY_CRASHED",
       "ECONOMY_DEVELOPING",
+      "ECONOMY_FALTERING",
       "ECONOMY_STABLE",
       "ECONOMY_SURPLUS",
       "qlib",
