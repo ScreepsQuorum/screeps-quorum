@@ -1,6 +1,6 @@
 'use strict'
 
-const healthThreshold = 0.9
+const healthThreshold = 0.8
 const maintainStructures = [
   STRUCTURE_ROAD,
   STRUCTURE_CONTAINER
