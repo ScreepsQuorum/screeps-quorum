@@ -152,7 +152,7 @@ class CityFortify extends kernel.process {
     }
 
     let target
-    if (decaying) {
+    if (decaying.length > 0) {
       decaying.sort((a, b) => a.hits - b.hits)
       target = decaying[0]
     } else {
