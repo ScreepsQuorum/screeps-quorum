@@ -80,5 +80,8 @@ Room.prototype.getDesiredEnergyBuffer = function () {
   if (roomLevel < 4) {
     return 0
   }
+  if (this.name === 'sim') {
+    return 40000
+  }
   return Math.min((roomLevel - 3) * 100000, 300000)
 }
