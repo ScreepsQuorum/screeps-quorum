@@ -434,9 +434,9 @@ class CityLayout extends kernel.process {
         }
         if (layout) {
           plannedStruct = layout.getStructureAt(x, y)
-          if (plannedStruct === 3) { // magic number due to lacking access to structureMap
+          if (plannedStruct === STRUCTURE_ROAD) {
             costMatrix.set(x, y, 1)
-          } else if ([1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].indexOf(plannedStruct) > -1) { // magic numbers due to lacking access to structureMap
+          } else if (OBSTACLE_OBJECT_TYPES.indexOf(plannedStruct) > -1) {
             costMatrix.set(x, y, 0xff)
           }
         }
