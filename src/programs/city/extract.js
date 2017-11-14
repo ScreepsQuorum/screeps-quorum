@@ -73,10 +73,13 @@ class CityExtract extends kernel.process {
       }
 
       const closestExtractor = hauler.pos.findClosestByRange(frackersToEmpty)
-      if (!closestExtractor || !hauler.pos.isNearTo(closestExtractor)) {
-        hauler.travelTo(mineral)
-      } else {
+      if (closestExtractor && hauler.pos.isNearTo(closestExtractor)) {
         closestExtractor.transfer(hauler, mineral.mineralType)
+      }
+      frackersToEmpty.sort((a, b) => _.sum(b.carry) - _.sum(a.carry))
+      const fullestExtractor = frackersToEmpty[0]
+      if (fullestExtractor && !hauler.pos.isNearTo(fullestExtractor)) {
+        hauler.travelTo(fullestExtractor)
       }
     })
 
