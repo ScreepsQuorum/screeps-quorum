@@ -287,6 +287,15 @@ class RoomLayout {
         }
       }
     }
+
+    if (this._getSegmentLabel() === SEGMENT_CONSTRUCTION) {
+      if (this.allStructures[STRUCTURE_CONTAINER] && this.allStructures[STRUCTURE_ROAD]) {
+        for (const position of this.allStructures[STRUCTURE_CONTAINER]) {
+          this.allStructures[STRUCTURE_ROAD].push(position)
+        }
+      }
+    }
+
     return this.allStructures
   }
 
