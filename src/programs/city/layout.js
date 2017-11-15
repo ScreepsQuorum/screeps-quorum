@@ -404,8 +404,8 @@ class CityLayout extends kernel.process {
    */
   planRoad (layout, fromPos, toPos, matrix) {
     if (!matrix) matrix = this.getConstructionMatrix(layout)
-    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
-    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
+    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 4, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
+    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 3, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
     if (!path.path || path.path.length < 1) {
       Logger.log(`Unable to find path for road from: ${fromPos} to: ${toPos} in room: ${this.data.room} path returned was: ${JSON.stringify(path)}`, LOG_ERROR, 'layout')
@@ -440,7 +440,7 @@ class CityLayout extends kernel.process {
         if (layout) {
           plannedStruct = layout.getStructureAt(x, y)
           if (plannedStruct === STRUCTURE_ROAD) {
-            costMatrix.set(x, y, 1)
+            costMatrix.set(x, y, 2)
           } else if (OBSTACLE_OBJECT_TYPES.indexOf(plannedStruct) > -1) {
             // By making them walkable we allow the road planner to accept positions that are not actually reachable.
             costMatrix.set(x, y, 120)

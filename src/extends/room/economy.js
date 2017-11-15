@@ -8,6 +8,8 @@ global.ECONOMY_SURPLUS = 4
 global.ECONOMY_BURSTING = 5
 
 const economySettings = {
+  'SUPPLY_TERMINAL': ECONOMY_FALTERING,
+
   'EXPAND_FROM': ECONOMY_DEVELOPING,
   'WALLBUILDERS': ECONOMY_DEVELOPING,
   'BUILD_STRUCTURES': ECONOMY_DEVELOPING,
@@ -79,6 +81,9 @@ Room.prototype.getDesiredEnergyBuffer = function () {
   const roomLevel = this.getPracticalRoomLevel()
   if (roomLevel < 4) {
     return 0
+  }
+  if (this.name === 'sim') {
+    return 40000
   }
   return Math.min((roomLevel - 3) * 100000, 300000)
 }

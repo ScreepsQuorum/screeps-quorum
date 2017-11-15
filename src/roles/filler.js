@@ -46,9 +46,11 @@ class Filler extends MetaRole {
     }
 
     // If nothing else to fill, and structure is allowed, fill terminal.
-    if (this.fillableStructures.includes(STRUCTURE_TERMINAL) && creep.room.terminal) {
-      if (creep.room.terminal.store[RESOURCE_ENERGY] < 20000) {
-        this.fillStructure(creep, creep.room.terminal)
+    if (creep.room.isEconomyCapable('SUPPLY_TERMINAL')) {
+      if (this.fillableStructures.includes(STRUCTURE_TERMINAL) && creep.room.terminal) {
+        if (creep.room.terminal.store[RESOURCE_ENERGY] < 20000) {
+          this.fillStructure(creep, creep.room.terminal)
+        }
       }
     }
 
