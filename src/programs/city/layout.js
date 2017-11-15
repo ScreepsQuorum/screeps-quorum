@@ -429,15 +429,21 @@ class CityLayout extends kernel.process {
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (pos.isExit() || (pos.isSteppable() && pos.inFrontOfExit())) {
+        if (pos.isExit()) {
+          costMatrix.set(x, y, 0xff)
+          continue
+        }
+        if (pos.isSteppable() && pos.inFrontOfExit()) {
           costMatrix.set(x, y, 30)
+          continue
         }
         if (layout) {
           plannedStruct = layout.getStructureAt(x, y)
-          if (plannedStruct === 3) { // magic number due to lacking access to structureMap
+          if (plannedStruct === STRUCTURE_ROAD) {
             costMatrix.set(x, y, 2)
-          } else if ([1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].indexOf(plannedStruct) > -1) { // magic numbers due to lacking access to structureMap
-            costMatrix.set(x, y, 0xff)
+          } else if (OBSTACLE_OBJECT_TYPES.indexOf(plannedStruct) > -1) {
+            // By making them walkable we allow the road planner to accept positions that are not actually reachable.
+            costMatrix.set(x, y, 120)
           }
         }
       }
