@@ -35,6 +35,10 @@ class Logger {
       qlib.notify.send(message, 500)
     }
 
+    if (Memory.loglevel && Memory.loglevel > severity) {
+      return
+    }
+
     let attributes = ''
     let tag
     if (tags) {
@@ -53,7 +57,7 @@ class Logger {
     try {
       this.log(JSON.stringify(data), severity, group)
     } catch (err) {
-      this.log('Unable to log data due to circular dependency')
+      this.log('Unable to log data due to circular dependency', severity, group)
     }
   }
 
