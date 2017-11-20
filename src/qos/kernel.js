@@ -32,7 +32,7 @@ class QosKernel {
 
   start () {
     // Announce new uploads
-    Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_INFO, 'kernel')
+    Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_TRACE, 'kernel')
     if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
       Logger.log(`New script upload detected: ${SCRIPT_VERSION}`, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
@@ -54,6 +54,7 @@ class QosKernel {
   }
 
   cleanMemory () {
+    Logger.log('Cleaning memory', LOG_TRACE, 'kernel')
     let i
     for (i in Memory.creeps) { // jshint ignore:line
       if (!Game.creeps[i]) {
@@ -79,7 +80,7 @@ class QosKernel {
           processName += ' ' + descriptor
         }
 
-        Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_INFO, 'kernel')
+        Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_TRACE, 'kernel')
         const startCpu = Game.cpu.getUsed()
         runningProcess.run()
         let performanceName = runningProcess.name

@@ -37,7 +37,7 @@ class Performance {
       let average = cpu / count
       report += `${program}\t ${average.toFixed(3)}\t${max.toFixed(3)}\t${cpu.toFixed(3)}\t${count}\n`
     }
-    Logger.log(report)
+    Logger.log(report, LOG_WARN, 'performance')
   }
 
   reportHtml () {
@@ -92,7 +92,7 @@ class Performance {
       report += '</tr>'
     }
     report += '</table>'
-    Logger.log(report)
+    Logger.log(report, LOG_WARN, 'performance')
   }
 
   clear () {
