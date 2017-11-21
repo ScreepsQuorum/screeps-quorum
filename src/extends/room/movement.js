@@ -1,7 +1,7 @@
 'use strict'
 
 Room.getCostmatrix = function (roomname, opts = {}) {
-  Logger.log(`Retrieving CostMatrix for ${roomname}`, LOG_INFO)
+  Logger.log(`Retrieving CostMatrix for ${roomname}`, LOG_TRACE)
 
   const cm = Room.getStructuresCostmatrix(roomname, opts)
 
