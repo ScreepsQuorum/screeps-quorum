@@ -9,6 +9,8 @@ if (!Memory.username) {
 global.USERNAME = Memory.username
 global.PUBLIC_ACCOUNT = USERNAME === 'Quorum'
 
+global.MAX_INTEL_TARGETS = 500
+
 global.PRIORITIES_DEFAULT = 6
 
 global.PRIORITIES_CREEP_DEFAULT = 4
