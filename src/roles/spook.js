@@ -22,6 +22,9 @@ class Spook extends MetaRole {
 
     // Delete current target if it is currently visible.
     if (creep.memory.starget && Game.rooms[creep.memory.starget]) {
+      if (Memory.intel.active[creep.name]) {
+        delete Memory.intel.active[creep.name]
+      }
       delete creep.memory.starget
     }
 

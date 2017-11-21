@@ -22,6 +22,27 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   return Game.map.findRoute(fromRoom, toRoom, opts)
 }
 
+module.exports.getDistanceToEmpire = function (roomname) {
+  const cachedDistance = sos.lib.cache.get(`empire_distance_${roomname}`)
+  if (cachedDistance) {
+    return cachedDistance
+  }
+  let minimum = Infinity
+  const cities = Room.getCities()
+  for (const city of cities) {
+    const distance = Game.map.getRoomLinearDistance(city, roomname)
+    if (minimum > distance) {
+      minimum = distance
+    }
+  }
+  sos.lib.cache.set(`empire_distance_${roomname}`, minimum, {'maxttl': 50})
+  return minimum
+}
+
+module.exports.reachableFromEmpire = function (roomname) {
+  return module.exports.getDistanceToEmpire(roomname) <= (Math.ceil(CREEP_LIFE_TIME / 50) + 1)
+}
+
 const PATH_WEIGHT_HALLWAY = 1
 const PATH_WEIGHT_SOURCEKEEPER = 1
 const PATH_WEIGHT_OWN = 1
@@ -31,6 +52,9 @@ const PATH_WEIGHT_HOSTILE_RESERVATION = 5
 
 module.exports.getRoomScore = function (toRoom, fromRoom) {
   if (!Game.map.isRoomAvailable(toRoom)) {
+    return Infinity
+  }
+  if (!module.exports.reachableFromEmpire(toRoom)) {
     return Infinity
   }
   if (Room.isSourcekeeper(toRoom)) {
