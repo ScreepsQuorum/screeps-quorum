@@ -4,7 +4,7 @@ Room.prototype.getSuicideBooth = function () {
   let spawn = false
   if (this.storage) {
     spawn = this.storage.pos.findClosestByRange(this.structures[STRUCTURE_SPAWN])
-  } else {
+  } else if (this.structures[STRUCTURE_SPAWN]) {
     spawn = this.structures[STRUCTURE_SPAWN][0]
   }
 
