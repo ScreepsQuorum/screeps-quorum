@@ -48,10 +48,12 @@ Pull requests are accepted by votes, which depend on the
 [conensus rules](https://github.com/ScreepsQuorum/ScreepsAutoSpawner/blob/master/.gitconsensus.yaml)
 of the project. You are allowed to vote for your own pull requests.
 
-This project follows the [standardjs](https://standardjs.com/) code style. This
-is tested for by the Quorum continious integration system (currently CircleCI)
-and any pull requests which do not follow this standard will not be merged
-regardless of votes.
+This project follows the [prettier](https://prettier.io/) code style. This is
+tested for by the Quorum continious integration system (currently CircleCI) and
+any pull requests which do not follow this will not be merged regardless of
+votes. It is recommended that you install the
+[prettier plugin](https://prettier.io/docs/en/editors.html) for your editor so
+you can take advantage of auto-format-on-save awesomeness.
 
 ### Third Party Services
 

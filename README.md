@@ -3,7 +3,7 @@
 Screeps Quorum is a completely automated project centered around the game
 [Screeps](https://screeps.com/).
 
-[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![License](https://img.shields.io/npm/l/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
 [![Version](https://img.shields.io/npm/v/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
 [![Downloads](https://img.shields.io/npm/dw/screepsbot-quorum.svg)](https://npmjs.com/package/screepsbot-quorum)
