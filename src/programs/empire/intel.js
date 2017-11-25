@@ -7,12 +7,12 @@
 const EMERGENCY_TARGET_TRIGGER = MAX_INTEL_TARGETS * 2
 
 class EmpireIntel extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_EMPIRE_INTEL
   }
 
-  main () {
+  main() {
     this.gatherIntel()
     this.flushIntel()
     if (!this.data.lastclean || Game.time - this.data.lastclean > 100) {
@@ -21,7 +21,7 @@ class EmpireIntel extends kernel.process {
     }
   }
 
-  gatherIntel () {
+  gatherIntel() {
     const roomnames = Object.keys(Game.rooms)
     let roomname
     for (roomname of roomnames) {
@@ -36,7 +36,7 @@ class EmpireIntel extends kernel.process {
     }
   }
 
-  flushIntel () {
+  flushIntel() {
     if (!Memory.intel) {
       return
     }
@@ -44,12 +44,16 @@ class EmpireIntel extends kernel.process {
     if (buffersize < 0) {
       return
     }
-    if (!this.data.lastflush || Game.time - this.data.lastflush > 50 || buffersize > 80) {
+    if (
+      !this.data.lastflush ||
+      Game.time - this.data.lastflush > 50 ||
+      buffersize > 80
+    ) {
       Room.flushIntelToSegment()
     }
   }
 
-  cleanTargets () {
+  cleanTargets() {
     if (!Memory.intel) {
       return
     }

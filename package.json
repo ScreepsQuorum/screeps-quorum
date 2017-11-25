@@ -2,10 +2,7 @@
   "name": "screepsbot-quorum",
   "version": "0.1.0",
   "description": "Screeps Self Managing and Playing Codebase",
-  "keywords": [
-    "screeps",
-    "screepsbot"
-  ],
+  "keywords": ["screeps", "screepsbot"],
   "homepage": "http://quorum.tedivm.com",
   "license": "MIT",
   "main": "dist/main.js",

@@ -4,16 +4,16 @@
  * This program handles spawning of creeps.
  */
 class Spawns extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_SPAWNS
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -31,7 +31,12 @@ class Spawns extends kernel.process {
       }
       const ret = spawn.createCreep(creep.build, creep.name, creep.memory)
       if (Number.isInteger(ret)) {
-        Logger.log(`Error ${ret} while spawning creep ${creep.name} in room ${this.data.room}`, LOG_ERROR)
+        Logger.log(
+          `Error ${ret} while spawning creep ${creep.name} in room ${
+            this.data.room
+          }`,
+          LOG_ERROR
+        )
       } else {
         Logger.log(`Spawning creep ${creep.name} from ${this.data.room}`)
       }

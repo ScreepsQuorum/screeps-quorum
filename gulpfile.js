@@ -15,25 +15,33 @@ gulp.task('clean', () => {
 })
 
 gulp.task('copy', ['clean'], () => {
-  return gulp.src('src/**/*.js').pipe(rename((path) => {
-    let parts = path.dirname.match(/[^/\\]+/g)
-    let name = ''
-    for (let i in parts) {
-      if (parts[i] !== '.') {
-        name += parts[i] + '_'
-      }
-    }
-    name += path.basename
-    path.basename = name
-    path.dirname = ''
-  })).pipe(insert.transform(function (contents, file) {
-    let name = file.path.match(/[^/\\]+/g)
-    name = name[name.length - 1]
-    if (name === 'version.js') {
-      return `${contents}\nglobal.SCRIPT_VERSION = ${+new Date()}` // jshint ignore:line
-    }
-    return contents
-  })).pipe(gulp.dest('dist/'))
+  return gulp
+    .src('src/**/*.js')
+    .pipe(
+      rename(path => {
+        let parts = path.dirname.match(/[^/\\]+/g)
+        let name = ''
+        for (let i in parts) {
+          if (parts[i] !== '.') {
+            name += parts[i] + '_'
+          }
+        }
+        name += path.basename
+        path.basename = name
+        path.dirname = ''
+      })
+    )
+    .pipe(
+      insert.transform(function(contents, file) {
+        let name = file.path.match(/[^/\\]+/g)
+        name = name[name.length - 1]
+        if (name === 'version.js') {
+          return `${contents}\nglobal.SCRIPT_VERSION = ${+new Date()}` // jshint ignore:line
+        }
+        return contents
+      })
+    )
+    .pipe(gulp.dest('dist/'))
 })
 
 gulp.task('deploy', ['copy'], () => {
@@ -41,13 +49,16 @@ gulp.task('deploy', ['copy'], () => {
   let opts = config[args.server || 'main']
   let options = {}
   if (!opts) {
-    let err = new Error(`No configuration exists for server "${args.server || 'main'}`)
+    let err = new Error(
+      `No configuration exists for server "${args.server || 'main'}`
+    )
     err.showStack = false
     throw err
   }
 
   // allow overrides from passed arguments
-  for (let i in args) { // jshint ignore:line
+  for (let i in args) {
+    // jshint ignore:line
     opts[i] = args[i]
   }
 
@@ -60,29 +71,33 @@ gulp.task('deploy', ['copy'], () => {
   } else {
     options.host = opts.host || 'screeps.com'
   }
-  options.secure = !!opts.ssl || (options.host === 'screeps.com')
+  options.secure = !!opts.ssl || options.host === 'screeps.com'
   options.port = opts.port || 443
 
   return gulp.src('dist/*.js').pipe(screeps(options))
 })
 
-gulp.task('ci-config', ['ci-version'], (cb) => {
-  fs.writeFile('.screeps.json', JSON.stringify({
-    main: {
-      ptr: !!process.env.SCREEPS_PTR,
-      branch: process.env.SCREEPS_BRANCH,
-      email: process.env.SCREEPS_EMAIL,
-      password: process.env.SCREEPS_PASSWORD,
-      host: process.env.SCREEPS_HOST,
-      ssl: !!process.env.SCREEPS_SSL,
-      port: process.env.SCREEPS_PORT
-    }
-  }), cb)
+gulp.task('ci-config', ['ci-version'], cb => {
+  fs.writeFile(
+    '.screeps.json',
+    JSON.stringify({
+      main: {
+        ptr: !!process.env.SCREEPS_PTR,
+        branch: process.env.SCREEPS_BRANCH,
+        email: process.env.SCREEPS_EMAIL,
+        password: process.env.SCREEPS_PASSWORD,
+        host: process.env.SCREEPS_HOST,
+        ssl: !!process.env.SCREEPS_SSL,
+        port: process.env.SCREEPS_PORT,
+      },
+    }),
+    cb
+  )
 })
-gulp.task('ci-version', (cb) => {
+gulp.task('ci-version', cb => {
   let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
   let now = new Date()
-  let seconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds()
+  let seconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()
   let year = now.getFullYear()
   let month = now.getMonth() + 1
   let day = now.getDate()

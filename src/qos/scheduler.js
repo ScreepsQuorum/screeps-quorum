@@ -5,7 +5,7 @@ const MAX_PRIORITY = 16
 const MAX_PID = 9999999
 
 class Scheduler {
-  constructor () {
+  constructor() {
     if (!Memory.qos.scheduler) {
       Memory.qos.scheduler = {}
     }
@@ -14,15 +14,15 @@ class Scheduler {
     this.processCache = {}
     if (!this.memory.processes) {
       this.memory.processes = {
-        'index': {},
-        'running': false,
-        'completed': [],
-        'queues': {}
+        index: {},
+        running: false,
+        completed: [],
+        queues: {},
       }
     }
   }
 
-  shift () {
+  shift() {
     // Promote processes that did not run.
     let x
     for (x = 0; x <= MAX_PRIORITY; x++) {
@@ -32,7 +32,9 @@ class Scheduler {
           this.memory.processes.queues[x] = []
         }
         if (this.memory.processes.queues[x + 1]) {
-          this.memory.processes.queues[x] = this.memory.processes.queues[x].concat(this.memory.processes.queues[x + 1])
+          this.memory.processes.queues[x] = this.memory.processes.queues[
+            x
+          ].concat(this.memory.processes.queues[x + 1])
         }
         continue
       }
@@ -70,7 +72,7 @@ class Scheduler {
     this.memory.processes.completed = []
   }
 
-  getNextProcess () {
+  getNextProcess() {
     // Reset any "running" pids
     if (this.memory.processes.running) {
       this.memory.processes.completed.push(this.memory.processes.running)
@@ -80,7 +82,10 @@ class Scheduler {
     // Iterate through the queues until a pid is found.
     let x
     for (x = 0; x <= MAX_PRIORITY; x++) {
-      if (!this.memory.processes.queues[x] || this.memory.processes.queues[x].length <= 0) {
+      if (
+        !this.memory.processes.queues[x] ||
+        this.memory.processes.queues[x].length <= 0
+      ) {
         continue
       }
 
@@ -93,7 +98,11 @@ class Scheduler {
 
       // If process has a parent and the parent has died kill the child process.
       if (this.memory.processes.index[this.memory.processes.running].p) {
-        if (!this.isPidActive(this.memory.processes.index[this.memory.processes.running].p)) {
+        if (
+          !this.isPidActive(
+            this.memory.processes.index[this.memory.processes.running].p
+          )
+        ) {
           this.kill(this.memory.processes.running)
           continue
         }
@@ -106,12 +115,12 @@ class Scheduler {
     return false
   }
 
-  launchProcess (name, data = {}, parent = false) {
+  launchProcess(name, data = {}, parent = false) {
     const pid = this.getNextPid()
     this.memory.processes.index[pid] = {
       n: name,
       d: data,
-      p: parent
+      p: parent,
     }
     const priority = this.getPriorityForPid(pid)
     if (!this.memory.processes.queues[priority]) {
@@ -121,7 +130,7 @@ class Scheduler {
     return pid
   }
 
-  getNextPid () {
+  getNextPid() {
     if (!this.memory.lastPid) {
       this.memory.lastPid = 0
     }
@@ -137,21 +146,21 @@ class Scheduler {
     }
   }
 
-  isPidActive (pid) {
+  isPidActive(pid) {
     return !!this.memory.processes.index[pid]
   }
 
-  kill (pid) {
+  kill(pid) {
     if (this.memory.processes.index[pid]) {
       delete this.memory.processes.index[pid]
     }
   }
 
-  getProcessCount () {
+  getProcessCount() {
     return Object.keys(this.memory.processes.index).length
   }
 
-  getPriorityForPid (pid) {
+  getPriorityForPid(pid) {
     const program = this.getProcessForPid(pid)
     if (!program.getPriority) {
       return DEFAULT_PRIORITY
@@ -160,10 +169,13 @@ class Scheduler {
     return priority < MAX_PRIORITY ? priority : MAX_PRIORITY
   }
 
-  getProcessForPid (pid) {
+  getProcessForPid(pid) {
     if (!this.processCache[pid]) {
-      const ProgramClass = this.getProgramClass(this.memory.processes.index[pid].n)
-      this.processCache[pid] = new ProgramClass(pid,
+      const ProgramClass = this.getProgramClass(
+        this.memory.processes.index[pid].n
+      )
+      this.processCache[pid] = new ProgramClass(
+        pid,
         this.memory.processes.index[pid].n,
         this.memory.processes.index[pid].d,
         this.memory.processes.index[pid].p
@@ -172,7 +184,7 @@ class Scheduler {
     return this.processCache[pid]
   }
 
-  getProgramClass (program) {
+  getProgramClass(program) {
     return require(`programs_${program}`)
   }
 }

@@ -5,7 +5,7 @@
  */
 
 class CityExtract extends kernel.process {
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -15,24 +15,32 @@ class CityExtract extends kernel.process {
       return this.suicide()
     }
 
-    const extractor = this.room.structures[STRUCTURE_EXTRACTOR] ? this.room.structures[STRUCTURE_EXTRACTOR][0] : false
+    const extractor = this.room.structures[STRUCTURE_EXTRACTOR]
+      ? this.room.structures[STRUCTURE_EXTRACTOR][0]
+      : false
     const mineral = this.room.find(FIND_MINERALS)[0]
     const storage = this.room.terminal ? this.room.terminal : this.room.storage
-    const canExtract = extractor && mineral.mineralAmount > 0 && !mineral.ticksToRegeneration
+    const canExtract =
+      extractor && mineral.mineralAmount > 0 && !mineral.ticksToRegeneration
     const frackerCluster = this.getCluster('frackers', this.room)
     const haulerCluster = this.getCluster('haulers', this.room)
     const frackers = frackerCluster.getCreeps()
-    const frackersToEmpty = _.filter(frackers, function (fracker) {
+    const frackersToEmpty = _.filter(frackers, function(fracker) {
       if (!fracker.pos.isNearTo(mineral)) {
         return false
       }
       return _.sum(fracker.carry) > 0
     })
 
-    frackerCluster.sizeCluster('fracker', canExtract > 0 ? Math.min(3, extractor.pos.getSteppableAdjacent().length) : 0)
+    frackerCluster.sizeCluster(
+      'fracker',
+      canExtract > 0
+        ? Math.min(3, extractor.pos.getSteppableAdjacent().length)
+        : 0
+    )
     haulerCluster.sizeCluster('hauler', canExtract > 0 ? 2 : 0)
 
-    frackerCluster.forEach(function (fracker) {
+    frackerCluster.forEach(function(fracker) {
       const carrying = fracker.getCarryPercentage()
       if (!canExtract) {
         fracker.recycle()
@@ -51,7 +59,7 @@ class CityExtract extends kernel.process {
       }
     })
 
-    haulerCluster.forEach(function (hauler) {
+    haulerCluster.forEach(function(hauler) {
       if (!canExtract || hauler.ticksToLive < 50) {
         hauler.recycle()
         return

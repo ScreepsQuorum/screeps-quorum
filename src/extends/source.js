@@ -1,5 +1,5 @@
 'use strict'
 
-Source.prototype.getMiningPosition = function () {
+Source.prototype.getMiningPosition = function() {
   return this.pos.getMostOpenNeighbor()
 }

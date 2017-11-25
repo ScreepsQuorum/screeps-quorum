@@ -3,7 +3,9 @@
 if (!Memory.username) {
   const struc = _.find(Game.structures)
   const creep = _.find(Game.creeps)
-  Memory.username = (struc ? struc.owner.username : false) || (creep ? creep.owner.username : false)
+  Memory.username =
+    (struc ? struc.owner.username : false) ||
+    (creep ? creep.owner.username : false)
 }
 
 global.USERNAME = Memory.username
@@ -37,7 +39,7 @@ global.MARKET_STATS_INTERVAL = 750
 // Interval * Max Records == length of history saved
 global.MARKET_STATS_MAXECORD = 50
 // Percentage of records to drop. This prevents outliers from skewing results.
-global.MARKET_STATS_DROP = 0.10
+global.MARKET_STATS_DROP = 0.1
 
 global.MINERALS_EXTRACTABLE = [
   RESOURCE_HYDROGEN,
@@ -46,11 +48,11 @@ global.MINERALS_EXTRACTABLE = [
   RESOURCE_LEMERGIUM,
   RESOURCE_KEANIUM,
   RESOURCE_ZYNTHIUM,
-  RESOURCE_CATALYST
+  RESOURCE_CATALYST,
 ]
 
 // Which priorities to monitor.
 global.MONITOR_PRIORITIES = _.uniq([
   PRIORITIES_CREEP_DEFAULT,
-  PRIORITIES_DEFAULT
+  PRIORITIES_DEFAULT,
 ])

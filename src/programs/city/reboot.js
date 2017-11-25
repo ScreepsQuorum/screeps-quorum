@@ -5,25 +5,27 @@
  */
 
 class CityReboot extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_CITY_REBOOT
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
-    const fillers = this.room.find(FIND_MY_CREEPS, {filter: (creep) => creep.name.startsWith('filler')})
+    const fillers = this.room.find(FIND_MY_CREEPS, {
+      filter: creep => creep.name.startsWith('filler'),
+    })
     if (fillers.length <= 0) {
       this.launchCreepProcess('rebooter', 'filler', this.data.room, 2, {
         priority: 1,
-        energy: 300
+        energy: 300,
       })
     }
   }

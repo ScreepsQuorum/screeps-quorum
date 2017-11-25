@@ -1,17 +1,18 @@
-
-module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
+module.exports.findRoute = function(fromRoom, toRoom, opts = {}) {
   if (!opts.routeCallback) {
-    opts.routeCallback = function (toRoom, fromRoom) {
+    opts.routeCallback = function(toRoom, fromRoom) {
       return module.exports.getRoomScore(toRoom, fromRoom)
     }
     if (!opts.ignoreCache) {
-      const cacheLabel = `route_${Room.serializeName(fromRoom)}_${Room.serializeName(toRoom)}`
+      const cacheLabel = `route_${Room.serializeName(
+        fromRoom
+      )}_${Room.serializeName(toRoom)}`
       const cachedPath = sos.lib.cache.get(cacheLabel)
       if (cachedPath) {
         return cachedPath
       }
       const newPath = Game.map.findRoute(fromRoom, toRoom, opts)
-      let options = {maxttl: 150}
+      let options = { maxttl: 150 }
       if (newPath.length >= 4) {
         options.persist = true
       }
@@ -22,7 +23,7 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   return Game.map.findRoute(fromRoom, toRoom, opts)
 }
 
-module.exports.getDistanceToEmpire = function (roomname) {
+module.exports.getDistanceToEmpire = function(roomname) {
   const cachedDistance = sos.lib.cache.get(`empire_distance_${roomname}`)
   if (cachedDistance) {
     return cachedDistance
@@ -35,12 +36,15 @@ module.exports.getDistanceToEmpire = function (roomname) {
       minimum = distance
     }
   }
-  sos.lib.cache.set(`empire_distance_${roomname}`, minimum, {'maxttl': 50})
+  sos.lib.cache.set(`empire_distance_${roomname}`, minimum, { maxttl: 50 })
   return minimum
 }
 
-module.exports.reachableFromEmpire = function (roomname) {
-  return module.exports.getDistanceToEmpire(roomname) <= (Math.ceil(CREEP_LIFE_TIME / 50) + 1)
+module.exports.reachableFromEmpire = function(roomname) {
+  return (
+    module.exports.getDistanceToEmpire(roomname) <=
+    Math.ceil(CREEP_LIFE_TIME / 50) + 1
+  )
 }
 
 const PATH_WEIGHT_HALLWAY = 1
@@ -50,7 +54,7 @@ const PATH_WEIGHT_NEUTRAL = 3
 const PATH_WEIGHT_HOSTILE = 10
 const PATH_WEIGHT_HOSTILE_RESERVATION = 5
 
-module.exports.getRoomScore = function (toRoom, fromRoom) {
+module.exports.getRoomScore = function(toRoom, fromRoom) {
   if (!Game.map.isRoomAvailable(toRoom)) {
     return Infinity
   }
@@ -65,7 +69,10 @@ module.exports.getRoomScore = function (toRoom, fromRoom) {
   }
 
   const fromRoomIntel = Room.getIntel(fromRoom)
-  if (fromRoomIntel[INTEL_BLOCKED_EXITS] && fromRoomIntel[INTEL_BLOCKED_EXITS].indexOf(toRoom) >= 0) {
+  if (
+    fromRoomIntel[INTEL_BLOCKED_EXITS] &&
+    fromRoomIntel[INTEL_BLOCKED_EXITS].indexOf(toRoom) >= 0
+  ) {
     return Infinity
   }
 
@@ -74,7 +81,9 @@ module.exports.getRoomScore = function (toRoom, fromRoom) {
     if (roomIntel[INTEL_OWNER] === USERNAME) {
       return PATH_WEIGHT_OWN
     }
-    return roomIntel[INTEL_LEVEL] ? PATH_WEIGHT_HOSTILE : PATH_WEIGHT_HOSTILE_RESERVATION
+    return roomIntel[INTEL_LEVEL]
+      ? PATH_WEIGHT_HOSTILE
+      : PATH_WEIGHT_HOSTILE_RESERVATION
   }
   return PATH_WEIGHT_NEUTRAL
 }

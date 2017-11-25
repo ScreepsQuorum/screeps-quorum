@@ -7,16 +7,22 @@ import { createBoundingBoxForRange } from '../../../src/extends/roomposition'
 const BOUND_MIN = 0
 const BOUND_MAX = 49
 
-function testMacro (t, x, y, range) {
+function testMacro(t, x, y, range) {
   const { left, right, top, bottom } = createBoundingBoxForRange(x, y, range)
 
   t.true(left <= right, 'Left value is less than or equal to right value')
   t.true(top <= bottom, 'Bottom value is less than or equal to top value')
 
   t.true(BOUND_MIN <= left && left <= BOUND_MAX, 'Left value is out of bound')
-  t.true(BOUND_MIN <= right && right <= BOUND_MAX, 'Right value is out of bound')
+  t.true(
+    BOUND_MIN <= right && right <= BOUND_MAX,
+    'Right value is out of bound'
+  )
   t.true(BOUND_MIN <= top && top <= BOUND_MAX, 'Top value is out of bound')
-  t.true(BOUND_MIN <= bottom && bottom <= BOUND_MAX, 'Bottom value is out of bound')
+  t.true(
+    BOUND_MIN <= bottom && bottom <= BOUND_MAX,
+    'Bottom value is out of bound'
+  )
 
   // @todo add some assertions based on range
 }

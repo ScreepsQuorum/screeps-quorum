@@ -3,13 +3,13 @@
 const Filler = require('roles_filler')
 
 class Replenisher extends Filler {
-  constructor () {
+  constructor() {
     super()
     this.defaultEnergy = 800
     this.fillableStructures = [STRUCTURE_TOWER]
   }
 
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY], options.energy)
   }

@@ -5,12 +5,12 @@
  */
 
 class CityMine extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_CONSTRUCTION
   }
 
-  getDescriptor () {
+  getDescriptor() {
     if (this.data.mine) {
       return `${this.data.room} to ${this.data.mine}`
     } else {
@@ -18,14 +18,14 @@ class CityMine extends kernel.process {
     }
   }
 
-  getPerformanceDescriptor () {
+  getPerformanceDescriptor() {
     if (this.data.mine) {
       return 'remote'
     }
     return false
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -58,12 +58,15 @@ class CityMine extends kernel.process {
     }
   }
 
-  mineSource (source) {
+  mineSource(source) {
     // Identify where the miner should sit and any container should be built
     const minerPos = source.getMiningPosition()
 
     // Look for a container
-    const containers = _.filter(minerPos.lookFor(LOOK_STRUCTURES), (a) => a.structureType === STRUCTURE_CONTAINER)
+    const containers = _.filter(
+      minerPos.lookFor(LOOK_STRUCTURES),
+      a => a.structureType === STRUCTURE_CONTAINER
+    )
     const container = containers.length > 0 ? containers[0] : false
 
     // Build container if it isn't there
@@ -83,15 +86,19 @@ class CityMine extends kernel.process {
     // Check if a replacement miner is needed and spawn it early
     const minerCreeps = miners.getCreeps()
     let minerQuantity = 1
-    if (miners.getClusterSize() === 1 && minerCreeps.length > 0 && minerCreeps[0].ticksToLive < 60) {
+    if (
+      miners.getClusterSize() === 1 &&
+      minerCreeps.length > 0 &&
+      minerCreeps[0].ticksToLive < 60
+    ) {
       minerQuantity = 2
     }
     if (this.underAttack || this.strictSpawning) {
       minerQuantity = 0
     }
 
-    miners.sizeCluster('miner', minerQuantity, {'priority': 2})
-    miners.forEach(function (miner) {
+    miners.sizeCluster('miner', minerQuantity, { priority: 2 })
+    miners.forEach(function(miner) {
       if (miner.pos.getRangeTo(minerPos) !== 0) {
         miner.travelTo(minerPos)
         return
@@ -120,7 +127,9 @@ class CityMine extends kernel.process {
 
       if (containers && containers.length > 0) {
         if (containers.length > 1) {
-          containers.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY])
+          containers.sort(
+            (a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY]
+          )
         }
         storage = containers[0]
       } else {
@@ -145,32 +154,43 @@ class CityMine extends kernel.process {
     }
     if (!this.data.ssp[source.id]) {
       if (this.room.storage) {
-        this.data.ssp[source.id] = this.room.findPath(this.room.storage.pos, source.pos, {
-          ignoreCreeps: true,
-          maxOps: 6000
-        }).length
+        this.data.ssp[source.id] = this.room.findPath(
+          this.room.storage.pos,
+          source.pos,
+          {
+            ignoreCreeps: true,
+            maxOps: 6000,
+          }
+        ).length
       }
     }
     const distance = this.data.ssp[source.id] ? this.data.ssp[source.id] : 80
     if (!this.underAttack && !this.strictSpawning) {
       const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
       const multiplier = this.remote ? 1.8 : 1.3
-      const carryAmount = Math.ceil(((distance * multiplier) * 20) / carryCost) * carryCost
-      const maxEnergy = Math.min(carryCost * (MAX_CREEP_SIZE / 2), this.room.energyCapacityAvailable)
-      let energy = (carryAmount / CARRY_CAPACITY) * carryCost // 50 carry == 1m1c == 100 energy
+      const carryAmount =
+        Math.ceil(distance * multiplier * 20 / carryCost) * carryCost
+      const maxEnergy = Math.min(
+        carryCost * (MAX_CREEP_SIZE / 2),
+        this.room.energyCapacityAvailable
+      )
+      let energy = carryAmount / CARRY_CAPACITY * carryCost // 50 carry == 1m1c == 100 energy
       let quantity = 1
       if (energy > maxEnergy) {
         quantity = 2
-        energy = Math.ceil((energy / 2) / carryCost) * carryCost
+        energy = Math.ceil(energy / 2 / carryCost) * carryCost
       }
 
-      const respawnTime = ((energy / carryCost) * 2) * CREEP_SPAWN_TIME
-      const respawnAge = respawnTime + (distance * 1.2)
-      haulers.sizeCluster('hauler', quantity, {'energy': energy, 'respawnAge': respawnAge})
+      const respawnTime = energy / carryCost * 2 * CREEP_SPAWN_TIME
+      const respawnAge = respawnTime + distance * 1.2
+      haulers.sizeCluster('hauler', quantity, {
+        energy: energy,
+        respawnAge: respawnAge,
+      })
     }
 
-    haulers.forEach(function (hauler) {
-      if (hauler.ticksToLive < (distance + 30)) {
+    haulers.forEach(function(hauler) {
+      if (hauler.ticksToLive < distance + 30) {
         return hauler.recycle()
       }
       if (hauler.getCarryPercentage() > 0.8) {
@@ -197,38 +217,46 @@ class CityMine extends kernel.process {
     })
   }
 
-  scout () {
+  scout() {
     const center = new RoomPosition(25, 25, this.data.mine)
     const quantity = Game.rooms[this.data.mine] ? 0 : 1
     const scouts = this.getCluster(`scout`, this.room)
     scouts.sizeCluster('spook', quantity)
-    scouts.forEach(function (scout) {
+    scouts.forEach(function(scout) {
       if (scout.room.name === center.roomName) {
         if (scout.pos.getRangeTo(center) <= 20) {
           return
         }
       }
-      scout.travelTo(center, {range: 20})
+      scout.travelTo(center, { range: 20 })
     })
   }
 
-  reserveRoom () {
+  reserveRoom() {
     if (this.underAttack) {
       return
     }
     const controller = this.mine.controller
-    const timeout = controller.reservation ? controller.reservation.ticksToEnd : 0
+    const timeout = controller.reservation
+      ? controller.reservation.ticksToEnd
+      : 0
     let quantity = 0
     if (timeout < 3500) {
-      quantity = Math.min(this.room.getRoomSetting('RESERVER_COUNT'), controller.pos.getSteppableAdjacent().length)
+      quantity = Math.min(
+        this.room.getRoomSetting('RESERVER_COUNT'),
+        controller.pos.getSteppableAdjacent().length
+      )
     }
 
     const reservists = this.getCluster(`reservists`, this.room)
     reservists.sizeCluster('reservist', quantity)
-    reservists.forEach(function (reservist) {
+    reservists.forEach(function(reservist) {
       if (!reservist.pos.isNearTo(controller)) {
         reservist.travelTo(controller)
-      } else if (!controller.reservation || timeout < (CONTROLLER_RESERVE_MAX - 5)) {
+      } else if (
+        !controller.reservation ||
+        timeout < CONTROLLER_RESERVE_MAX - 5
+      ) {
         reservist.reserveController(controller)
       }
     })

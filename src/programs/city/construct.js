@@ -8,28 +8,30 @@ const ignoreConstructionSites = [
   STRUCTURE_RAMPART,
   STRUCTURE_WALL,
   STRUCTURE_CONTAINER,
-  STRUCTURE_ROAD
+  STRUCTURE_ROAD,
 ]
 
 class CityConstruct extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_CONSTRUCTION
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
 
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (structure) {
-      return !ignoreConstructionSites.includes(structure)
-    }})
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: function(structure) {
+        return !ignoreConstructionSites.includes(structure)
+      },
+    })
     if (sites.length <= 0) {
       let result = this.room.constructNextMissingStructure()
       if (Number.isInteger(result) && result < 0) {

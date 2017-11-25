@@ -3,12 +3,12 @@
 const MetaRole = require('roles_meta')
 
 class Builder extends MetaRole {
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
-  manageCreep (creep) {
+  manageCreep(creep) {
     if (creep.ticksToLive < 50) {
       return creep.recycle()
     }
@@ -17,7 +17,9 @@ class Builder extends MetaRole {
     }
 
     // Find and build any construction sites
-    const construction = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES)
+    const construction = creep.pos.findClosestByRange(
+      FIND_MY_CONSTRUCTION_SITES
+    )
     if (construction) {
       if (creep.pos.getRangeTo(construction) > 2) {
         creep.travelTo(construction)

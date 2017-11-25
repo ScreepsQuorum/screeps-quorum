@@ -3,12 +3,12 @@
 const MetaRole = require('roles_meta')
 
 class Reservist extends MetaRole {
-  constructor () {
+  constructor() {
     super()
     this.defaultEnergy = 3250
   }
 
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CLAIM], options.energy)
   }

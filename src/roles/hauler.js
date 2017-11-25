@@ -3,12 +3,12 @@
 const MetaRole = require('roles_meta')
 
 class Hauler extends MetaRole {
-  constructor () {
+  constructor() {
     super()
     this.defaultEnergy = 1200
   }
 
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY], options.energy)
   }

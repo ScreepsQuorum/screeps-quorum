@@ -1,7 +1,7 @@
 'use strict'
 
 class MetaRole {
-  setBuildDefaults (room, options) {
+  setBuildDefaults(room, options) {
     if (!options.energy) {
       options.energy = this.defaultEnergy || room.energyCapacityAvailable
     }
@@ -10,7 +10,7 @@ class MetaRole {
     }
   }
 
-  getPriority (creep) {
+  getPriority(creep) {
     return PRIORITIES_CREEP_DEFAULT
   }
 }

@@ -1,21 +1,22 @@
 'use strict'
 
 class Process {
-  constructor (pid, name, data, parent) {
+  constructor(pid, name, data, parent) {
     this.pid = pid
     this.name = name
     this.data = data
     this.parent = parent
   }
 
-  getPriority () {
+  getPriority() {
     return this.priority || DEFAULT_PRIORITY
   }
 
-  clean () {
+  clean() {
     if (this.data.children) {
       let label
-      for (label in this.data.children) { // jshint ignore:line
+      for (label in this.data.children) {
+        // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.children[label])) {
           delete this.data.children[label]
         }
@@ -24,7 +25,8 @@ class Process {
 
     if (this.data.processes) {
       let label
-      for (label in this.data.processes) { // jshint ignore:line
+      for (label in this.data.processes) {
+        // jshint ignore:line
         if (!kernel.scheduler.isPidActive(this.data.processes[label])) {
           delete this.data.processes[label]
         }
@@ -32,26 +34,30 @@ class Process {
     }
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return false
   }
 
-  getPerformanceDescriptor () {
+  getPerformanceDescriptor() {
     return false
   }
 
-  launchChildProcess (label, name, data = {}) {
+  launchChildProcess(label, name, data = {}) {
     if (!this.data.children) {
       this.data.children = {}
     }
     if (this.data.children[label]) {
       return true
     }
-    this.data.children[label] = kernel.scheduler.launchProcess(name, data, this.pid)
+    this.data.children[label] = kernel.scheduler.launchProcess(
+      name,
+      data,
+      this.pid
+    )
     return this.data.children[label]
   }
 
-  getChildProcessPid (label) {
+  getChildProcessPid(label) {
     if (!this.data.children) {
       return false
     }
@@ -61,7 +67,7 @@ class Process {
     return this.data.children[label]
   }
 
-  isChildProcessRunning (label) {
+  isChildProcessRunning(label) {
     const pid = this.getChildProcessPid(label)
     if (!pid) {
       return false
@@ -69,7 +75,7 @@ class Process {
     return kernel.scheduler.isPidActive(pid)
   }
 
-  launchProcess (label, name, data = {}) {
+  launchProcess(label, name, data = {}) {
     if (!this.data.processes) {
       this.data.processes = {}
     }
@@ -81,7 +87,7 @@ class Process {
     return this.data.processes[label]
   }
 
-  getProcessPid (label) {
+  getProcessPid(label) {
     if (!this.data.processes) {
       return false
     }
@@ -91,7 +97,7 @@ class Process {
     return this.data.processes[label]
   }
 
-  isProcessRunning (label) {
+  isProcessRunning(label) {
     const pid = this.getProcessPid(label)
     if (!pid) {
       return false
@@ -99,7 +105,7 @@ class Process {
     return kernel.scheduler.isPidActive(pid)
   }
 
-  launchCreepProcess (label, role, roomname, quantity = 1, options = {}) {
+  launchCreepProcess(label, role, roomname, quantity = 1, options = {}) {
     const room = Game.rooms[roomname]
     if (!room) {
       return false
@@ -115,16 +121,16 @@ class Process {
       }
       const creepName = room.queueCreep(role, options)
       this.launchChildProcess(specificLabel, 'creep', {
-        'creep': creepName
+        creep: creepName,
       })
     }
   }
 
-  getCluster (name, room) {
+  getCluster(name, room) {
     return new qlib.Cluster(`${name}_${this.pid}`, room)
   }
 
-  period (interval, label = 'default') {
+  period(interval, label = 'default') {
     if (!this.data.period) {
       this.data.period = {}
     }
@@ -138,11 +144,11 @@ class Process {
     return false
   }
 
-  suicide () {
+  suicide() {
     return kernel.scheduler.kill(this.pid)
   }
 
-  run () {
+  run() {
     this.clean()
     this.main()
   }

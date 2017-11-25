@@ -3,12 +3,12 @@
 const MetaRole = require('roles_meta')
 
 class Miner extends MetaRole {
-  constructor () {
+  constructor() {
     super()
     this.defaultEnergy = 800
   }
 
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     const base = [MOVE, CARRY, WORK, WORK, WORK, WORK, WORK, WORK, MOVE, MOVE]
     if (options.energy >= 800) {

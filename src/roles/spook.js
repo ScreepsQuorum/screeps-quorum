@@ -3,17 +3,19 @@
 const MetaRole = require('roles_meta')
 let CONTROLLER_MESSAGE
 if (PUBLIC_ACCOUNT) {
-  CONTROLLER_MESSAGE = 'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+  CONTROLLER_MESSAGE =
+    'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
 } else {
-  CONTROLLER_MESSAGE = 'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+  CONTROLLER_MESSAGE =
+    'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
 }
 
 class Spook extends MetaRole {
-  getBuild (room, options) {
+  getBuild(room, options) {
     return [MOVE]
   }
 
-  manageCreep (creep) {
+  manageCreep(creep) {
     // Disable notifications of attack since this creep will head into hostile rooms.
     if (!creep.memory.dn) {
       creep.memory.dn = true
@@ -30,7 +32,10 @@ class Spook extends MetaRole {
 
     // Harass current room by signing controller and stomping contruction sites.
     if (!creep.room.controller || !creep.room.controller.my) {
-      if (!creep.memory.stomproom || creep.memory.stomproom !== creep.room.name) {
+      if (
+        !creep.memory.stomproom ||
+        creep.memory.stomproom !== creep.room.name
+      ) {
         creep.memory.stomproom = creep.room.name
         creep.memory.stomptime = Game.time
       }
@@ -51,7 +56,7 @@ class Spook extends MetaRole {
     this.migrateRooms(creep)
   }
 
-  stompConstruction (creep) {
+  stompConstruction(creep) {
     // Use cached construction site
     if (creep.memory.stomp) {
       let construction = Game.getObjectById(creep.memory.stomp)
@@ -63,9 +68,14 @@ class Spook extends MetaRole {
       }
     }
     // Find a new site to stomp, excluding any being stood on.
-    const construction = creep.pos.findClosestByRange(FIND_HOSTILE_CONSTRUCTION_SITES, {filter: function (site) {
-      return site.pos.getRangeTo(creep) > 0
-    }})
+    const construction = creep.pos.findClosestByRange(
+      FIND_HOSTILE_CONSTRUCTION_SITES,
+      {
+        filter: function(site) {
+          return site.pos.getRangeTo(creep) > 0
+        },
+      }
+    )
     if (!construction) {
       return false
     }
@@ -74,11 +84,14 @@ class Spook extends MetaRole {
     return true
   }
 
-  signController (creep) {
+  signController(creep) {
     if (!creep.room.controller) {
       return false
     }
-    if (creep.room.controller.sign && creep.room.controller.sign.username === USERNAME) {
+    if (
+      creep.room.controller.sign &&
+      creep.room.controller.sign.username === USERNAME
+    ) {
       return false
     }
     if (creep.pos.isNearTo(creep.room.controller)) {
@@ -89,7 +102,7 @@ class Spook extends MetaRole {
     return true
   }
 
-  migrateRooms (creep) {
+  migrateRooms(creep) {
     let target
     if (creep.memory.starget && creep.memory.starget !== creep.room.name) {
       target = creep.memory.starget
@@ -97,7 +110,10 @@ class Spook extends MetaRole {
       target = Room.getScoutTarget(creep)
       creep.memory.starget = target
     }
-    if (creep.travelTo(new RoomPosition(25, 25, target), {range: 23}) === ERR_NO_PATH) {
+    if (
+      creep.travelTo(new RoomPosition(25, 25, target), { range: 23 }) ===
+      ERR_NO_PATH
+    ) {
       delete creep.memory.starget
     }
   }

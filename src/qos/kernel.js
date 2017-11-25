@@ -8,7 +8,7 @@ const BUCKET_EMERGENCY = 1000
 const BUCKET_FLOOR = 2000
 const BUCKET_CEILING = 9500
 const CPU_BUFFER = 130
-const CPU_MINIMUM = 0.50
+const CPU_MINIMUM = 0.5
 const CPU_ADJUST = 0.05
 const CPU_GLOBAL_BOOST = 60
 const GLOBAL_LAST_RESET = Game.time
@@ -17,7 +17,7 @@ global.BUCKET_FLOOR = BUCKET_FLOOR
 global.BUCKET_CEILING = BUCKET_CEILING
 
 class QosKernel {
-  constructor () {
+  constructor() {
     global.kernel = this
 
     if (!Memory.qos) {
@@ -30,10 +30,13 @@ class QosKernel {
     this.process = Process
   }
 
-  start () {
+  start() {
     // Announce new uploads
     Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_TRACE, 'kernel')
-    if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
+    if (
+      !Memory.qos.script_version ||
+      Memory.qos.script_version !== SCRIPT_VERSION
+    ) {
       Logger.log(`New script upload detected: ${SCRIPT_VERSION}`, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
       Memory.qos.script_upload = Game.time
@@ -53,10 +56,11 @@ class QosKernel {
     }
   }
 
-  cleanMemory () {
+  cleanMemory() {
     Logger.log('Cleaning memory', LOG_TRACE, 'kernel')
     let i
-    for (i in Memory.creeps) { // jshint ignore:line
+    for (i in Memory.creeps) {
+      // jshint ignore:line
       if (!Game.creeps[i]) {
         delete Memory.creeps[i]
       }
@@ -66,7 +70,7 @@ class QosKernel {
     qlib.notify.clean()
   }
 
-  run () {
+  run() {
     while (this.shouldContinue()) {
       const runningProcess = this.scheduler.getNextProcess()
       if (!runningProcess) {
@@ -80,7 +84,11 @@ class QosKernel {
           processName += ' ' + descriptor
         }
 
-        Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_TRACE, 'kernel')
+        Logger.log(
+          `Running ${processName} (pid ${runningProcess.pid})`,
+          LOG_TRACE,
+          'kernel'
+        )
         const startCpu = Game.cpu.getUsed()
         runningProcess.run()
         let performanceName = runningProcess.name
@@ -88,7 +96,10 @@ class QosKernel {
         if (performanceDescriptor) {
           performanceName += ' ' + performanceDescriptor
         }
-        this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
+        this.performance.addProgramStats(
+          performanceName,
+          Game.cpu.getUsed() - startCpu
+        )
       } catch (err) {
         let message = 'program error occurred\n'
         message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
@@ -99,19 +110,19 @@ class QosKernel {
     }
   }
 
-  sigmoid (x) {
+  sigmoid(x) {
     return 1.0 / (1.0 + Math.exp(-x))
   }
 
-  sigmoidSkewed (x) {
-    return this.sigmoid((x * 12.0) - 6.0)
+  sigmoidSkewed(x) {
+    return this.sigmoid(x * 12.0 - 6.0)
   }
 
-  shouldContinue () {
+  shouldContinue() {
     return !!this.simulation || Game.cpu.getUsed() < this.getCpuLimit()
   }
 
-  getCpuLimit () {
+  getCpuLimit() {
     if (Game.cpu.bucket > BUCKET_CEILING) {
       return Game.cpu.tickLimit - CPU_BUFFER
     }
@@ -129,7 +140,10 @@ class QosKernel {
       const depthInRange = (Game.cpu.bucket - BUCKET_FLOOR) / bucketRange
       const minToAllocate = Game.cpu.limit * CPU_MINIMUM
       const maxToAllocate = Game.cpu.limit
-      this._cpuLimit = (minToAllocate + this.sigmoidSkewed(depthInRange) * (maxToAllocate - minToAllocate)) * (1 - CPU_ADJUST)
+      this._cpuLimit =
+        (minToAllocate +
+          this.sigmoidSkewed(depthInRange) * (maxToAllocate - minToAllocate)) *
+        (1 - CPU_ADJUST)
       if (this.newglobal) {
         this._cpuLimit += CPU_GLOBAL_BOOST
       }
@@ -138,14 +152,18 @@ class QosKernel {
     return this._cpuLimit
   }
 
-  shutdown () {
+  shutdown() {
     sos.lib.vram.saveDirty()
     sos.lib.segments.process()
 
     const processCount = this.scheduler.getProcessCount()
     const completedCount = this.scheduler.memory.processes.completed.length
 
-    Logger.log(`Processes Run: ${completedCount}/${processCount}`, LOG_INFO, 'kernel')
+    Logger.log(
+      `Processes Run: ${completedCount}/${processCount}`,
+      LOG_INFO,
+      'kernel'
+    )
     Logger.log(`Tick Limit: ${Game.cpu.tickLimit}`, LOG_INFO, 'kernel')
     Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
     Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')

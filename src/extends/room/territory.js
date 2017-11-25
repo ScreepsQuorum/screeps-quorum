@@ -2,7 +2,7 @@
 
 // Memory.territory
 
-Room.getCities = function () {
+Room.getCities = function() {
   // When respawning the first room has to be autodetected, after which new cities will need to added.
   if (!Memory.territory || Object.keys(Memory.territory).length <= 0) {
     Memory.territory = {}
@@ -16,7 +16,7 @@ Room.getCities = function () {
   return Object.keys(Memory.territory)
 }
 
-Room.addCity = function (roomName) {
+Room.addCity = function(roomName) {
   if (!Memory.territory[roomName]) {
     Memory.territory[roomName] = {}
     Logger.log(`Adding city ${roomName}`)
@@ -25,7 +25,7 @@ Room.addCity = function (roomName) {
   }
 }
 
-Room.removeCity = function (roomName) {
+Room.removeCity = function(roomName) {
   if (Memory.territory && Memory.territory[roomName]) {
     delete Memory.territory[roomName]
     Logger.log(`Removing city ${roomName}`)
@@ -33,11 +33,11 @@ Room.removeCity = function (roomName) {
   }
 }
 
-Room.isCity = function (roomName) {
+Room.isCity = function(roomName) {
   return Boolean(Memory.territory[roomName])
 }
 
-Room.prototype.getMines = function () {
+Room.prototype.getMines = function() {
   if (!Memory.territory || !Memory.territory[this.name]) {
     return []
   }
@@ -47,7 +47,7 @@ Room.prototype.getMines = function () {
   return Memory.territory[this.name].mines
 }
 
-Room.prototype.addMine = function (mine) {
+Room.prototype.addMine = function(mine) {
   if (!Memory.territory || !Memory.territory[this.name]) {
     return false
   }
@@ -60,7 +60,7 @@ Room.prototype.addMine = function (mine) {
   qlib.notify.send(`Adding mine from ${this.name} to ${mine}`)
 }
 
-Room.getMineOwner = function (mine) {
+Room.getMineOwner = function(mine) {
   if (!Memory.territory) {
     return false
   }
@@ -92,10 +92,13 @@ const MINE_WEIGHTS_WALKABILITY = 0
 const MINE_WEIGHTS_DISTANCE = -3
 const MINE_MAX_DISTANCE = 2
 
-Room.prototype.selectNextMine = function () {
+Room.prototype.selectNextMine = function() {
   const existing = this.getMines()
   // The first mine should not be more than one room away
-  const candidates = Room.getRoomsInRange(this.name, existing.length <= 0 ? 1 : 2)
+  const candidates = Room.getRoomsInRange(
+    this.name,
+    existing.length <= 0 ? 1 : 2
+  )
   let candidate
   let currentScore = -Infinity
   let currentBestRoom = false
@@ -118,7 +121,7 @@ Room.prototype.selectNextMine = function () {
   return currentBestRoom
 }
 
-Room.prototype.getMineScore = function (roomName) {
+Room.prototype.getMineScore = function(roomName) {
   // Mining program currently doesn't support SK rooms. When support is added make sure to include it in the scoring.
   if (Room.isSourcekeeper(roomName)) {
     return false
@@ -151,10 +154,10 @@ Room.prototype.getMineScore = function (roomName) {
   }
 
   let score = 0
-  score += (intel[INTEL_SOURCES] / 3) * MINE_WEIGHTS_SOURCES
+  score += intel[INTEL_SOURCES] / 3 * MINE_WEIGHTS_SOURCES
   score += intel[INTEL_WALKABILITY] * MINE_WEIGHTS_WALKABILITY
   score += intel[INTEL_SWAMPINESS] * MINE_WEIGHTS_SWAMPINESS
-  score += (distance / MINE_MAX_DISTANCE) * MINE_WEIGHTS_DISTANCE
+  score += distance / MINE_MAX_DISTANCE * MINE_WEIGHTS_DISTANCE
   return score
 }
 
@@ -210,7 +213,7 @@ const CITY_MAX_REACHABILITY_DISTANCE = Math.floor(CREEP_CLAIM_LIFE_TIME / 50)
 // Number of 2 source cities needed before the system is willing to consider one source rooms
 const CITY_MINIMUM_CITIES_BEFORE_ONE_SOURCE = 5
 
-Room.getCityScore = function (roomName) {
+Room.getCityScore = function(roomName) {
   // Skip rooms that can not be claimed.
   if (!Room.isClaimable(roomName)) {
     return false
@@ -234,7 +237,11 @@ Room.getCityScore = function (roomName) {
   }
 
   // Don't claim room that is already owned by this player.
-  if (Game.rooms[roomName] && Game.rooms[roomName].controller && Game.rooms[roomName].controller.my) {
+  if (
+    Game.rooms[roomName] &&
+    Game.rooms[roomName].controller &&
+    Game.rooms[roomName].controller.my
+  ) {
     return false
   }
 
@@ -243,7 +250,10 @@ Room.getCityScore = function (roomName) {
     return false
   }
 
-  if (intel[INTEL_SOURCES] < 2 && Room.getCities().length < CITY_MINIMUM_CITIES_BEFORE_ONE_SOURCE) {
+  if (
+    intel[INTEL_SOURCES] < 2 &&
+    Room.getCities().length < CITY_MINIMUM_CITIES_BEFORE_ONE_SOURCE
+  ) {
     return false
   }
 
@@ -251,8 +261,11 @@ Room.getCityScore = function (roomName) {
   score += (intel[INTEL_SOURCES] - 1) * CITY_WEIGHTS_TWO_SOURCES
   score += intel[INTEL_WALKABILITY] * CITY_WEIGHTS_WALKABILITY
   score += intel[INTEL_SWAMPINESS] * CITY_WEIGHTS_SWAMPINESS
-  score += getMineralMarketScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_MARKET
-  score += getMineralEmpireNeedsScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_EMPIRE_NEED
+  score +=
+    getMineralMarketScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_MARKET
+  score +=
+    getMineralEmpireNeedsScore(intel[INTEL_MINERAL]) *
+    CITY_WEIGHTS_MINERAL_EMPIRE_NEED
   score += getDefensibilityScore(roomName) * CITY_WEIGHTS_DEFENSIBILITY
   score += getRoomTypeScore(roomName) * CITY_WEIGHTS_ROOMTYPE
   score += getEmpireClutterScore(roomName) * CITY_WEIGHTS_EMPIRE_CLUTTERED
@@ -264,60 +277,96 @@ Room.getCityScore = function (roomName) {
   return score
 }
 
-Room.testRoomScore = function (roomName) {
+Room.testRoomScore = function(roomName) {
   const intel = Room.getIntel(roomName)
   Logger.highlightData(intel)
 
-  Logger.highlight(`Two Sources: ${(intel[INTEL_SOURCES] - 1)}`)
-  Logger.highlight(`Two Sources: ${(intel[INTEL_SOURCES] - 1) * CITY_WEIGHTS_TWO_SOURCES}`)
+  Logger.highlight(`Two Sources: ${intel[INTEL_SOURCES] - 1}`)
+  Logger.highlight(
+    `Two Sources: ${(intel[INTEL_SOURCES] - 1) * CITY_WEIGHTS_TWO_SOURCES}`
+  )
 
   Logger.highlight(`Walkability: ${intel[INTEL_WALKABILITY]}`)
-  Logger.highlight(`Walkability: ${intel[INTEL_WALKABILITY] * CITY_WEIGHTS_WALKABILITY}`)
+  Logger.highlight(
+    `Walkability: ${intel[INTEL_WALKABILITY] * CITY_WEIGHTS_WALKABILITY}`
+  )
 
   Logger.highlight(`Swampiness: ${intel[INTEL_SWAMPINESS]}`)
-  Logger.highlight(`Swampiness: ${intel[INTEL_SWAMPINESS] * CITY_WEIGHTS_SWAMPINESS}`)
+  Logger.highlight(
+    `Swampiness: ${intel[INTEL_SWAMPINESS] * CITY_WEIGHTS_SWAMPINESS}`
+  )
 
-  Logger.highlight(`Mineral Market: ${getMineralMarketScore(intel[INTEL_MINERAL])}`)
-  Logger.highlight(`Mineral Market: ${getMineralMarketScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_MARKET}`)
+  Logger.highlight(
+    `Mineral Market: ${getMineralMarketScore(intel[INTEL_MINERAL])}`
+  )
+  Logger.highlight(
+    `Mineral Market: ${getMineralMarketScore(intel[INTEL_MINERAL]) *
+      CITY_WEIGHTS_MINERAL_MARKET}`
+  )
 
-  Logger.highlight(`Mineral Empire: ${getMineralEmpireNeedsScore(intel[INTEL_MINERAL])}`)
-  Logger.highlight(`Mineral Empire: ${getMineralEmpireNeedsScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_EMPIRE_NEED}`)
+  Logger.highlight(
+    `Mineral Empire: ${getMineralEmpireNeedsScore(intel[INTEL_MINERAL])}`
+  )
+  Logger.highlight(
+    `Mineral Empire: ${getMineralEmpireNeedsScore(intel[INTEL_MINERAL]) *
+      CITY_WEIGHTS_MINERAL_EMPIRE_NEED}`
+  )
 
   Logger.highlight(`Defensibility: ${getDefensibilityScore(roomName)}`)
-  Logger.highlight(`Defensibility: ${getDefensibilityScore(roomName) * CITY_WEIGHTS_DEFENSIBILITY}`)
+  Logger.highlight(
+    `Defensibility: ${getDefensibilityScore(roomName) *
+      CITY_WEIGHTS_DEFENSIBILITY}`
+  )
 
   Logger.highlight(`Room Type: ${getRoomTypeScore(roomName)}`)
-  Logger.highlight(`Room Type: ${getRoomTypeScore(roomName) * CITY_WEIGHTS_ROOMTYPE}`)
+  Logger.highlight(
+    `Room Type: ${getRoomTypeScore(roomName) * CITY_WEIGHTS_ROOMTYPE}`
+  )
 
   Logger.highlight(`Empire Clutter: ${getEmpireClutterScore(roomName)}`)
-  Logger.highlight(`Empire Clutter: ${getEmpireClutterScore(roomName) * CITY_WEIGHTS_EMPIRE_CLUTTERED}`)
+  Logger.highlight(
+    `Empire Clutter: ${getEmpireClutterScore(roomName) *
+      CITY_WEIGHTS_EMPIRE_CLUTTERED}`
+  )
 
   Logger.highlight(`Empire Defense: ${getEmpireDefenseScore(roomName)}`)
-  Logger.highlight(`Empire Defense: ${getEmpireDefenseScore(roomName) * CITY_WEIGHTS_EMPIRE_DEFENSE}`)
+  Logger.highlight(
+    `Empire Defense: ${getEmpireDefenseScore(roomName) *
+      CITY_WEIGHTS_EMPIRE_DEFENSE}`
+  )
 
   Logger.highlight(`Region Resources: ${getRegionResourcesScore(roomName, 2)}`)
-  Logger.highlight(`Region Resources: ${getRegionResourcesScore(roomName, 2) * CITY_WEIGHTS_REGION_RESOURCES}`)
+  Logger.highlight(
+    `Region Resources: ${getRegionResourcesScore(roomName, 2) *
+      CITY_WEIGHTS_REGION_RESOURCES}`
+  )
 
   Logger.highlight(`Region Density: ${getRegionDensityScore(roomName, 2)}`)
-  Logger.highlight(`Region Density: ${getRegionDensityScore(roomName, 2) * CITY_WEIGHTS_REGION_DENSITY}`)
+  Logger.highlight(
+    `Region Density: ${getRegionDensityScore(roomName, 2) *
+      CITY_WEIGHTS_REGION_DENSITY}`
+  )
 
   Logger.highlight(`City Distance: ${getCityDistanceScore(roomName)}`)
-  Logger.highlight(`City Distance: ${getCityDistanceScore(roomName) * CITY_WEIGHT_CITY_DISTANCE}`)
+  Logger.highlight(
+    `City Distance: ${getCityDistanceScore(roomName) *
+      CITY_WEIGHT_CITY_DISTANCE}`
+  )
 
   Logger.highlight(`Total Score: ${Room.getCityScore(roomName)}`)
 }
 
-function getMineralMarketScore (mineral) {
+function getMineralMarketScore(mineral) {
   const max = qlib.market.getHighestMineralValue()
   const cost = qlib.market.getAveragePrice(mineral, ORDER_SELL)
   return cost / max
 }
 
-function getMineralEmpireNeedsScore (mineral) {
+function getMineralEmpireNeedsScore(mineral) {
   return 1 - Mineral.getEmpireRatio()[mineral]
 }
 
-function getDefensibilityScore (room) {
+function getDefensibilityScore(room) {
   let score = 0
   let totalEdge = 48 * 4
   let exits = Game.map.describeExits(room)
@@ -355,7 +404,7 @@ function getDefensibilityScore (room) {
 }
 
 // Hallway (power), Corner (shards), SK Neighbor (resources)
-function getRoomTypeScore (room) {
+function getRoomTypeScore(room) {
   const coords = Room.getCoordinates(room)
   const normX = coords.x % 10
   const normY = coords.y % 10
@@ -389,8 +438,8 @@ function getRoomTypeScore (room) {
 }
 
 // How many sources compared to rooms.
-function getRegionResourcesScore (centerRoomName, range) {
-  const regionRoomCount = Math.pow((range * 2) + 1, 2) - 1
+function getRegionResourcesScore(centerRoomName, range) {
+  const regionRoomCount = Math.pow(range * 2 + 1, 2) - 1
   const rooms = Room.getRoomsInRange(centerRoomName, range)
   let sourceCount = 0
   for (let roomName of rooms) {
@@ -412,7 +461,7 @@ function getRegionResourcesScore (centerRoomName, range) {
 }
 
 // How many neighboring rooms have two sources
-function getNeighborSourcesScore (room) {
+function getNeighborSourcesScore(room) {
   const neighbors = _.values(Game.map.describeExits(room))
   let twoSource = 0
   for (let neighbor of neighbors) {
@@ -425,15 +474,17 @@ function getNeighborSourcesScore (room) {
 }
 
 // How many rooms in range (allowance for one, presumably the claimer)
-function getEmpireClutterScore (room) {
+function getEmpireClutterScore(room) {
   const cities = Room.getCities()
   const maxInRange = 5
   let inRange = 0
   for (let city of cities) {
-    if (Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE) {
+    if (
+      Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE
+    ) {
       inRange++
     }
-    if ((inRange - 1) >= maxInRange) {
+    if (inRange - 1 >= maxInRange) {
       return 1
     }
   }
@@ -444,12 +495,14 @@ function getEmpireClutterScore (room) {
 }
 
 // Out of the closest 4 cities, how many are in range to help with defense?
-function getEmpireDefenseScore (room) {
+function getEmpireDefenseScore(room) {
   const cities = Room.getCities()
   const target = cities.length < 4 ? cities.length : 4
   let closeCount = 0
   for (let city of cities) {
-    if (Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE) {
+    if (
+      Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE
+    ) {
       closeCount++
       if (closeCount >= target) {
         return 1
@@ -459,8 +512,8 @@ function getEmpireDefenseScore (room) {
   return closeCount / target
 }
 
-function getRegionDensityScore (room, range) {
-  const regionRoomCount = Math.pow((range * 2) + 1, 2) - 1
+function getRegionDensityScore(room, range) {
+  const regionRoomCount = Math.pow(range * 2 + 1, 2) - 1
   const rooms = Room.getRoomsInRange(room, range)
   let owned = 0
   for (let room of rooms) {
@@ -475,7 +528,7 @@ function getRegionDensityScore (room, range) {
   return owned / regionRoomCount
 }
 
-function getCityDistanceScore (room) {
+function getCityDistanceScore(room) {
   const cities = Room.getCities()
   let max = CITY_MAX_REACHABILITY_DISTANCE - 2
   let min = Infinity
