@@ -8,16 +8,16 @@
 const DECAY_LIMIT = 30000
 
 class CityFortify extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_FORTIFY
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
+  main() {
     if (!Game.rooms[this.data.room]) {
       return this.suicide()
     }
@@ -59,7 +59,10 @@ class CityFortify extends kernel.process {
 
     let quantity = 0
     if (this.room.isEconomyCapable('WALLBUILDERS')) {
-      if (target instanceof ConstructionSite || target.hits < desiredHitpoints) {
+      if (
+        target instanceof ConstructionSite ||
+        target.hits < desiredHitpoints
+      ) {
         quantity += 1
       }
       if (this.room.isEconomyCapable('EXTRA_WALLBUILDERS')) {
@@ -68,10 +71,10 @@ class CityFortify extends kernel.process {
     }
 
     builderCluster.sizeCluster('builder', quantity, {
-      'priority': 5
+      priority: 5,
     })
 
-    builderCluster.forEach(function (builder) {
+    builderCluster.forEach(function(builder) {
       if (builder.recharge()) {
         return
       }
@@ -95,16 +98,21 @@ class CityFortify extends kernel.process {
       * Missing structures,
       * Structure with the lowest percentage of hit points compared to desired amount.
   */
-  getTarget () {
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (site) {
-      return site.structureType === STRUCTURE_RAMPART || site.structureType === STRUCTURE_WALL
-    }})
+  getTarget() {
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: function(site) {
+        return (
+          site.structureType === STRUCTURE_RAMPART ||
+          site.structureType === STRUCTURE_WALL
+        )
+      },
+    })
     if (sites.length > 0) {
       return sites[0]
     }
 
     let targetId = sos.lib.cache.get([this.data.room, 'rampartTarget'], {
-      ttl: 50
+      ttl: 50,
     })
 
     if (targetId) {
@@ -128,7 +136,10 @@ class CityFortify extends kernel.process {
       }
       for (let position of structures[type]) {
         // Don't build structure ramparts unless there's a structure.
-        if (type === RAMPART_PRIMARY_STRUCTURES || type === RAMPART_SECONDARY_STRUCTURES) {
+        if (
+          type === RAMPART_PRIMARY_STRUCTURES ||
+          type === RAMPART_SECONDARY_STRUCTURES
+        ) {
           if (position.lookFor(LOOK_STRUCTURES).length <= 0) {
             continue
           }
@@ -140,7 +151,10 @@ class CityFortify extends kernel.process {
           continue
         }
         const rampart = position.getStructureByType(STRUCTURE_RAMPART)
-        if (rampart && rampart.hits < RAMPART_HITS_MAX[this.room.controller.level]) {
+        if (
+          rampart &&
+          rampart.hits < RAMPART_HITS_MAX[this.room.controller.level]
+        ) {
           if (rampart.hits <= DECAY_LIMIT) {
             decaying.push(rampart)
           }
@@ -156,15 +170,21 @@ class CityFortify extends kernel.process {
       decaying.sort((a, b) => a.hits - b.hits)
       target = decaying[0]
     } else {
-      const potentialTargets = Object.keys(structureMap).sort(function (a, b) {
+      const potentialTargets = Object.keys(structureMap).sort(function(a, b) {
         return structureMap[a] - structureMap[b]
       })
-      target = potentialTargets.length > 0 ? Game.getObjectById(potentialTargets[0]) : false
+      target =
+        potentialTargets.length > 0
+          ? Game.getObjectById(potentialTargets[0])
+          : false
     }
     if (missing.length > 0 && (!target || target.hits > DECAY_LIMIT)) {
       // Add structure
       let type = STRUCTURE_RAMPART
-      if (this.defenses.getStructureAt(missing[0].x, missing[0].y) === WALL_GATEWAY) {
+      if (
+        this.defenses.getStructureAt(missing[0].x, missing[0].y) ===
+        WALL_GATEWAY
+      ) {
         type = STRUCTURE_WALL
       }
       this.room.createConstructionSite(missing[0], type)
@@ -174,7 +194,7 @@ class CityFortify extends kernel.process {
       return false
     }
     sos.lib.cache.set([this.data.room, 'rampartTarget'], target.id, {
-      persist: true
+      persist: true,
     })
     return target
   }

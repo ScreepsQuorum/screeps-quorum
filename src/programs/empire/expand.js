@@ -5,19 +5,19 @@
  */
 
 class EmpireExpand extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_EXPAND
   }
 
-  getDescriptor () {
+  getDescriptor() {
     if (!this.data.colony) {
       return 'seeking'
     }
     return this.data.colony
   }
 
-  main () {
+  main() {
     if (!this.data.colony && !this.data.recover) {
       const candidate = this.getNextCandidate()
       if (candidate && this.validateRoom(candidate)) {
@@ -57,7 +57,7 @@ class EmpireExpand extends kernel.process {
     if (!this.data.claimedAt) {
       if (!this.colony.getLayout().isPlanned()) {
         this.launchChildProcess('layout', 'city_layout', {
-          'room': this.data.colony
+          room: this.data.colony,
         })
       }
       this.data.claimedAt = Game.time
@@ -65,7 +65,10 @@ class EmpireExpand extends kernel.process {
 
     // If layout isn't complete after a full generation unclaim and try again somewhere else.
     if (!this.data.recover && Game.time - this.data.claimedAt > 1500) {
-      if (!this.colony.getLayout().isPlanned() && !this.isChildProcessRunning('layout')) {
+      if (
+        !this.colony.getLayout().isPlanned() &&
+        !this.isChildProcessRunning('layout')
+      ) {
         this.colony.controller.unclaim()
         delete this.data.claimedAt
         delete this.data.colony
@@ -110,7 +113,7 @@ class EmpireExpand extends kernel.process {
     // If the room layout is planned launch the construction program
     if (!this.data.recover && this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('construct', 'city_construct', {
-        'room': this.data.colony
+        room: this.data.colony,
       })
     }
 
@@ -129,13 +132,17 @@ class EmpireExpand extends kernel.process {
     }
   }
 
-  getNextCandidate () {
+  getNextCandidate() {
     // If a candidate list already exists use the best scoring candidate from the list.
     if (this.data.candidates && this.data.candidates.length > 0) {
       return this.data.candidates.pop()
     }
 
-    if (typeof this.data.candidateList === 'undefined' || !this.data.candidates || this.data.candidates.length <= 0) {
+    if (
+      typeof this.data.candidateList === 'undefined' ||
+      !this.data.candidates ||
+      this.data.candidates.length <= 0
+    ) {
       this.data.candidateList = this.getCandidateList()
     }
     if (!this.data.candidateScores) {
@@ -156,19 +163,19 @@ class EmpireExpand extends kernel.process {
 
     const scores = this.data.candidateScores
     this.data.candidates = Object.keys(this.data.candidateScores)
-    this.data.candidates.sort(function (a, b) {
+    this.data.candidates.sort(function(a, b) {
       return scores[a] - scores[b]
     })
     return this.data.candidates.pop()
   }
 
-  validateRoom (roomName) {
+  validateRoom(roomName) {
     const closest = this.getClosestCity(roomName).name
     const path = Game.map.findRoute(closest, roomName)
     return path.length <= 8
   }
 
-  getClosestCity (roomName) {
+  getClosestCity(roomName) {
     const cities = Room.getCities()
     let closest = false
     let distance = Infinity
@@ -188,7 +195,7 @@ class EmpireExpand extends kernel.process {
     return closest ? Game.rooms[closest] : false
   }
 
-  getCandidateList () {
+  getCandidateList() {
     const cities = Room.getCities()
     let candidates = []
 
@@ -197,7 +204,10 @@ class EmpireExpand extends kernel.process {
         continue
       }
       const room = Game.rooms[city]
-      if (!room.getRoomSetting('EXPAND_FROM') || !room.isEconomyCapable('EXPAND_FROM')) {
+      if (
+        !room.getRoomSetting('EXPAND_FROM') ||
+        !room.isEconomyCapable('EXPAND_FROM')
+      ) {
         continue
       }
 
@@ -214,26 +224,29 @@ class EmpireExpand extends kernel.process {
     return candidates
   }
 
-  scout () {
+  scout() {
     const closestCity = this.getClosestCity(this.data.colony)
     const center = new RoomPosition(25, 25, this.data.colony)
     const scouts = this.getCluster(`scout`, closestCity)
-    if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
+    if (
+      !Game.rooms[this.data.colony] ||
+      !Game.rooms[this.data.colony].controller.my
+    ) {
       let creeps = scouts.getCreeps()
       let quantity = creeps.length === 1 && creeps[0].ticksToLive < 750 ? 2 : 1
-      scouts.sizeCluster('spook', quantity, {'priority': 2})
+      scouts.sizeCluster('spook', quantity, { priority: 2 })
     }
-    scouts.forEach(function (scout) {
+    scouts.forEach(function(scout) {
       if (scout.room.name === center.roomName) {
         if (scout.pos.getRangeTo(center) <= 20) {
           return
         }
       }
-      scout.travelTo(center, {range: 20})
+      scout.travelTo(center, { range: 20 })
     })
   }
 
-  claim () {
+  claim() {
     let controller = false
     if (this.colony) {
       if (this.colony.controller.my) {
@@ -247,10 +260,13 @@ class EmpireExpand extends kernel.process {
     // Give up 1000 ticks after launching the last claimer and move on to the next candidate room.
 
     if (this.data.attemptedClaim < 3) {
-      if (!this.data.lastClaimAttempt || Game.time - this.data.lastClaimAttempt > 1000) {
+      if (
+        !this.data.lastClaimAttempt ||
+        Game.time - this.data.lastClaimAttempt > 1000
+      ) {
         this.data.attemptedClaim++
         this.data.lastClaimAttempt = Game.time
-        claimer.sizeCluster('claimer', 1, {'priority': 2})
+        claimer.sizeCluster('claimer', 1, { priority: 2 })
       }
     } else if (Game.time - this.data.lastClaimAttempt > 1000) {
       if (claimer.getCreeps().length < 1) {
@@ -259,10 +275,10 @@ class EmpireExpand extends kernel.process {
       }
     }
     const colonyName = this.data.colony
-    claimer.forEach(function (claimer) {
+    claimer.forEach(function(claimer) {
       if (!controller) {
         let pos = new RoomPosition(25, 25, colonyName)
-        claimer.travelTo(pos, {range: 20})
+        claimer.travelTo(pos, { range: 20 })
         return
       }
       if (!claimer.pos.isNearTo(controller)) {
@@ -273,11 +289,17 @@ class EmpireExpand extends kernel.process {
     })
   }
 
-  mine (source) {
-    let spawnRoom = this.colony.energyCapacityAvailable >= 800 ? this.colony : this.getClosestCity(this.data.colony)
+  mine(source) {
+    let spawnRoom =
+      this.colony.energyCapacityAvailable >= 800
+        ? this.colony
+        : this.getClosestCity(this.data.colony)
 
     const minerPos = source.getMiningPosition()
-    const containers = _.filter(minerPos.lookFor(LOOK_STRUCTURES), (a) => a.structureType === STRUCTURE_CONTAINER)
+    const containers = _.filter(
+      minerPos.lookFor(LOOK_STRUCTURES),
+      a => a.structureType === STRUCTURE_CONTAINER
+    )
     const container = containers.length > 0 ? containers[0] : false
 
     // Build container if it isn't there
@@ -292,10 +314,13 @@ class EmpireExpand extends kernel.process {
     }
 
     const miners = this.getCluster(`miner_${source.id}`, spawnRoom)
-    if (!this.data.deathwatch && !this.colony.getRoomSetting('SELF_SUFFICIENT')) {
+    if (
+      !this.data.deathwatch &&
+      !this.colony.getRoomSetting('SELF_SUFFICIENT')
+    ) {
       miners.sizeCluster('miner', 1)
     }
-    miners.forEach(function (miner) {
+    miners.forEach(function(miner) {
       if (miner.pos.getRangeTo(minerPos) > 0) {
         miner.travelTo(minerPos)
         return
@@ -304,7 +329,11 @@ class EmpireExpand extends kernel.process {
         if (construction) {
           miner.build(construction)
           return
-        } else if (source.energy <= 0 && container && container.hits < container.hitsMax) {
+        } else if (
+          source.energy <= 0 &&
+          container &&
+          container.hits < container.hitsMax
+        ) {
           miner.repair(container)
           return
         }
@@ -315,7 +344,7 @@ class EmpireExpand extends kernel.process {
     })
   }
 
-  build () {
+  build() {
     const controller = this.colony.controller
     const closestCity = this.getClosestCity(this.data.colony)
     const builders = this.getCluster(`builders`, closestCity)
@@ -325,7 +354,7 @@ class EmpireExpand extends kernel.process {
     if (!this.data.deathwatch) {
       builders.sizeCluster('builder', 2)
     }
-    builders.forEach(function (builder) {
+    builders.forEach(function(builder) {
       if (builder.room.name !== controller.room.name) {
         builder.travelTo(controller)
         return
@@ -346,12 +375,20 @@ class EmpireExpand extends kernel.process {
       }
 
       if (builder.room.energyAvailable < builder.room.energyCapacityAvailable) {
-        const structures = builder.room.find(FIND_MY_STRUCTURES, {filter: function (structure) {
-          if (structure.structureType !== STRUCTURE_EXTENSION && structure.structureType !== STRUCTURE_SPAWN) {
-            return false
-          }
-          return structure.energyCapacity && structure.energy < structure.energyCapacity
-        }})
+        const structures = builder.room.find(FIND_MY_STRUCTURES, {
+          filter: function(structure) {
+            if (
+              structure.structureType !== STRUCTURE_EXTENSION &&
+              structure.structureType !== STRUCTURE_SPAWN
+            ) {
+              return false
+            }
+            return (
+              structure.energyCapacity &&
+              structure.energy < structure.energyCapacity
+            )
+          },
+        })
         const structure = builder.pos.findClosestByRange(structures)
 
         if (!builder.pos.isNearTo(structure)) {
@@ -385,7 +422,7 @@ class EmpireExpand extends kernel.process {
     })
   }
 
-  upgrade () {
+  upgrade() {
     const controller = this.colony.controller
     const closestCity = this.getClosestCity(this.data.colony)
     const upgraders = this.getCluster(`upgraders`, closestCity)
@@ -396,7 +433,7 @@ class EmpireExpand extends kernel.process {
       }
       upgraders.sizeCluster('upgrader', quantity)
     }
-    upgraders.forEach(function (upgrader) {
+    upgraders.forEach(function(upgrader) {
       if (upgrader.room.name !== controller.room.name) {
         upgrader.travelTo(controller)
         return

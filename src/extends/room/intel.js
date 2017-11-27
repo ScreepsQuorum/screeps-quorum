@@ -18,12 +18,12 @@ global.INTEL_WALKABILITY = 'w'
 global.INTEL_SWAMPINESS = 'a'
 global.INTEL_BLOCKED_EXITS = 'b'
 
-Room.prototype.saveIntel = function (refresh = false) {
+Room.prototype.saveIntel = function(refresh = false) {
   if (!Memory.intel) {
     Memory.intel = {
       buffer: {},
       targets: {},
-      active: {}
+      active: {},
     }
   }
 
@@ -32,7 +32,7 @@ Room.prototype.saveIntel = function (refresh = false) {
   if (refresh) {
     roominfo = {}
   } else {
-    roominfo = this.getIntel({'skipRequest': true})
+    roominfo = this.getIntel({ skipRequest: true })
     if (!roominfo) {
       roominfo = {}
     }
@@ -59,27 +59,31 @@ Room.prototype.saveIntel = function (refresh = false) {
 
     let candidates = this.find(FIND_SOURCES)
     candidates.push(this.controller)
-    const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates).pos
+    const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates)
+      .pos
     const exits = _.values(Game.map.describeExits(this.name))
     const name = this.name
     let blocked = []
     for (let exit of exits) {
       const targetPos = new RoomPosition(25, 25, exit)
-      const path = PathFinder.search(centerish, {pos: targetPos, range: 24},
+      const path = PathFinder.search(
+        centerish,
+        { pos: targetPos, range: 24 },
         {
           swampCost: 1,
           maxRooms: 2,
           maxCost: 2500,
-          roomCallback: function (roomName) {
+          roomCallback: function(roomName) {
             if (roomName !== name && roomName !== exit) {
               return false
             }
             return Room.getCostmatrix(roomName, {
               ignoreSourceKeepers: true,
-              ignoreCreeps: true
+              ignoreCreeps: true,
             })
-          }
-        })
+          },
+        }
+      )
       if (path.incomplete) {
         blocked.push(exit)
       }
@@ -92,7 +96,8 @@ Room.prototype.saveIntel = function (refresh = false) {
   }
 
   // Record static resources - minerals, number of sources, and their locations in SK rooms (for pathfinding)
-  const recordResourceLocation = this.structures[STRUCTURE_KEEPER_LAIR] !== undefined
+  const recordResourceLocation =
+    this.structures[STRUCTURE_KEEPER_LAIR] !== undefined
 
   if (recordResourceLocation) {
     roominfo[INTEL_RESOURCE_POSITIONS] = []
@@ -136,8 +141,8 @@ Room.prototype.saveIntel = function (refresh = false) {
         }
       }
     }
-    roominfo[INTEL_WALKABILITY] = Math.round((walkable / 2500) * 1000) / 1000
-    roominfo[INTEL_SWAMPINESS] = Math.round((swamps / walkable) * 1000) / 1000
+    roominfo[INTEL_WALKABILITY] = Math.round(walkable / 2500 * 1000) / 1000
+    roominfo[INTEL_SWAMPINESS] = Math.round(swamps / walkable * 1000) / 1000
   }
 
   // Record any portal destinations, distinguishing between inter and intra shard.
@@ -163,7 +168,7 @@ Room.prototype.saveIntel = function (refresh = false) {
   return roominfo
 }
 
-Room.flushIntelToSegment = function () {
+Room.flushIntelToSegment = function() {
   if (!Memory.intel || !Memory.intel.buffer) {
     return
   }
@@ -180,14 +185,17 @@ Room.flushIntelToSegment = function () {
   }
 }
 
-Room.getIntel = function (roomname, opts = {}) {
+Room.getIntel = function(roomname, opts = {}) {
   if (Memory.intel && Memory.intel.buffer[roomname]) {
     return Memory.intel.buffer[roomname]
   }
 
   const intelmap = sos.lib.vram.getData(SEGMENT_INTEL)
   if (intelmap[roomname]) {
-    if (!opts.skipRequest && Game.time - intelmap[roomname][INTEL_UPDATED] > recheckInterval) {
+    if (
+      !opts.skipRequest &&
+      Game.time - intelmap[roomname][INTEL_UPDATED] > recheckInterval
+    ) {
       Room.requestIntel(roomname)
     }
     return intelmap[roomname]
@@ -205,11 +213,11 @@ Room.getIntel = function (roomname, opts = {}) {
   return false
 }
 
-Room.prototype.getIntel = function (opts = {}) {
+Room.prototype.getIntel = function(opts = {}) {
   return Room.getIntel(this.name, opts)
 }
 
-Room.getResourcesPositions = function (roomname) {
+Room.getResourcesPositions = function(roomname) {
   const roominfo = Room.getIntel(roomname)
   if (!roominfo[INTEL_RESOURCE_POSITIONS]) {
     Room.requestIntel(roomname)
@@ -223,7 +231,7 @@ Room.getResourcesPositions = function (roomname) {
   return positions
 }
 
-Room.requestIntel = function (roomname) {
+Room.requestIntel = function(roomname) {
   if (Game.rooms[roomname]) {
     Game.rooms[roomname].saveIntel()
     return
@@ -238,7 +246,7 @@ Room.requestIntel = function (roomname) {
     Memory.intel = {
       buffer: {},
       targets: {},
-      active: {}
+      active: {},
     }
   }
   if (!Memory.intel.targets[roomname]) {
@@ -246,9 +254,11 @@ Room.requestIntel = function (roomname) {
   }
 }
 
-Room.getScoutTarget = function (creep) {
+Room.getScoutTarget = function(creep) {
   let target = false
-  const targetRooms = !Memory.intel ? [] : _.shuffle(Object.keys(Memory.intel.targets))
+  const targetRooms = !Memory.intel
+    ? []
+    : _.shuffle(Object.keys(Memory.intel.targets))
   const assignedRooms = !Memory.intel ? [] : Object.keys(Memory.intel.active)
 
   if (targetRooms.length > 0) {
@@ -268,7 +278,10 @@ Room.getScoutTarget = function (creep) {
           delete Memory.intel.active[testRoom]
         }
       }
-      if (Game.map.getRoomLinearDistance(creep.room.name, testRoom) > maxScoutDistance) {
+      if (
+        Game.map.getRoomLinearDistance(creep.room.name, testRoom) >
+        maxScoutDistance
+      ) {
         continue
       }
       if (!oldest || oldest > Memory.intel.targets[testRoom]) {
@@ -283,7 +296,9 @@ Room.getScoutTarget = function (creep) {
   }
 
   if (!target) {
-    const adjacent = _.shuffle(_.values(Game.map.describeExits(creep.room.name)))
+    const adjacent = _.shuffle(
+      _.values(Game.map.describeExits(creep.room.name))
+    )
     target = adjacent[0]
     let oldest = 0
     let testRoom
@@ -296,11 +311,20 @@ Room.getScoutTarget = function (creep) {
       if (!roominfo) {
         age = Infinity
       } else {
-        age = assignedRooms.indexOf(testRoom) >= 0 ? 0 : Game.time - roominfo[INTEL_UPDATED]
+        age =
+          assignedRooms.indexOf(testRoom) >= 0
+            ? 0
+            : Game.time - roominfo[INTEL_UPDATED]
       }
       if (target && oldest === age) {
-        let curDistance = Game.map.getRoomLinearDistance(creep.room.name, target)
-        let testDistance = Game.map.getRoomLinearDistance(creep.room.name, testRoom)
+        let curDistance = Game.map.getRoomLinearDistance(
+          creep.room.name,
+          target
+        )
+        let testDistance = Game.map.getRoomLinearDistance(
+          creep.room.name,
+          testRoom
+        )
         if (curDistance > testDistance) {
           target = testRoom
         }

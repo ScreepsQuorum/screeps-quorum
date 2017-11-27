@@ -1,26 +1,26 @@
 'use strict'
 
-module.exports.getAveragePrice = function (resource, orderType) {
+module.exports.getAveragePrice = function(resource, orderType) {
   return sos.lib.stats.rollingAverage(`${resource}_${orderType}`, {
     interval: MARKET_STATS_INTERVAL,
     maxrecord: MARKET_STATS_MAXECORD,
     drop: MARKET_STATS_DROP,
-    callback: function () {
+    callback: function() {
       return module.exports.getCurrentPrice(resource, orderType)
-    }
+    },
   })
 }
 
-module.exports.getOrdersByType = function (resource, orderType) {
+module.exports.getOrdersByType = function(resource, orderType) {
   // Temporary wrapper to deal with broken data in game engine (bug reported to devs)
   try {
-    return Game.market.getAllOrders({type: orderType, resourceType: resource})
+    return Game.market.getAllOrders({ type: orderType, resourceType: resource })
   } catch (err) {
     return []
   }
 }
 
-module.exports.getCurrentPrice = function (resource, orderType) {
+module.exports.getCurrentPrice = function(resource, orderType) {
   let orders = module.exports.getOrdersByType(resource, orderType)
   if (orderType === ORDER_BUY) {
     orders.sort((a, b) => a.price - b.price)
@@ -50,15 +50,25 @@ module.exports.getCurrentPrice = function (resource, orderType) {
   return price
 }
 
-module.exports.sellImmediately = function (resource, room, quantity) {
+module.exports.sellImmediately = function(resource, room, quantity) {
   return module.exports.transactImmediately(resource, room, quantity, ORDER_BUY)
 }
 
-module.exports.buyImmediately = function (resource, room, quantity) {
-  return module.exports.transactImmediately(resource, room, quantity, ORDER_SELL)
+module.exports.buyImmediately = function(resource, room, quantity) {
+  return module.exports.transactImmediately(
+    resource,
+    room,
+    quantity,
+    ORDER_SELL
+  )
 }
 
-module.exports.transactImmediately = function (resource, room, quantity, orderType) {
+module.exports.transactImmediately = function(
+  resource,
+  room,
+  quantity,
+  orderType
+) {
   if (!room.name) {
     if (Game.rooms[room]) {
       room = Game.rooms[room]
@@ -92,7 +102,7 @@ module.exports.transactImmediately = function (resource, room, quantity, orderTy
   return ERR_NOT_FOUND
 }
 
-module.exports.getHighestMineralValue = function (mineral) {
+module.exports.getHighestMineralValue = function(mineral) {
   if (!this.highestValueMineral) {
     this.highestValueMineral = Math.max(
       module.exports.getAveragePrice(RESOURCE_CATALYST, ORDER_SELL),

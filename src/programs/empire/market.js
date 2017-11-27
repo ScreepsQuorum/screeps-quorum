@@ -5,12 +5,12 @@
  */
 
 class EmpireMarket extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_EMPIRE_MARKET
   }
 
-  main () {
+  main() {
     if (!this.data.lma || Game.time - this.data.lma > TERMINAL_COOLDOWN) {
       const cities = Room.getCities()
       for (let city of cities) {
@@ -25,7 +25,7 @@ class EmpireMarket extends kernel.process {
     }
   }
 
-  manageTerminal (terminal) {
+  manageTerminal(terminal) {
     if (terminal.cooldown || terminal.store[RESOURCE_ENERGY] <= 100) {
       return false
     }
@@ -34,12 +34,16 @@ class EmpireMarket extends kernel.process {
       if (resource === RESOURCE_ENERGY) {
         continue
       }
-      qlib.market.sellImmediately(resource, terminal.room, terminal.store[resource])
+      qlib.market.sellImmediately(
+        resource,
+        terminal.room,
+        terminal.store[resource]
+      )
       break
     }
   }
 
-  recordAverages () {
+  recordAverages() {
     const resources = [
       RESOURCE_POWER,
       RESOURCE_HYDROGEN,
@@ -60,7 +64,7 @@ class EmpireMarket extends kernel.process {
       RESOURCE_CATALYZED_ZYNTHIUM_ACID,
       RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE,
       RESOURCE_CATALYZED_GHODIUM_ACID,
-      RESOURCE_CATALYZED_GHODIUM_ALKALIDE
+      RESOURCE_CATALYZED_GHODIUM_ALKALIDE,
     ]
     for (let resource of resources) {
       qlib.market.getAveragePrice(resource, ORDER_BUY)

@@ -6,13 +6,13 @@
  */
 
 class MetaMonitor extends kernel.process {
-  getPriority () {
+  getPriority() {
     return this.data.priority
   }
-  getDescriptor () {
+  getDescriptor() {
     return this.data.priority
   }
-  main () {
+  main() {
     sos.lib.monitor.markRun(this.data.priority)
   }
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-RoomPosition.prototype.getAdjacent = function () {
+RoomPosition.prototype.getAdjacent = function() {
   const results = []
   const room = Game.rooms[this.roomName]
 
@@ -38,13 +38,13 @@ RoomPosition.prototype.getAdjacent = function () {
   return results
 }
 
-RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false) {
-  return _.filter(this.getAdjacent(), function (pos) {
+RoomPosition.prototype.getSteppableAdjacent = function(includeCreeps = false) {
+  return _.filter(this.getAdjacent(), function(pos) {
     return pos.isSteppable(includeCreeps)
   })
 }
 
-RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
+RoomPosition.prototype.getAdjacentInRange = function(range = 1) {
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
   let positions = []
   for (let x = bounds.left; x <= bounds.right; x++) {
@@ -55,7 +55,7 @@ RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
   return positions
 }
 
-RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
+RoomPosition.prototype.getSteppableAdjacentInRange = function(range = 1) {
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
   let positions = []
   let position
@@ -68,7 +68,7 @@ RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
   return positions
 }
 
-RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
+RoomPosition.prototype.isSteppable = function(includeCreeps = false) {
   if (this.getTerrainAt() === 'wall') {
     return false
   }
@@ -87,7 +87,7 @@ RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
   return true
 }
 
-RoomPosition.prototype.getMostOpenNeighbor = function () {
+RoomPosition.prototype.getMostOpenNeighbor = function() {
   const steppable = this.getSteppableAdjacent()
   let pos
   let best
@@ -102,15 +102,15 @@ RoomPosition.prototype.getMostOpenNeighbor = function () {
   return best
 }
 
-RoomPosition.prototype.isEdge = function () {
+RoomPosition.prototype.isEdge = function() {
   return this.x === 49 || this.x === 0 || this.y === 49 || this.y === 0
 }
 
-RoomPosition.prototype.isExit = function () {
+RoomPosition.prototype.isExit = function() {
   return this.isEdge() && Game.map.getTerrainAt(this) !== 'wall'
 }
 
-RoomPosition.prototype.inFrontOfExit = function () {
+RoomPosition.prototype.inFrontOfExit = function() {
   if (this.isEdge()) {
     return false
   }
@@ -124,47 +124,63 @@ RoomPosition.prototype.inFrontOfExit = function () {
   return false
 }
 
-RoomPosition.prototype.getTerrainAt = function () {
+RoomPosition.prototype.getTerrainAt = function() {
   return Game.map.getTerrainAt(this)
 }
 
-RoomPosition.prototype.getManhattanDistance = function (pos) {
+RoomPosition.prototype.getManhattanDistance = function(pos) {
   return Math.abs(this.x - pos.x) + Math.abs(this.y - pos.y)
 }
 
-RoomPosition.prototype.serialize = function () {
-  return Room.serializeName(this.roomName) + String.fromCharCode(((this.x * 100) + +this.y) + 200)
+RoomPosition.prototype.serialize = function() {
+  return (
+    Room.serializeName(this.roomName) +
+    String.fromCharCode(this.x * 100 + +this.y + 200)
+  )
 }
 
-RoomPosition.deserialize = function (string) {
+RoomPosition.deserialize = function(string) {
   const roomname = Room.deserializeName(string.slice(0, -1))
-  const coordraw = (string.charCodeAt(string.length - 1) - 200)
+  const coordraw = string.charCodeAt(string.length - 1) - 200
   const x = Math.floor(coordraw / 100)
   const y = coordraw % 50
   return new RoomPosition(x, y, roomname)
 }
 
-RoomPosition.prototype.lookAroundFor = function (type, range = 1) {
+RoomPosition.prototype.lookAroundFor = function(type, range = 1) {
   if (!Game.rooms[this.roomName]) {
     return ERR_INVALID_TARGET
   }
   const room = Game.rooms[this.roomName]
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
-  return room.lookForAtArea(type, bounds.top, bounds.left, bounds.bottom, bounds.right, true)
+  return room.lookForAtArea(
+    type,
+    bounds.top,
+    bounds.left,
+    bounds.bottom,
+    bounds.right,
+    true
+  )
 }
 
-RoomPosition.prototype.lookAround = function (range = 1) {
+RoomPosition.prototype.lookAround = function(range = 1) {
   if (!Game.rooms[this.roomName]) {
     return ERR_INVALID_TARGET
   }
   const room = Game.rooms[this.roomName]
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
-  return room.lookAtArea(bounds.top, bounds.left, bounds.bottom, bounds.right, true)
+  return room.lookAtArea(
+    bounds.top,
+    bounds.left,
+    bounds.bottom,
+    bounds.right,
+    true
+  )
 }
 
-RoomPosition.prototype.getStructureByType = function (structureType) {
+RoomPosition.prototype.getStructureByType = function(structureType) {
   let structures = this.lookFor(LOOK_STRUCTURES)
-  let filteredStructures = _.filter(structures, function (structure) {
+  let filteredStructures = _.filter(structures, function(structure) {
     return structure.structureType === structureType
   })
   return filteredStructures.length > 0 ? filteredStructures[0] : false
@@ -177,15 +193,15 @@ RoomPosition.prototype.getStructureByType = function (structureType) {
  * @param {number} range of the bounding box
  * @returns {{left: number, right: number, top: number, bottom: number}}
  */
-function createBoundingBoxForRange (x, y, range) {
+function createBoundingBoxForRange(x, y, range) {
   const absRange = Math.abs(range)
   const left = Math.min(Math.max(x - absRange, 0), 49)
   const right = Math.max(Math.min(x + absRange, 49), 0)
   const top = Math.min(Math.max(y - absRange, 0), 49)
   const bottom = Math.max(Math.min(y + absRange, 49), 0)
-  return {left, right, top, bottom}
+  return { left, right, top, bottom }
 }
 
 module.exports = {
-  createBoundingBoxForRange
+  createBoundingBoxForRange,
 }

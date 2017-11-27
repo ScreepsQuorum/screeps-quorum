@@ -3,17 +3,17 @@
 const TIMEOUT = 75000
 
 class MetaMaintenance extends kernel.process {
-  getPriority () {
+  getPriority() {
     return PRIORITIES_MAINTENANCE
   }
-  main () {
+  main() {
     if (!Memory.construction) {
       Memory.construction = {}
     }
     this.construction()
   }
 
-  construction () {
+  construction() {
     const memSites = Object.keys(Memory.construction)
     for (const id of memSites) {
       if (!Game.constructionSites[id]) {

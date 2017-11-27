@@ -27,7 +27,7 @@ const structureMap = [
   'terminal',
   'nuker',
   'loader',
-  'crane'
+  'crane',
 ]
 
 const structures = Object.keys(CONTROLLER_STRUCTURES)
@@ -35,7 +35,7 @@ const skipStructures = [
   STRUCTURE_ROAD,
   STRUCTURE_WALL,
   STRUCTURE_RAMPART,
-  STRUCTURE_CONTAINER
+  STRUCTURE_CONTAINER,
 ]
 
 const orderStructures = [
@@ -53,7 +53,7 @@ const orderStructures = [
   STRUCTURE_OBSERVER,
   STRUCTURE_NUKER,
   STRUCTURE_POWER_SPAWN,
-  STRUCTURE_ROAD
+  STRUCTURE_ROAD,
 ]
 
 global.LEVEL_BREAKDOWN = {}
@@ -69,7 +69,7 @@ for (structure of structures) {
   }
 }
 
-Room.prototype.constructNextMissingStructure = function () {
+Room.prototype.constructNextMissingStructure = function() {
   const structureType = this.getNextMissingStructureType()
   if (!structureType) {
     return false
@@ -94,31 +94,37 @@ Room.prototype.constructNextMissingStructure = function () {
     return false
   }
 
-  const structurePositions = _.filter(allStructurePositions[structureType], function (position) {
-    const structures = position.lookFor(LOOK_STRUCTURES)
-    if (!structures || structures.length <= 0) {
+  const structurePositions = _.filter(
+    allStructurePositions[structureType],
+    function(position) {
+      const structures = position.lookFor(LOOK_STRUCTURES)
+      if (!structures || structures.length <= 0) {
+        return true
+      }
+      let structure
+      for (structure of structures) {
+        if (structure.structureType === structureType) {
+          return false
+        }
+      }
       return true
     }
-    let structure
-    for (structure of structures) {
-      if (structure.structureType === structureType) {
-        return false
-      }
-    }
-    return true
-  })
+  )
 
   // Prioritize structures based on distance to storage- closer ones get built first.
   if (allStructurePositions[STRUCTURE_STORAGE]) {
     const storagePosition = allStructurePositions[STRUCTURE_STORAGE][0]
-    structurePositions.sort(function (a, b) {
-      return a.getManhattanDistance(storagePosition) - b.getManhattanDistance(storagePosition)
+    structurePositions.sort(function(a, b) {
+      return (
+        a.getManhattanDistance(storagePosition) -
+        b.getManhattanDistance(storagePosition)
+      )
     })
   }
   return this.createConstructionSite(structurePositions[0], structureType)
 }
 
-Room.prototype.getNextMissingStructureType = function () {
+Room.prototype.getNextMissingStructureType = function() {
   if (!this.controller) {
     return false
   }
@@ -132,8 +138,8 @@ Room.prototype.getNextMissingStructureType = function () {
   const structures = Object.keys(nextLevelStructureCount)
 
   // Priority.
-  structures.sort(function (a, b) {
-    return (orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1)
+  structures.sort(function(a, b) {
+    return orderStructures.indexOf(a) < orderStructures.indexOf(b) ? -1 : 1
   })
 
   // Get room layout, if it exists, and use that to check which planned structureTypes are missing.
@@ -146,13 +152,22 @@ Room.prototype.getNextMissingStructureType = function () {
   // Build all other structures.
   let structureType
   for (structureType of structures) {
-    if (structureType === STRUCTURE_LINK || this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)) {
+    if (
+      structureType === STRUCTURE_LINK ||
+      this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)
+    ) {
       continue
     }
-    if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
+    if (
+      !nextLevelStructureCount[structureType] ||
+      nextLevelStructureCount[structureType] <= 0
+    ) {
       continue
     }
-    if (!allStructurePositions[structureType] || allStructurePositions[structureType].length <= 0) {
+    if (
+      !allStructurePositions[structureType] ||
+      allStructurePositions[structureType].length <= 0
+    ) {
       if (structureType !== STRUCTURE_EXTRACTOR) {
         continue
       }
@@ -161,12 +176,17 @@ Room.prototype.getNextMissingStructureType = function () {
     let constructionStructures = constructionCount[structureType] || 0
     let totalStructures = currentStructures + constructionStructures
 
-    if (totalStructures >= LEVEL_BREAKDOWN[this.controller.level][structureType]) {
+    if (
+      totalStructures >= LEVEL_BREAKDOWN[this.controller.level][structureType]
+    ) {
       continue
     }
 
     if (totalStructures < nextLevelStructureCount[structureType]) {
-      if (structureType === STRUCTURE_EXTRACTOR || totalStructures < allStructurePositions[structureType].length) {
+      if (
+        structureType === STRUCTURE_EXTRACTOR ||
+        totalStructures < allStructurePositions[structureType].length
+      ) {
         return structureType
       }
     }
@@ -174,7 +194,9 @@ Room.prototype.getNextMissingStructureType = function () {
   return false
 }
 
-Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES) {
+Room.prototype.getStructureCount = function(
+  structureFind = FIND_MY_STRUCTURES
+) {
   const structures = this.find(structureFind)
   const counts = {}
   let structure
@@ -187,7 +209,9 @@ Room.prototype.getStructureCount = function (structureFind = FIND_MY_STRUCTURES)
   return counts
 }
 
-Room.prototype.getConstructionCount = function (constructionFind = FIND_MY_CONSTRUCTION_SITES) {
+Room.prototype.getConstructionCount = function(
+  constructionFind = FIND_MY_CONSTRUCTION_SITES
+) {
   const sites = this.find(constructionFind)
   const counts = {}
   let site
@@ -200,7 +224,7 @@ Room.prototype.getConstructionCount = function (constructionFind = FIND_MY_CONST
   return counts
 }
 
-Room.prototype.getPracticalRoomLevel = function () {
+Room.prototype.getPracticalRoomLevel = function() {
   if (this.__level) {
     return this.__level
   }
@@ -210,11 +234,18 @@ Room.prototype.getPracticalRoomLevel = function () {
     const neededStructures = Object.keys(LEVEL_BREAKDOWN[level + 1])
     let structureType
     for (structureType of neededStructures) {
-      if (skipStructures.indexOf(structureType) !== -1 || structureType === STRUCTURE_LINK) {
+      if (
+        skipStructures.indexOf(structureType) !== -1 ||
+        structureType === STRUCTURE_LINK
+      ) {
         continue
       }
       if (LEVEL_BREAKDOWN[level + 1][structureType] > 0) {
-        if (!structureCount[structureType] || structureCount[structureType] < LEVEL_BREAKDOWN[level + 1][structureType]) {
+        if (
+          !structureCount[structureType] ||
+          structureCount[structureType] <
+            LEVEL_BREAKDOWN[level + 1][structureType]
+        ) {
           this.__level = level
           return level
         }
@@ -225,21 +256,21 @@ Room.prototype.getPracticalRoomLevel = function () {
   return 8
 }
 
-Room.getLayout = function (roomname) {
+Room.getLayout = function(roomname) {
   return new RoomLayout(roomname)
 }
 
-Room.prototype.getLayout = function () {
+Room.prototype.getLayout = function() {
   return Room.getLayout(this.name)
 }
 
 class RoomLayout {
-  constructor (roomname) {
+  constructor(roomname) {
     this.roomname = roomname
     this.allStructures = false
   }
 
-  planStructureAt (structureType, x, y, overrideRoads = false) {
+  planStructureAt(structureType, x, y, overrideRoads = false) {
     const currentStructure = this.getStructureAt(x, y)
     if (currentStructure) {
       if (!overrideRoads || currentStructure !== STRUCTURE_ROAD) {
@@ -248,7 +279,9 @@ class RoomLayout {
     }
     const structureId = structureMap.indexOf(structureType)
     if (structureId < 1) {
-      throw new Error('Unable to map structure to id for structure type ' + structureType)
+      throw new Error(
+        'Unable to map structure to id for structure type ' + structureType
+      )
     }
     const map = this._getStructureMap()
     map.set(x, y, structureId)
@@ -256,12 +289,14 @@ class RoomLayout {
       if (!this.allStructures[structureType]) {
         this.allStructures[structureType] = []
       }
-      this.allStructures[structureType].push(new RoomPosition(x, y, this.roomname))
+      this.allStructures[structureType].push(
+        new RoomPosition(x, y, this.roomname)
+      )
     }
     return true
   }
 
-  getStructureAt (x, y) {
+  getStructureAt(x, y) {
     const map = this._getStructureMap()
     const structureId = map.get(x, y)
     if (!structureMap[structureId]) {
@@ -270,11 +305,10 @@ class RoomLayout {
     return structureMap[structureId]
   }
 
-  getAllStructures () {
+  getAllStructures() {
     if (!this.allStructures) {
       this.allStructures = {}
-      let x,
-        y
+      let x, y
       for (x = 0; x < 50; x++) {
         for (y = 0; y < 50; y++) {
           const structure = this.getStructureAt(x, y)
@@ -282,14 +316,19 @@ class RoomLayout {
             if (!this.allStructures[structure]) {
               this.allStructures[structure] = []
             }
-            this.allStructures[structure].push(new RoomPosition(x, y, this.roomname))
+            this.allStructures[structure].push(
+              new RoomPosition(x, y, this.roomname)
+            )
           }
         }
       }
     }
 
     if (this._getSegmentLabel() === SEGMENT_CONSTRUCTION) {
-      if (this.allStructures[STRUCTURE_CONTAINER] && this.allStructures[STRUCTURE_ROAD]) {
+      if (
+        this.allStructures[STRUCTURE_CONTAINER] &&
+        this.allStructures[STRUCTURE_ROAD]
+      ) {
         for (const position of this.allStructures[STRUCTURE_CONTAINER]) {
           this.allStructures[STRUCTURE_ROAD].push(position)
         }
@@ -299,12 +338,12 @@ class RoomLayout {
     return this.allStructures
   }
 
-  clear () {
+  clear() {
     this.allStructures = false
     this.structureMap = new PathFinder.CostMatrix()
   }
 
-  save () {
+  save() {
     const map = this._getStructureMap()
     const label = this._getSegmentLabel()
     const globalmap = sos.lib.vram.getData(label)
@@ -313,12 +352,12 @@ class RoomLayout {
     this.unplanned = false
   }
 
-  isPlanned () {
+  isPlanned() {
     this._getStructureMap()
     return !this.unplanned
   }
 
-  visualize () {
+  visualize() {
     const structures = this.getAllStructures()
     const types = Object.keys(structures)
     const visual = new RoomVisual(this.roomname)
@@ -326,24 +365,26 @@ class RoomLayout {
     for (type of types) {
       for (structurePos of structures[type]) {
         visual.structure(structurePos.x, structurePos.y, type, {
-          'opacity': 0.60
+          opacity: 0.6,
         })
       }
     }
   }
 
-  _getSegmentLabel () {
+  _getSegmentLabel() {
     return SEGMENT_CONSTRUCTION
   }
 
-  _getStructureMap () {
+  _getStructureMap() {
     if (!this.structureMap) {
       const map = sos.lib.vram.getData(this._getSegmentLabel())
       if (Number.isInteger(map)) {
         throw new Error('Room structure maps are not available')
       }
       if (map[this.roomname]) {
-        this.structureMap = PathFinder.CostMatrix.deserialize(map[this.roomname])
+        this.structureMap = PathFinder.CostMatrix.deserialize(
+          map[this.roomname]
+        )
         this.unplanned = false
       } else {
         this.structureMap = new PathFinder.CostMatrix()
@@ -354,11 +395,11 @@ class RoomLayout {
   }
 }
 
-Room.getDefenseMap = function (roomname) {
+Room.getDefenseMap = function(roomname) {
   return new DefenseMap(roomname)
 }
 
-Room.prototype.getDefenseMap = function () {
+Room.prototype.getDefenseMap = function() {
   return Room.getDefenseMap(this.name)
 }
 
@@ -388,13 +429,10 @@ const primaryStructures = [
   STRUCTURE_SPAWN,
   STRUCTURE_STORAGE,
   STRUCTURE_TERMINAL,
-  STRUCTURE_TOWER
+  STRUCTURE_TOWER,
 ]
 
-const excludeStructures = [
-  STRUCTURE_ROAD,
-  STRUCTURE_CONTAINER
-]
+const excludeStructures = [STRUCTURE_ROAD, STRUCTURE_CONTAINER]
 
 const pathwayDistance = 1
 const pathwaySpawnDistance = 2
@@ -405,7 +443,7 @@ const QUEUED_SPACE = 1
 const TESTED_SPACE = 2
 
 class DefenseMap extends RoomLayout {
-  generate () {
+  generate() {
     const room = Game.rooms[this.roomname]
     if (!room) {
       return false
@@ -420,10 +458,15 @@ class DefenseMap extends RoomLayout {
       if (excludeStructures.includes(structureType)) {
         continue
       }
-      const type = primaryStructures.includes(structureType) ? RAMPART_PRIMARY_STRUCTURES : RAMPART_SECONDARY_STRUCTURES
+      const type = primaryStructures.includes(structureType)
+        ? RAMPART_PRIMARY_STRUCTURES
+        : RAMPART_SECONDARY_STRUCTURES
       for (let structurePosition of structures[structureType]) {
         map.set(structurePosition.x, structurePosition.y, type)
-        let distance = structureType === STRUCTURE_SPAWN ? pathwaySpawnDistance : pathwayDistance
+        let distance =
+          structureType === STRUCTURE_SPAWN
+            ? pathwaySpawnDistance
+            : pathwayDistance
         let neighbors = structurePosition.getSteppableAdjacentInRange(distance)
         for (let neighbor of neighbors) {
           const structure = layout.getStructureAt(neighbor.x, neighbor.y)
@@ -436,9 +479,14 @@ class DefenseMap extends RoomLayout {
     }
     // Add controller ramparts and pathways (if paths are enabled for controllers).
     const controllerRange = controllerPathway < 1 ? 1 : controllerPathway
-    const controllerNeighbors = room.controller.pos.getSteppableAdjacentInRange(controllerRange)
+    const controllerNeighbors = room.controller.pos.getSteppableAdjacentInRange(
+      controllerRange
+    )
     for (let neighbor of controllerNeighbors) {
-      const type = room.controller.pos.getRangeTo(neighbor) > 1 ? RAMPART_PATHWAY : RAMPART_CONTROLLER
+      const type =
+        room.controller.pos.getRangeTo(neighbor) > 1
+          ? RAMPART_PATHWAY
+          : RAMPART_CONTROLLER
       if (type === RAMPART_PATHWAY) {
         pathways.push(neighbor)
       }
@@ -460,22 +508,33 @@ class DefenseMap extends RoomLayout {
     // plan walls around each exit, hugging them directly.
     // This *has* to be done after edge calculatons
 
-    const exits = this.roomname === 'sim' ? [1, 3, 5, 7] : Object.keys(Game.map.describeExits(this.roomname))
+    const exits =
+      this.roomname === 'sim'
+        ? [1, 3, 5, 7]
+        : Object.keys(Game.map.describeExits(this.roomname))
     for (let exit of exits) {
       const pieces = this._getExitPieces(exit)
 
       for (let piece of pieces) {
-        const horizontal = (exit === TOP || exit === BOTTOM)
+        const horizontal = exit === TOP || exit === BOTTOM
         if (horizontal) {
           let endpointOffset = exit === TOP ? 1 : -1
           let y = piece[0].y
           let left = new RoomPosition(piece[0].x - 1, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[0].x - 1, y + endpointOffset) !== 'wall') {
+          if (
+            Game.map.getTerrainAt(piece[0].x - 1, y + endpointOffset) !== 'wall'
+          ) {
             map.set(piece[0].x - 1, y + endpointOffset, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
           let right = new RoomPosition(piece[lastPiece].x + 1, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[lastPiece].x + 1, y + endpointOffset, this.roomname) !== 'wall') {
+          if (
+            Game.map.getTerrainAt(
+              piece[lastPiece].x + 1,
+              y + endpointOffset,
+              this.roomname
+            ) !== 'wall'
+          ) {
             map.set(piece[lastPiece].x + 1, y + endpointOffset, WALL_GATEWAY)
           }
           piece.unshift(left)
@@ -484,12 +543,28 @@ class DefenseMap extends RoomLayout {
           let endpointOffset = exit === LEFT ? 1 : -1
           let x = piece[0].x
           let top = new RoomPosition(x, piece[0].y - 1, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[0].y - 1, this.roomname) !== 'wall') {
+          if (
+            Game.map.getTerrainAt(
+              x + endpointOffset,
+              piece[0].y - 1,
+              this.roomname
+            ) !== 'wall'
+          ) {
             map.set(x + endpointOffset, piece[0].y - 1, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
-          let bottom = new RoomPosition(x, piece[lastPiece].y + 1, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[lastPiece].y + 1, this.roomname) !== 'wall') {
+          let bottom = new RoomPosition(
+            x,
+            piece[lastPiece].y + 1,
+            this.roomname
+          )
+          if (
+            Game.map.getTerrainAt(
+              x + endpointOffset,
+              piece[lastPiece].y + 1,
+              this.roomname
+            ) !== 'wall'
+          ) {
             map.set(x + endpointOffset, piece[lastPiece].y + 1, WALL_GATEWAY)
           }
           piece.unshift(top)
@@ -516,7 +591,7 @@ class DefenseMap extends RoomLayout {
     }
   }
 
-  _getExitPieces (exit) {
+  _getExitPieces(exit) {
     let vertical = exit === LEFT || exit === RIGHT
     let stationary
     if (vertical) {
@@ -545,7 +620,7 @@ class DefenseMap extends RoomLayout {
   }
 
   // Using a room and a rampart map (CostMatrix) this generates a list of positions reachable from an exit.
-  _getWalkableMap (room, map) {
+  _getWalkableMap(room, map) {
     let tested = []
     let queue = []
     let walkableMap = new PathFinder.CostMatrix()
@@ -562,7 +637,10 @@ class DefenseMap extends RoomLayout {
       tested.push(current.serialize())
 
       // If the value is greater than zero it has already been tested or is blocked by ramparts
-      if (map.get(current.x, current.y) || walkableMap.get(current.x, current.y) >= TESTED_SPACE) {
+      if (
+        map.get(current.x, current.y) ||
+        walkableMap.get(current.x, current.y) >= TESTED_SPACE
+      ) {
         continue
       }
 
@@ -582,17 +660,17 @@ class DefenseMap extends RoomLayout {
     return walkableMap
   }
 
-  getStructureAt (x, y) {
+  getStructureAt(x, y) {
     const map = this._getStructureMap()
     const structureId = map.get(x, y)
     return structureId || false
   }
 
-  _getSegmentLabel () {
+  _getSegmentLabel() {
     return SEGMENT_RAMPARTS
   }
 
-  visualize () {
+  visualize() {
     const structures = this.getAllStructures()
     const types = Object.keys(structures)
     const visual = new RoomVisual(this.roomname)
@@ -601,11 +679,12 @@ class DefenseMap extends RoomLayout {
       if (!defenseColors[type]) {
         continue
       }
-      let structureType = type === WALL_GATEWAY ? STRUCTURE_WALL : STRUCTURE_RAMPART
+      let structureType =
+        type === WALL_GATEWAY ? STRUCTURE_WALL : STRUCTURE_RAMPART
       for (structurePos of structures[type]) {
         visual.structure(structurePos.x, structurePos.y, structureType, {
-          'opacity': 0.60,
-          'rampart': defenseColors[type]
+          opacity: 0.6,
+          rampart: defenseColors[type],
         })
       }
     }

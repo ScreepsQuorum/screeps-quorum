@@ -1,9 +1,10 @@
-
-Room.prototype.getSuicideBooth = function () {
+Room.prototype.getSuicideBooth = function() {
   // Identify spawn closest to storage, to make reclaimed energy easier to store.
   let spawn = false
   if (this.storage) {
-    spawn = this.storage.pos.findClosestByRange(this.structures[STRUCTURE_SPAWN])
+    spawn = this.storage.pos.findClosestByRange(
+      this.structures[STRUCTURE_SPAWN]
+    )
   } else {
     spawn = this.structures[STRUCTURE_SPAWN][0]
   }

@@ -2,9 +2,8 @@
 
 const SPAWN_DEFAULT_PRIORITY = 4
 
-Room.prototype.queueCreep = function (role, options = {}) {
-  const name = role + '_' + sos.lib.counter.get(role)
-    .toString(36)
+Room.prototype.queueCreep = function(role, options = {}) {
+  const name = role + '_' + sos.lib.counter.get(role).toString(36)
 
   if (!options.priority) {
     options.priority = SPAWN_DEFAULT_PRIORITY
@@ -24,11 +23,11 @@ Room.prototype.queueCreep = function (role, options = {}) {
   return name
 }
 
-Room.prototype.clearSpawnQueue = function () {
+Room.prototype.clearSpawnQueue = function() {
   Room.clearSpawnQueue(this.name)
 }
 
-Room.clearSpawnQueue = function (roomname) {
+Room.clearSpawnQueue = function(roomname) {
   if (!Memory.spawnqueue) {
     return
   }
@@ -37,7 +36,7 @@ Room.clearSpawnQueue = function (roomname) {
   }
 }
 
-Room.prototype.getQueuedCreep = function () {
+Room.prototype.getQueuedCreep = function() {
   if (!Memory.spawnqueue) {
     return false
   }
@@ -53,9 +52,13 @@ Room.prototype.getQueuedCreep = function () {
     return false
   }
   const that = this
-  creeps.sort(function (a, b) {
-    const aP = Memory.spawnqueue.index[that.name][a].priority ? Memory.spawnqueue.index[that.name][a].priority : SPAWN_DEFAULT_PRIORITY
-    const bP = Memory.spawnqueue.index[that.name][b].priority ? Memory.spawnqueue.index[that.name][b].priority : SPAWN_DEFAULT_PRIORITY
+  creeps.sort(function(a, b) {
+    const aP = Memory.spawnqueue.index[that.name][a].priority
+      ? Memory.spawnqueue.index[that.name][a].priority
+      : SPAWN_DEFAULT_PRIORITY
+    const bP = Memory.spawnqueue.index[that.name][b].priority
+      ? Memory.spawnqueue.index[that.name][b].priority
+      : SPAWN_DEFAULT_PRIORITY
     return aP - bP
   })
 
@@ -76,7 +79,7 @@ Room.prototype.getQueuedCreep = function () {
   return options
 }
 
-Room.prototype.isQueued = function (name) {
+Room.prototype.isQueued = function(name) {
   if (!Memory.spawnqueue) {
     return false
   }
@@ -92,7 +95,7 @@ Room.prototype.isQueued = function (name) {
   return !!this.queued && this.queued.indexOf(name) >= 0
 }
 
-Room.isQueued = function (name) {
+Room.isQueued = function(name) {
   if (!Memory.spawnqueue) {
     return false
   }

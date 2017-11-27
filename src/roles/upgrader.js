@@ -4,27 +4,32 @@ const MetaRole = require('roles_meta')
 
 let CONTROLLER_MESSAGE
 if (PUBLIC_ACCOUNT) {
-  CONTROLLER_MESSAGE = 'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+  CONTROLLER_MESSAGE =
+    'Self Managed Code * quorum.tedivm.com * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
 } else {
-  CONTROLLER_MESSAGE = 'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
+  CONTROLLER_MESSAGE =
+    'Fully Autonomous Open Source Bot * github.com/ScreepsQuorum/screeps-quorum * #quorum in Slack'
 }
 
 class Upgrader extends MetaRole {
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
-  getPriority (creep) {
+  getPriority(creep) {
     return PRIORITIES_CREEP_UPGRADER
   }
 
-  manageCreep (creep) {
+  manageCreep(creep) {
     if (creep.recharge()) {
       return
     }
 
-    if (!creep.room.controller.sign || creep.room.controller.sign.text !== CONTROLLER_MESSAGE) {
+    if (
+      !creep.room.controller.sign ||
+      creep.room.controller.sign.text !== CONTROLLER_MESSAGE
+    ) {
       if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
         creep.travelTo(creep.room.controller)
       }

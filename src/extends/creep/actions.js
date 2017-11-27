@@ -1,5 +1,4 @@
-
-Creep.prototype.recharge = function () {
+Creep.prototype.recharge = function() {
   // Check to see if creep needs to recharge
   if (this.carry[RESOURCE_ENERGY] <= 0) {
     this.memory.recharge = true
@@ -31,32 +30,40 @@ Creep.prototype.recharge = function () {
   let carryCap = this.carryCapacity
 
   // Check for qualifying dropped energy.
-  const resources = this.room.find(FIND_DROPPED_RESOURCES, {filter: function (resource) {
-    if (resource.resourceType !== RESOURCE_ENERGY || resource.amount < carryCap) {
-      return false
-    }
+  const resources = this.room.find(FIND_DROPPED_RESOURCES, {
+    filter: function(resource) {
+      if (
+        resource.resourceType !== RESOURCE_ENERGY ||
+        resource.amount < carryCap
+      ) {
+        return false
+      }
 
-    // Is resource on top of container?
-    const structures = resource.pos.lookFor(LOOK_STRUCTURES)
-    for (let structure of structures) {
-      if (structure.structureType === STRUCTURE_CONTAINER) {
+      // Is resource on top of container?
+      const structures = resource.pos.lookFor(LOOK_STRUCTURES)
+      for (let structure of structures) {
+        if (structure.structureType === STRUCTURE_CONTAINER) {
+          return true
+        }
+      }
+
+      // Is the resource near the room storage?
+      if (
+        resource.room.storage &&
+        resource.room.storage.pos.getRangeTo(resource) <= 2
+      ) {
         return true
       }
-    }
 
-    // Is the resource near the room storage?
-    if (resource.room.storage && resource.room.storage.pos.getRangeTo(resource) <= 2) {
-      return true
-    }
+      // Is the resource on top of the suicide booth?
+      const suicideBooth = resource.room.getSuicideBooth()
+      if (suicideBooth && resource.pos.getRangeTo(suicideBooth) === 0) {
+        return true
+      }
 
-    // Is the resource on top of the suicide booth?
-    const suicideBooth = resource.room.getSuicideBooth()
-    if (suicideBooth && resource.pos.getRangeTo(suicideBooth) === 0) {
-      return true
-    }
-
-    return false
-  }})
+      return false
+    },
+  })
 
   if (resources.length > 0) {
     const resource = this.pos.findClosestByRange(resources)
@@ -70,7 +77,10 @@ Creep.prototype.recharge = function () {
   }
 
   // If there is no storage check for containers.
-  const containers = _.filter(this.room.structures[STRUCTURE_CONTAINER], (a) => a.store[RESOURCE_ENERGY] > Math.min(a.storeCapacity, carryCap))
+  const containers = _.filter(
+    this.room.structures[STRUCTURE_CONTAINER],
+    a => a.store[RESOURCE_ENERGY] > Math.min(a.storeCapacity, carryCap)
+  )
   if (containers.length > 0) {
     const container = this.pos.findClosestByRange(containers)
     if (!this.pos.isNearTo(container)) {
@@ -93,7 +103,10 @@ Creep.prototype.recharge = function () {
     return true
   }
 
-  sources.sort((a, b) => a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller))
+  sources.sort(
+    (a, b) =>
+      a.pos.getRangeTo(a.room.controller) - b.pos.getRangeTo(b.room.controller)
+  )
   const idx = parseInt(this.name[this.name.length - 1], 36)
   const source = sources[idx % sources.length]
   if (!this.pos.isNearTo(source)) {
@@ -105,7 +118,7 @@ Creep.prototype.recharge = function () {
   return true
 }
 
-Creep.prototype.recycle = function () {
+Creep.prototype.recycle = function() {
   let storage = this.room.storage
   if (!storage && this.room.terminal) {
     storage = this.room.terminal
@@ -134,12 +147,14 @@ Creep.prototype.recycle = function () {
   if (this.pos.getRangeTo(suicideBooth) > 0) {
     this.travelTo(suicideBooth)
   } else {
-    let spawn = this.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
+    let spawn = this.pos.findClosestByRange(
+      this.room.structures[STRUCTURE_SPAWN]
+    )
     spawn.recycleCreep(this)
   }
 }
 
-Creep.prototype.transferAll = function (target) {
+Creep.prototype.transferAll = function(target) {
   if (this.getCarryPercentage() <= 0) {
     return ERR_NOT_ENOUGH_RESOURCES
   }

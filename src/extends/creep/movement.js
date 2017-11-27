@@ -3,14 +3,14 @@
 const struckThreshold = 2
 const struckRerouteThreshold = 4
 const travelToDefaults = {
-  'reusePath': 1500,
-  'moveToOverride': true,
-  'ignoreStuck': false,
-  'ignoreHostileCities': true,
-  'ignoreHostileReservations': true
+  reusePath: 1500,
+  moveToOverride: true,
+  ignoreStuck: false,
+  ignoreHostileCities: true,
+  ignoreHostileReservations: true,
 }
 
-Creep.prototype.travelTo = function (pos, opts = {}) {
+Creep.prototype.travelTo = function(pos, opts = {}) {
   const that = this
   if (this.fatigue) {
     return ERR_TIRED
@@ -98,14 +98,20 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
   }
 
   // Make sure the current room is always allowed
-  if (moveToOpts.allowedRooms && moveToOpts.allowedRooms.indexOf(this.room.name) < 0) {
+  if (
+    moveToOpts.allowedRooms &&
+    moveToOpts.allowedRooms.indexOf(this.room.name) < 0
+  ) {
     moveToOpts.allowedRooms.push(this.room.name)
   }
 
   // If no cost matrix callback is defined use the default room one.
   if (!moveToOpts.costCallback) {
-    moveToOpts.costCallback = function (roomname) {
-      if (moveToOpts.allowedRooms && moveToOpts.allowedRooms.indexOf(roomname) < 0) {
+    moveToOpts.costCallback = function(roomname) {
+      if (
+        moveToOpts.allowedRooms &&
+        moveToOpts.allowedRooms.indexOf(roomname) < 0
+      ) {
         return false
       }
       // See if hostile cities or reservations are blocked
@@ -117,7 +123,10 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
           if (roominfo[INTEL_OWNER] && roominfo[INTEL_OWNER] !== USERNAME) {
             if (roominfo[INTEL_LEVEL] && !opts.ignoreHostileCities) {
               return false
-            } else if (!roominfo[INTEL_LEVEL] && !opts.ignoreHostileReservations) {
+            } else if (
+              !roominfo[INTEL_LEVEL] &&
+              !opts.ignoreHostileReservations
+            ) {
               return false
             }
           }
@@ -132,13 +141,13 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
   return this.moveTo(pos, moveToOpts)
 }
 
-Creep.prototype.isStuck = function () {
+Creep.prototype.isStuck = function() {
   return this.memory._sc && this.memory._sc >= struckThreshold
 }
 
 if (!Creep.prototype.__moveToOriginal) {
   Creep.prototype.__moveToOriginal = Creep.prototype.moveTo
-  Creep.prototype.moveTo = function (pos, opts = {}) {
+  Creep.prototype.moveTo = function(pos, opts = {}) {
     if (!opts.moveToOverride) {
       Logger.log('Deprecated: call `travelTo` instead of `moveTo`', LOG_ERROR)
     }

@@ -1,7 +1,7 @@
 'use strict'
 
 class Cluster {
-  static clean () {
+  static clean() {
     var clusters = Cluster.listAll()
     for (var clustername of clusters) {
       var cluster = new Cluster(clustername)
@@ -11,14 +11,14 @@ class Cluster {
     }
   }
 
-  static listAll () {
+  static listAll() {
     if (!Memory.clusters) {
       return []
     }
     return Object.keys(Memory.clusters)
   }
 
-  constructor (name, room = false) {
+  constructor(name, room = false) {
     this.name = name
     this.room = room
     if (!Memory.clusters) {
@@ -26,7 +26,7 @@ class Cluster {
     }
     if (!Memory.clusters[name]) {
       Memory.clusters[name] = {
-        'creeps': []
+        creeps: [],
       }
     }
     this.memory = Memory.clusters[name]
@@ -49,14 +49,16 @@ class Cluster {
     }
   }
 
-  getClusterSize () {
+  getClusterSize() {
     return this.memory.creeps.length
   }
 
-  sizeCluster (role, quantity, options = {}, room = false) {
+  sizeCluster(role, quantity, options = {}, room = false) {
     if (options.respawnAge) {
       const creeps = this.getCreeps()
-      quantity += _.filter(creeps, function (creep) { return creep.ticksToLive <= options.respawnAge }).length
+      quantity += _.filter(creeps, function(creep) {
+        return creep.ticksToLive <= options.respawnAge
+      }).length
       delete options.respawnAge
     }
 
@@ -70,11 +72,11 @@ class Cluster {
     return false
   }
 
-  getCreeps () {
+  getCreeps() {
     return this.creeps
   }
 
-  forEach (creepAction) {
+  forEach(creepAction) {
     const creeps = this.getCreeps()
     for (let creep of creeps) {
       try {

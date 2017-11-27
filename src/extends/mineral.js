@@ -1,6 +1,5 @@
-
 // Assumes a desired ratio of two hydrogen per one of every other base mineral.
-Mineral.getEmpireRatio = function () {
+Mineral.getEmpireRatio = function() {
   if (this.mineralRatio && Game.time === this.mineralRatioSave) {
     return this.mineralRatio
   }

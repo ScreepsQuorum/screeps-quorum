@@ -1,21 +1,20 @@
-
 class Performance {
-  constructor () {
+  constructor() {
     if (!Memory.qos.performance) {
       Memory.qos.performance = {
-        'start': Game.time,
-        'programs': {}
+        start: Game.time,
+        programs: {},
       }
     }
   }
 
-  addProgramStats (name, cpu) {
+  addProgramStats(name, cpu) {
     if (!Memory.qos.performance.programs[name]) {
       Memory.qos.performance.programs[name] = {
         first: Game.time,
         count: 1,
         cpu: cpu,
-        max: cpu
+        max: cpu,
       }
       return
     }
@@ -26,21 +25,27 @@ class Performance {
     }
   }
 
-  report () {
+  report() {
     const programs = Object.keys(Memory.qos.performance.programs)
-    programs.sort((a, b) => Memory.qos.performance.programs[b].cpu - Memory.qos.performance.programs[a].cpu)
+    programs.sort(
+      (a, b) =>
+        Memory.qos.performance.programs[b].cpu -
+        Memory.qos.performance.programs[a].cpu
+    )
     let report = 'Program\tAverage\tMax Cpu\t Total Cpu \t Ticks Run\n'
     for (let program of programs) {
       let max = Memory.qos.performance.programs[program].max
       let cpu = Memory.qos.performance.programs[program].cpu
       let count = Memory.qos.performance.programs[program].count
       let average = cpu / count
-      report += `${program}\t ${average.toFixed(3)}\t${max.toFixed(3)}\t${cpu.toFixed(3)}\t${count}\n`
+      report += `${program}\t ${average.toFixed(3)}\t${max.toFixed(
+        3
+      )}\t${cpu.toFixed(3)}\t${count}\n`
     }
     Logger.log(report, LOG_WARN, 'performance')
   }
 
-  reportHtml () {
+  reportHtml() {
     const numTicks = Game.time - Memory.qos.performance.start
 
     let report = '\n'
@@ -69,7 +74,11 @@ class Performance {
 
     report += `CPU Usage By Program - Stats collected for ${numTicks} ticks.`
     const programs = Object.keys(Memory.qos.performance.programs)
-    programs.sort((a, b) => Memory.qos.performance.programs[b].cpu - Memory.qos.performance.programs[a].cpu)
+    programs.sort(
+      (a, b) =>
+        Memory.qos.performance.programs[b].cpu -
+        Memory.qos.performance.programs[a].cpu
+    )
     report += '<table width="500">'
     report += '<tr>'
     report += '<td>Program</td>'
@@ -95,7 +104,7 @@ class Performance {
     Logger.log(report, LOG_WARN, 'performance')
   }
 
-  clear () {
+  clear() {
     delete Memory.qos.performance
   }
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-Room.getCostmatrix = function (roomname, opts = {}) {
+Room.getCostmatrix = function(roomname, opts = {}) {
   Logger.log(`Retrieving CostMatrix for ${roomname}`, LOG_TRACE)
 
   const cm = Room.getStructuresCostmatrix(roomname, opts)
@@ -43,7 +43,7 @@ const CACHE_IGNORE_DESTRUCTABLE = 1 // 0001
 const CACHE_IGNORE_ROADS = 2 // 0010
 const CACHE_IGNORE_SOURCE_KEEPER = 4 // 0100
 
-Room.getStructuresCostmatrix = function (roomname, opts) {
+Room.getStructuresCostmatrix = function(roomname, opts) {
   let flags = 0
   if (opts.ignoreDestructibleStructures) {
     flags = flags | CACHE_IGNORE_DESTRUCTABLE
@@ -54,10 +54,10 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   if (opts.ignoreSourceKeepers) {
     flags = flags | CACHE_IGNORE_SOURCE_KEEPER
   }
-  const cacheLabel = `${Room.serializeName(roomname)}_${(flags >>> 0)}`
+  const cacheLabel = `${Room.serializeName(roomname)}_${flags >>> 0}`
 
   let cmSerialized = sos.lib.cache.get(cacheLabel, {
-    ttl: Game.rooms[roomname] ? 25 : false
+    ttl: Game.rooms[roomname] ? 25 : false,
   })
   if (cmSerialized) {
     return PathFinder.CostMatrix.deserialize(cmSerialized)
@@ -75,7 +75,10 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   }
 
   // Attempt to get structures from room.
-  if ((!opts.ignoreDestructibleStructures || !opts.ignoreRoads) && Game.rooms[roomname]) {
+  if (
+    (!opts.ignoreDestructibleStructures || !opts.ignoreRoads) &&
+    Game.rooms[roomname]
+  ) {
     const room = Game.rooms[roomname]
     const structures = room.find(FIND_STRUCTURES)
     for (let structure of structures) {
@@ -115,12 +118,12 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   sos.lib.cache.set(cacheLabel, cm.serialize(), {
     persist: true,
     maxttl: 3000,
-    compress: true
+    compress: true,
   })
   return cm
 }
 
-function setValuesInRange (cm, pos, range, value) {
+function setValuesInRange(cm, pos, range, value) {
   const left = pos.x - value
   const right = pos.x + value
   const top = pos.y - value

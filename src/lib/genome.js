@@ -1,4 +1,3 @@
-
 /**
  * The Genome class allows for infinite but replicatable variations on bot behavior.
  *
@@ -26,14 +25,14 @@
  * myGenome.trait('aggression', 5, {min: 1, max: 9})
  */
 class Genome {
-  constructor (initializer, returnExpected = false) {
+  constructor(initializer, returnExpected = false) {
     // defined for convenience, do not change without also changing Lehmer multiplier in `_getNumberFromSeed`
     this.max = 2147483647
     this.seed = this._getNumberFromString(initializer)
     this.returnDefault = returnExpected
   }
 
-  trait (name, expected, opts) {
+  trait(name, expected, opts) {
     if (this.returnDefault) {
       return expected
     }
@@ -59,37 +58,43 @@ class Genome {
     }
   }
 
-  random (label) {
+  random(label) {
     let seed = (this._getNumberFromString(label) + this.seed) % this.max
     return this._getNumberFromSeed(seed) / (this.max - 1)
   }
 
-  randomInt (label, min, max) {
+  randomInt(label, min, max) {
     return Math.floor(this.random(label) * (max - min + 1) + min)
   }
 
-  randomCenterWeighted (label, iterations = 3) {
+  randomCenterWeighted(label, iterations = 3) {
     // const iterations = 3
-    let total = this._getNumberFromSeed((this._getNumberFromString(label) + this.seed) % this.max)
+    let total = this._getNumberFromSeed(
+      (this._getNumberFromString(label) + this.seed) % this.max
+    )
     for (let i = 1; i < iterations; i++) {
       total += this._getNumberFromSeed(total)
     }
-    return (total / iterations) / (this.max - 1)
+    return total / iterations / (this.max - 1)
   }
 
-  randomCenterWeightedInt (label, min, max, iterations = 3) {
-    return Math.floor(this.randomCenterWeighted(label, iterations) * (max - min + 1) + min)
+  randomCenterWeightedInt(label, min, max, iterations = 3) {
+    return Math.floor(
+      this.randomCenterWeighted(label, iterations) * (max - min + 1) + min
+    )
   }
 
-  _getNumberFromString (string) {
+  _getNumberFromString(string) {
     let numeric = 1
     for (var i = 0; i < string.length; i++) {
-      numeric = this._getNumberFromSeed((numeric * string.charCodeAt(i) % 65535) + 1)
+      numeric = this._getNumberFromSeed(
+        (numeric * string.charCodeAt(i)) % 65535 + 1
+      )
     }
     return numeric
   }
 
-  _getNumberFromSeed (seed) {
+  _getNumberFromSeed(seed) {
     // Lehmer random number generator
     return (seed * 48271) % this.max
   }
@@ -102,7 +107,11 @@ if (typeof module !== 'undefined' && !module.parent) {
   const max = process.argv.length >= 3 ? process.argv[2] : 10
   const modifier = Math.floor(Math.random() * (100 + 1))
   const seed = 'Quorum' + modifier
-  console.log(`Testing distribution with seed ${seed} over ${iterations} iterations with max value ${max}.`)
+  console.log(
+    `Testing distribution with seed ${seed} over ${
+      iterations
+    } iterations with max value ${max}.`
+  )
   let genome = new Genome(seed)
 
   let count = {}
@@ -119,7 +128,7 @@ if (typeof module !== 'undefined' && !module.parent) {
   for (let i = 0; i < iterations; i++) {
     let ret = genome.trait('apples' + i, 50, {
       max: max,
-      min: 1
+      min: 1,
     })
     if (!trait[ret]) {
       trait[ret] = 1
@@ -142,11 +151,11 @@ if (typeof module !== 'undefined' && !module.parent) {
     }
   }
 
-  const normalizeCount = function (num) {
+  const normalizeCount = function(num) {
     if (!num) {
       return 0
     }
-    return (((num / iterations) * 100).toFixed(2)) + '%'
+    return (num / iterations * 100).toFixed(2) + '%'
   }
 
   let header = 'Value'

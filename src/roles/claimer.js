@@ -3,14 +3,17 @@
 const MetaRole = require('roles_meta')
 
 class Claimer extends MetaRole {
-  constructor () {
+  constructor() {
     super()
     this.defaultEnergy = 850
   }
 
-  getBuild (room, options) {
+  getBuild(room, options) {
     this.setBuildDefaults(room, options)
-    return Creep.buildFromTemplate([MOVE, CLAIM, MOVE, MOVE, MOVE, MOVE], options.energy)
+    return Creep.buildFromTemplate(
+      [MOVE, CLAIM, MOVE, MOVE, MOVE, MOVE],
+      options.energy
+    )
   }
 }
 

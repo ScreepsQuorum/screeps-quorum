@@ -1,24 +1,27 @@
 'use strict'
 
 const roomPrograms = {
-  'spawns': 'spawns',
-  'defense': 'city_defense',
-  'reboot': 'city_reboot',
-  'works': 'city_publicworks'
+  spawns: 'spawns',
+  defense: 'city_defense',
+  reboot: 'city_reboot',
+  works: 'city_publicworks',
 }
 
 class City extends kernel.process {
-  constructor (...args) {
+  constructor(...args) {
     super(...args)
     this.priority = PRIORITIES_CITY
   }
 
-  getDescriptor () {
+  getDescriptor() {
     return this.data.room
   }
 
-  main () {
-    if (!Game.rooms[this.data.room] || !Game.rooms[this.data.room].controller.my) {
+  main() {
+    if (
+      !Game.rooms[this.data.room] ||
+      !Game.rooms[this.data.room].controller.my
+    ) {
       Room.removeCity(this.data.room)
       return this.suicide()
     }
@@ -30,7 +33,11 @@ class City extends kernel.process {
     }
     const roomLevel = this.room.getPracticalRoomLevel()
     if (this.data.prl !== roomLevel) {
-      qlib.notify.send(`${this.data.room} has changed from PRL${this.data.prl} to PRL${roomLevel}`)
+      qlib.notify.send(
+        `${this.data.room} has changed from PRL${this.data.prl} to PRL${
+          roomLevel
+        }`
+      )
       this.data.prl = roomLevel
       this.room.clearSpawnQueue()
     }
@@ -40,15 +47,19 @@ class City extends kernel.process {
       this.data.level = this.room.controller.level
     }
     if (this.data.level !== this.room.controller.level) {
-      qlib.notify.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
+      qlib.notify.send(
+        `${this.data.room} has changed from level ${this.data.level} to level ${
+          this.room.controller.level
+        }`
+      )
       this.data.level = this.room.controller.level
     }
 
     const spawns = this.room.find(FIND_MY_SPAWNS)
     if (spawns.length <= 0) {
       this.launchChildProcess('gethelp', 'empire_expand', {
-        'colony': this.data.room,
-        'recover': true
+        colony: this.data.room,
+        recover: true,
       })
       return
     }
@@ -56,39 +67,50 @@ class City extends kernel.process {
     // Launch children programs
     for (const label in roomPrograms) {
       this.launchChildProcess(label, roomPrograms[label], {
-        'room': this.data.room
+        room: this.data.room,
       })
     }
 
     // If the room isn't planned launch the room layout program, otherwise launch construction program
     if (!this.room.getLayout().isPlanned()) {
       this.launchChildProcess('layout', 'city_layout', {
-        'room': this.data.room
+        room: this.data.room,
       })
     } else {
       this.launchChildProcess('construct', 'city_construct', {
-        'room': this.data.room
+        room: this.data.room,
       })
       this.launchChildProcess('fortify', 'city_fortify', {
-        'room': this.data.room
+        room: this.data.room,
       })
     }
 
     // Launch fillers
     let options = {
-      'priority': 3
+      priority: 3,
     }
     if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
       options['carry_only'] = true
-      options['energy'] = Math.max(Math.min(1600, this.room.energyCapacityAvailable / 2), 400)
+      options['energy'] = Math.max(
+        Math.min(1600, this.room.energyCapacityAvailable / 2),
+        400
+      )
     }
-    const fillerQuantity = this.room.getRoomSetting('ADDITIONAL_FILLERS') ? 4 : 2
-    this.launchCreepProcess('fillers', 'filler', this.data.room, fillerQuantity, options)
+    const fillerQuantity = this.room.getRoomSetting('ADDITIONAL_FILLERS')
+      ? 4
+      : 2
+    this.launchCreepProcess(
+      'fillers',
+      'filler',
+      this.data.room,
+      fillerQuantity,
+      options
+    )
 
     // Launch mining if all level 2 extensions are build.
     if (this.room.energyCapacityAvailable > 500) {
       this.launchChildProcess('mining', 'city_mine', {
-        'room': this.data.room
+        room: this.data.room,
       })
     }
 
@@ -97,7 +119,9 @@ class City extends kernel.process {
     if (mineCount && lastAdd >= 2000) {
       let remoteMines = this.room.getMines()
       if (remoteMines.length < mineCount) {
-        const cpuUsage = sos.lib.monitor.getPriorityRunStats(PRIORITIES_CREEP_DEFAULT)
+        const cpuUsage = sos.lib.monitor.getPriorityRunStats(
+          PRIORITIES_CREEP_DEFAULT
+        )
         if (cpuUsage && cpuUsage['long'] <= 1.25) {
           const mine = this.room.selectNextMine()
           if (mine) {
@@ -110,20 +134,23 @@ class City extends kernel.process {
       let mineRoomName
       for (mineRoomName of remoteMines) {
         this.launchChildProcess(`mine_${mineRoomName}`, 'city_mine', {
-          'room': this.data.room,
-          'mine': mineRoomName
+          room: this.data.room,
+          mine: mineRoomName,
         })
       }
     }
 
     // Launch mineral extraction
-    if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
+    if (
+      this.room.isEconomyCapable('EXTRACT_MINERALS') &&
+      this.room.getRoomSetting('EXTRACT_MINERALS')
+    ) {
       // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
       // conditions.
       const mineral = this.room.find(FIND_MINERALS)[0]
       if (mineral.mineralAmount > 0 && !mineral.ticksToRegeneration) {
         this.launchChildProcess('extraction', 'city_extract', {
-          'room': this.data.room
+          room: this.data.room,
         })
       }
     }
@@ -144,21 +171,27 @@ class City extends kernel.process {
       if (this.room.controller.level >= 8) {
         upgraderQuantity = 1
       }
-      this.launchCreepProcess('upgraders', 'upgrader', this.data.room, upgraderQuantity, {
-        'priority': 5
-      })
+      this.launchCreepProcess(
+        'upgraders',
+        'upgrader',
+        this.data.room,
+        upgraderQuantity,
+        {
+          priority: 5,
+        }
+      )
     }
     if (this.room.controller.isTimingOut()) {
       this.launchCreepProcess('eupgrader', 'upgrader', this.data.room, 1, {
         priority: 1,
-        energy: 200
+        energy: 200,
       })
     }
 
     // Launch scouts to map out neighboring rooms
     if (this.data.room !== 'sim' && this.room.getRoomSetting('SCOUTS')) {
       this.launchCreepProcess('scouts', 'spook', this.data.room, 1, {
-        'priority': 4
+        priority: 4,
       })
     }
   }
