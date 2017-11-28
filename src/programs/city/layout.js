@@ -248,7 +248,12 @@ class CityLayout extends kernel.process {
 
     /* Get flower2 structures */
     const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
     if (!flower2Position) {
       return false
@@ -285,7 +290,12 @@ class CityLayout extends kernel.process {
 
     /* Get flower2 structures */
     const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
     if (!flower2Position) {
       return false
