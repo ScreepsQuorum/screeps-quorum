@@ -1,15 +1,16 @@
 
 Room.prototype.getSuicideBooth = function () {
-  // Identify spawn closest to storage, to make reclaimed energy easier to store.
-  let spawn = false
-  if (this.storage) {
-    spawn = this.storage.pos.findClosestByRange(this.structures[STRUCTURE_SPAWN])
-  } else {
-    spawn = this.structures[STRUCTURE_SPAWN][0]
+  // Make sure there are spawns in the room
+  if (!this.structures[STRUCTURE_SPAWN] || !this.structures[STRUCTURE_SPAWN].length) {
+    return false
   }
 
-  if (!spawn) {
-    return false
+  // Defaults to the first spawn
+  let spawn = this.structures[STRUCTURE_SPAWN][0]
+
+  // Identify spawn closest to storage, to make reclaimed energy easier to store.
+  if (this.storage) {
+    spawn = this.storage.pos.findClosestByRange(this.structures[STRUCTURE_SPAWN])
   }
 
   // Pick the location immediately above the spawn and recycle there.
