@@ -3,6 +3,7 @@
 global.DEFAULT_PRIORITY = global.PRIORITIES_DEFAULT || 6
 const MAX_PRIORITY = 16
 const MAX_PID = 9999999
+const WALL = 9
 
 class Scheduler {
   constructor () {
@@ -24,10 +25,9 @@ class Scheduler {
 
   shift () {
     // Promote processes that did not run.
-    let x
-    for (x = 0; x <= MAX_PRIORITY; x++) {
+    for (let x = 0; x <= MAX_PRIORITY; x++) {
       // If we're at the lowest priority merge it with the next priority rather than replacing it, so no pids are lost.
-      if (x === 0) {
+      if (x === 0 || x === WALL) {
         if (!this.memory.processes.queues[x]) {
           this.memory.processes.queues[x] = []
         }
@@ -35,6 +35,16 @@ class Scheduler {
           this.memory.processes.queues[x] = this.memory.processes.queues[x].concat(this.memory.processes.queues[x + 1])
         }
         continue
+      }
+
+      // Don't merge priorities from above the wall to below it.
+      if ((x + 1) === WALL) {
+        continue
+      }
+
+      // If the last tick did not hit the wall then do not promote "above the wall" processes.
+      if (x >= WALL && this.memory.processes.hitwall) {
+        break
       }
 
       // Replace the current priority queue with the one above it, or reset this one if there is none.
@@ -52,6 +62,9 @@ class Scheduler {
       this.memory.processes.running = false
     }
 
+    // Randomize order of completed processes before reinserting them to
+    // * prevent error prone combinations (such as two really high processes running back to back) from recurring,
+    // * keep specific processes from being favored by the scheduler.
     const completed = _.shuffle(_.uniq(this.memory.processes.completed))
     let pid
     for (pid of completed) {
@@ -67,6 +80,7 @@ class Scheduler {
         Logger.log(err, LOG_ERROR)
       }
     }
+    this.memory.processes.hitwall = false
     this.memory.processes.completed = []
   }
 
@@ -80,6 +94,9 @@ class Scheduler {
     // Iterate through the queues until a pid is found.
     let x
     for (x = 0; x <= MAX_PRIORITY; x++) {
+      if (x >= WALL) {
+        this.memory.processes.hitwall = true
+      }
       if (!this.memory.processes.queues[x] || this.memory.processes.queues[x].length <= 0) {
         continue
       }
@@ -149,6 +166,10 @@ class Scheduler {
 
   getProcessCount () {
     return Object.keys(this.memory.processes.index).length
+  }
+
+  getCompletedProcessCount () {
+    return this.memory.processes.completed.length
   }
 
   getPriorityForPid (pid) {
