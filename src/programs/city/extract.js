@@ -22,10 +22,10 @@ class CityExtract extends kernel.process {
     const frackerCluster = this.getCluster('frackers', this.room)
     const haulerCluster = this.getCluster('haulers', this.room)
     const frackers = frackerCluster.getCreeps()
-    const frackersToEmpty = _.filter(frackers, function (fracker) {
-      if (!fracker.pos.isNearTo(mineral)) {
-        return false
-      }
+    const frackersInPlace = _.filter(frackers, function (fracker) {
+      return fracker.pos.isNearTo(mineral)
+    })
+    const frackersToEmpty = _.filter(frackersInPlace, function (fracker) {
       return _.sum(fracker.carry) > 0
     })
 
@@ -66,7 +66,11 @@ class CityExtract extends kernel.process {
       }
 
       if (frackersToEmpty.length < 1) {
-        if (hauler.pos.getRangeTo(mineral) > 2) {
+        const rangeToMineral = hauler.pos.getRangeTo(mineral)
+        const idealDistance = frackersInPlace.length ? 2 : 5
+        if (rangeToMineral < idealDistance) {
+          hauler.travelTo(storage)
+        } else if (rangeToMineral > idealDistance) {
           hauler.travelTo(mineral)
         }
         return
