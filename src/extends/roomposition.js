@@ -170,6 +170,10 @@ RoomPosition.prototype.getStructureByType = function (structureType) {
   return filteredStructures.length > 0 ? filteredStructures[0] : false
 }
 
+RoomPosition.prototype.getBoundingBoxForRange = function (range) {
+  return createBoundingBoxForRange(this.x, this.y, range)
+}
+
 /**
  * Creates a bounding box clamped inside the borders of the room
  * @param {number} x position to get bounds-range from
