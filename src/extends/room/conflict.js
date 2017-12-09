@@ -30,7 +30,7 @@ Room.isPlayerHazard = function (creep) {
   if (creep.my) {
     return false
   }
-  return this.isPotentialHazard(creep)
+  return Room.isPotentialHazard(creep)
 }
 
 Room.isPotentialHazard = function (creep) {
