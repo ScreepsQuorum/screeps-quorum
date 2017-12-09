@@ -181,7 +181,7 @@ var sos_lib_vram = {
       }
       return
     }
-    console.log('Saving segment')
+    console.log(`Saving segment ${key}`)
     sos.lib.segments.saveObject(key, value)
   }
 

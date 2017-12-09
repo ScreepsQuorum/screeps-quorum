@@ -38,6 +38,7 @@ require('extends_creep_actions')
 require('extends_creep_movement')
 require('extends_creep_overrides')
 require('extends_mineral')
+require('extends_room_conflict')
 require('extends_room_construction')
 require('extends_room_control')
 require('extends_room_economy')
@@ -61,6 +62,7 @@ module.exports.loop = function () {
   }
   const kernel = new QosKernel()
   kernel.start()
+  global.Empire = new qlib.Empire()
   kernel.run()
   kernel.shutdown()
 }
