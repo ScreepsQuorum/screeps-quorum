@@ -38,6 +38,7 @@ class CityMine extends kernel.process {
       }
       this.remote = true
       this.scout()
+      this.defend()
       if (!Game.rooms[this.data.mine]) {
         return
       }
@@ -232,6 +233,32 @@ class CityMine extends kernel.process {
         reservist.reserveController(controller)
       }
     })
+  }
+
+  defend () {
+    if (!this.mine) {
+      return
+    }
+    this.recordAggression()
+  }
+
+  recordAggression () {
+    if (this.mine.controller.owner && this.mine.controller.owner.username !== USERNAME) {
+      Empire.dossier.recordAggression(this.mine.controller.owner.username, this.data.mine, AGGRESSION_CLAIM)
+      return
+    }
+    if (this.mine.controller.reservation && this.mine.controller.reservation.username !== USERNAME) {
+      Empire.dossier.recordAggression(this.mine.controller.reservation.username, this.data.mine, AGGRESSION_RESERVE)
+      return
+    }
+    const playerHostiles = this.mine.getHostilesByPlayer()
+    if (playerHostiles.length > 0) {
+      for (const user in playerHostiles) {
+        Logger.log(`Hostile creep owned by ${user} detected in room ${this.data.room}.`, LOG_WARN)
+        qlib.notify.send(`Hostile creep owned by ${user} detected in room ${this.data.room}.`, TICKS_BETWEEN_ALERTS)
+        Empire.dossier.recordAggression(user, this.data.room, AGGRESSION_HARASS)
+      }
+    }
   }
 }
 
