@@ -27,6 +27,9 @@ Room.isPlayerHazard = function (creep) {
   if (creep.owner.username === 'Invader' || creep.owner.username === 'Screeps') {
     return false
   }
+  if (creep.my) {
+    return false
+  }
   return this.isPotentialHazard(creep)
 }
 
