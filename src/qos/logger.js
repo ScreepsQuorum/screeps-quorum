@@ -38,8 +38,9 @@ class Logger {
     let attributes = ''
     let tag
     if (tags) {
-      if(!tags.shard)
+      if(!tags.shard) {
         tags.shard = Game.shard.name
+      }
       for (tag in tags) { // jshint ignore:line
         attributes += ` ${tag}="${tags[tag]}"`
       }
