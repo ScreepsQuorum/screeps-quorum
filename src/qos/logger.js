@@ -28,7 +28,7 @@ class Logger {
     }
 
     if (group !== 'default') {
-      message = group + ': ' + message
+      message = '[' + Game.shard.name + ']' + group + ': ' + message
     }
 
     if (severity >= LOG_ERROR) {
@@ -38,6 +38,8 @@ class Logger {
     let attributes = ''
     let tag
     if (tags) {
+      if(!tags.shard)
+        tags.shard = Game.shard.name
       for (tag in tags) { // jshint ignore:line
         attributes += ` ${tag}="${tags[tag]}"`
       }
