@@ -16,6 +16,14 @@ class Player extends kernel.process {
     }
     const empireAge = qlib.events.getTimeSinceEvent('epoch')
 
+    if (!this.data.gcl) {
+      this.data.gcl = Game.gcl.level
+    }
+    if (this.data.gcl < Game.gcl.level) {
+      qlib.notify.send(`GCL has increased to ${Game.gcl.level}`)
+      this.data.gcl = Game.gcl.level
+    }
+
     this.launchChildProcess('respawner', 'respawner')
     this.launchChildProcess('intel', 'empire_intel')
     this.launchChildProcess('market', 'empire_market')
