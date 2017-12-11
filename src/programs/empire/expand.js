@@ -64,7 +64,7 @@ class EmpireExpand extends kernel.process {
     }
 
     // If layout isn't complete after a full generation unclaim and try again somewhere else.
-    if (!this.data.recover && Game.time - this.data.claimedAt > 1500) {
+    if (!this.data.recover && Game.time - this.data.claimedAt > CREEP_LIFE_TIME) {
       if (!this.colony.getLayout().isPlanned() && !this.isChildProcessRunning('layout')) {
         this.colony.controller.unclaim()
         delete this.data.claimedAt
