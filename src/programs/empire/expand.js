@@ -145,7 +145,7 @@ class EmpireExpand extends kernel.process {
     const startCPU = Game.cpu.getUsed()
     while (this.data.candidateList.length > 0) {
       const testRoom = this.data.candidateList.pop()
-      const score = Room.getCityScore(testRoom)
+      const score = this.data.candidateScores[testRoom] || Room.getCityScore(testRoom)
       if (score) {
         this.data.candidateScores[testRoom] = score
       }
