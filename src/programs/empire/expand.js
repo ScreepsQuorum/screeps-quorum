@@ -136,8 +136,8 @@ class EmpireExpand extends kernel.process {
         return this.data.candidates.pop()
       } else {
         // If all candidates have been invalidated clear data and try again
-        delete this.data.candidates;
-        delete this.data.candidateList;
+        delete this.data.candidates
+        delete this.data.candidateList
       }
     }
 
