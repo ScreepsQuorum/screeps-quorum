@@ -131,13 +131,20 @@ class EmpireExpand extends kernel.process {
 
   getNextCandidate () {
     // If a candidate list already exists use the best scoring candidate from the list.
-    if (this.data.candidates && this.data.candidates.length > 0) {
-      return this.data.candidates.pop()
+    if (this.data.candidates) {
+      if (this.data.candidates.length > 0) {
+        return this.data.candidates.pop()
+      } else {
+        // If all candidates have been invalidated clear data and try again
+        delete this.data.candidates
+        delete this.data.candidateList
+      }
     }
 
-    if (typeof this.data.candidateList === 'undefined' || !this.data.candidates || this.data.candidates.length <= 0) {
+    if (typeof this.data.candidateList === 'undefined') {
       this.data.candidateList = this.getCandidateList()
     }
+
     if (!this.data.candidateScores) {
       this.data.candidateScores = {}
     }
