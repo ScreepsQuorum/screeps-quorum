@@ -310,7 +310,7 @@ Room.testRoomScore = function (roomName) {
 function getMineralMarketScore (mineral) {
   const max = qlib.market.getHighestMineralValue()
   const cost = qlib.market.getAveragePrice(mineral, ORDER_SELL)
-  return cost / max
+  return cost / max || 0
 }
 
 function getMineralEmpireNeedsScore (mineral) {
