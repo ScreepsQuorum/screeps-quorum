@@ -18,7 +18,7 @@ class EmpireExpand extends kernel.process {
   }
 
   main () {
-    if (!this.data.colony) {
+    if (!this.data.colony && !this.data.recover) {
       const candidate = this.getNextCandidate()
       if (candidate && this.validateRoom(candidate)) {
         this.data.colony = candidate
@@ -27,15 +27,28 @@ class EmpireExpand extends kernel.process {
       }
       return
     }
+    if (!this.getClosestCity(this.data.colony)) {
+      return
+    }
+    if (!this.data.recover) {
+      this.scout()
+    }
 
-    this.scout()
     if (!Game.rooms[this.data.colony]) {
+      if (!this.data.recover) {
+        this.claim()
+      }
       return
     }
     this.colony = Game.rooms[this.data.colony]
 
     // Don't continue futher until the room is claimed
     if (!this.colony.controller.my) {
+      // If we're trying to recover a destroyed room and the controller times out just give up.
+      if (this.data.recover) {
+        this.suicide()
+        return
+      }
       this.claim()
       return
     }
@@ -51,7 +64,7 @@ class EmpireExpand extends kernel.process {
     }
 
     // If layout isn't complete after a full generation unclaim and try again somewhere else.
-    if (Game.time - this.data.claimedAt > 1500) {
+    if (!this.data.recover && Game.time - this.data.claimedAt > CREEP_LIFE_TIME) {
       if (!this.colony.getLayout().isPlanned() && !this.isChildProcessRunning('layout')) {
         this.colony.controller.unclaim()
         delete this.data.claimedAt
@@ -61,16 +74,20 @@ class EmpireExpand extends kernel.process {
     }
 
     this.upgrade()
+
     const sources = this.colony.find(FIND_SOURCES)
     for (let source of sources) {
       this.mine(source)
     }
 
     // Destroy all neutral and hostile structures immediately
-    if (!this.data.hascleared) {
+    if (!this.data.recover && !this.data.hascleared) {
       const structures = this.colony.find(FIND_STRUCTURES)
       for (let structure of structures) {
         if (structure.structureType === STRUCTURE_CONTROLLER) {
+          continue
+        }
+        if (structure.my) {
           continue
         }
         structure.destroy()
@@ -91,14 +108,14 @@ class EmpireExpand extends kernel.process {
     }
 
     // If the room layout is planned launch the construction program
-    if (this.colony.getLayout().isPlanned()) {
+    if (!this.data.recover && this.colony.getLayout().isPlanned()) {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.colony
       })
     }
 
     if (this.colony.getRoomSetting('SELF_SUFFICIENT')) {
-      if (!Room.isCity(this.data.colony)) {
+      if (!this.data.recover && !Room.isCity(this.data.colony)) {
         Room.addCity(this.data.colony)
       }
       if (this.colony.storage) {
@@ -118,7 +135,7 @@ class EmpireExpand extends kernel.process {
       return this.data.candidates.pop()
     }
 
-    if (typeof this.data.candidateList === 'undefined') {
+    if (typeof this.data.candidateList === 'undefined' || !this.data.candidates || this.data.candidates.length <= 0) {
       this.data.candidateList = this.getCandidateList()
     }
     if (!this.data.candidateScores) {
@@ -159,13 +176,16 @@ class EmpireExpand extends kernel.process {
       if (!Game.rooms[city]) {
         continue
       }
+      if (!Game.rooms[city].getRoomSetting('EXPAND_FROM')) {
+        continue
+      }
       const testDistance = Room.getManhattanDistance(city, roomName)
       if (distance > testDistance) {
         closest = city
         distance = testDistance
       }
     }
-    return Game.rooms[closest]
+    return closest ? Game.rooms[closest] : false
   }
 
   getCandidateList () {
@@ -197,10 +217,11 @@ class EmpireExpand extends kernel.process {
   scout () {
     const closestCity = this.getClosestCity(this.data.colony)
     const center = new RoomPosition(25, 25, this.data.colony)
-    const quantity = Game.rooms[this.data.colony] ? 0 : 1
     const scouts = this.getCluster(`scout`, closestCity)
-    if (!Game.rooms[this.data.colony]) {
-      scouts.sizeCluster('spook', quantity)
+    if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
+      let creeps = scouts.getCreeps()
+      let quantity = creeps.length === 1 && creeps[0].ticksToLive < 750 ? 2 : 1
+      scouts.sizeCluster('spook', quantity, {'priority': 2})
     }
     scouts.forEach(function (scout) {
       if (scout.room.name === center.roomName) {
@@ -213,9 +234,12 @@ class EmpireExpand extends kernel.process {
   }
 
   claim () {
-    const controller = this.colony.controller
-    if (this.colony.controller.my) {
-      return
+    let controller = false
+    if (this.colony) {
+      if (this.colony.controller.my) {
+        return
+      }
+      controller = this.colony.controller
     }
     const closestCity = this.getClosestCity(this.data.colony)
     const claimer = this.getCluster(`claimers`, closestCity)
@@ -226,7 +250,7 @@ class EmpireExpand extends kernel.process {
       if (!this.data.lastClaimAttempt || Game.time - this.data.lastClaimAttempt > 1000) {
         this.data.attemptedClaim++
         this.data.lastClaimAttempt = Game.time
-        claimer.sizeCluster('claimer', 1)
+        claimer.sizeCluster('claimer', 1, {'priority': 2})
       }
     } else if (Game.time - this.data.lastClaimAttempt > 1000) {
       if (claimer.getCreeps().length < 1) {
@@ -234,7 +258,13 @@ class EmpireExpand extends kernel.process {
         return
       }
     }
+    const colonyName = this.data.colony
     claimer.forEach(function (claimer) {
+      if (!controller) {
+        let pos = new RoomPosition(25, 25, colonyName)
+        claimer.travelTo(pos, {range: 20})
+        return
+      }
       if (!claimer.pos.isNearTo(controller)) {
         claimer.travelTo(controller)
       } else if (!controller.my) {
@@ -360,7 +390,11 @@ class EmpireExpand extends kernel.process {
     const closestCity = this.getClosestCity(this.data.colony)
     const upgraders = this.getCluster(`upgraders`, closestCity)
     if (!this.data.deathwatch) {
-      upgraders.sizeCluster('upgrader', 2)
+      let quantity = 2
+      if (this.data.recover) {
+        quantity = this.colony.controller.isTimingOut() ? 1 : 0
+      }
+      upgraders.sizeCluster('upgrader', quantity)
     }
     upgraders.forEach(function (upgrader) {
       if (upgrader.room.name !== controller.room.name) {

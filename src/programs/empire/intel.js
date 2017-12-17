@@ -4,6 +4,8 @@
  * Scans all currently visible rooms and records useful information about them.
  */
 
+const EMERGENCY_TARGET_TRIGGER = MAX_INTEL_TARGETS * 2
+
 class EmpireIntel extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -51,9 +53,21 @@ class EmpireIntel extends kernel.process {
     if (!Memory.intel) {
       return
     }
+
+    // Bugfix for active systems and future unforeseen bugs - just erase giant target lists.
+    if (Memory.intel.targets.length > EMERGENCY_TARGET_TRIGGER) {
+      Memory.intel.targets = {}
+      return
+    }
+
+    // Purge older requests until limit is reached.
     const targets = Object.keys(Memory.intel.targets)
-    for (let target of targets) {
-      if (Game.time - Memory.intel.targets[target] > 5000) {
+    if (targets.length > MAX_INTEL_TARGETS) {
+      targets.sort((a, b) => Memory.intel.targets[a] - Memory.intel.targets[b])
+      for (let target of targets) {
+        if (Object.keys(Memory.intel.targets).length <= MAX_INTEL_TARGETS) {
+          break
+        }
         delete Memory.intel.targets[target]
       }
     }

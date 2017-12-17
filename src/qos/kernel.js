@@ -4,17 +4,16 @@ const Scheduler = require('qos_scheduler')
 const Performance = require('qos_performance')
 const Process = require('qos_process')
 
-const BUCKET_EMERGENCY = 1000
-const BUCKET_FLOOR = 2000
-const BUCKET_CEILING = 9500
+global.BUCKET_EMERGENCY = 1000
+global.BUCKET_FLOOR = 2000
+global.BUCKET_CEILING = 9500
 const CPU_BUFFER = 130
 const CPU_MINIMUM = 0.50
 const CPU_ADJUST = 0.05
 const CPU_GLOBAL_BOOST = 60
+const MINIMUM_PROGRAMS = 0.3
+const PROGRAM_NORMALIZING_BURST = 2
 const GLOBAL_LAST_RESET = Game.time
-global.BUCKET_EMERGENCY = BUCKET_EMERGENCY
-global.BUCKET_FLOOR = BUCKET_FLOOR
-global.BUCKET_CEILING = BUCKET_CEILING
 
 class QosKernel {
   constructor () {
@@ -32,7 +31,7 @@ class QosKernel {
 
   start () {
     // Announce new uploads
-    Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_INFO, 'kernel')
+    Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_TRACE, 'kernel')
     if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
       Logger.log(`New script upload detected: ${SCRIPT_VERSION}`, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
@@ -54,6 +53,7 @@ class QosKernel {
   }
 
   cleanMemory () {
+    Logger.log('Cleaning memory', LOG_TRACE, 'kernel')
     let i
     for (i in Memory.creeps) { // jshint ignore:line
       if (!Game.creeps[i]) {
@@ -79,7 +79,7 @@ class QosKernel {
           processName += ' ' + descriptor
         }
 
-        Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_INFO, 'kernel')
+        Logger.log(`Running ${processName} (pid ${runningProcess.pid})`, LOG_TRACE, 'kernel')
         const startCpu = Game.cpu.getUsed()
         runningProcess.run()
         let performanceName = runningProcess.name
@@ -107,7 +107,35 @@ class QosKernel {
   }
 
   shouldContinue () {
-    return !!this.simulation || Game.cpu.getUsed() < this.getCpuLimit()
+    if (this.simulation) {
+      return true
+    }
+
+    // Make sure to stop if cpuUsed has hit the maximum allowed cpu.
+    const cpuUsed = Game.cpu.getUsed()
+    if (cpuUsed >= Game.cpu.tickLimit - CPU_BUFFER) {
+      return false
+    }
+
+    // Allow if the cpu used is less than this tick's limit.
+    const cpuLimit = this.getCpuLimit()
+    if (cpuUsed < cpuLimit) {
+      return true
+    }
+
+    // Ensure that a minumum number of processes runs each tick.
+    // This is primarily useful for garbage collection cycles.
+    if (Game.cpu.bucket > BUCKET_FLOOR) {
+      const total = this.scheduler.getProcessCount()
+      const completed = this.scheduler.getCompletedProcessCount()
+      if (completed / total < MINIMUM_PROGRAMS) {
+        if (cpuUsed < cpuLimit * PROGRAM_NORMALIZING_BURST) {
+          return true
+        }
+      }
+    }
+
+    return false
   }
 
   getCpuLimit () {

@@ -11,6 +11,10 @@ class CityExtract extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
+    if (!this.room.getRoomSetting('EXTRACT_MINERALS')) {
+      return this.suicide()
+    }
+
     const extractor = this.room.structures[STRUCTURE_EXTRACTOR] ? this.room.structures[STRUCTURE_EXTRACTOR][0] : false
     const mineral = this.room.find(FIND_MINERALS)[0]
     const storage = this.room.terminal ? this.room.terminal : this.room.storage
@@ -18,10 +22,10 @@ class CityExtract extends kernel.process {
     const frackerCluster = this.getCluster('frackers', this.room)
     const haulerCluster = this.getCluster('haulers', this.room)
     const frackers = frackerCluster.getCreeps()
-    const frackersToEmpty = _.filter(frackers, function (fracker) {
-      if (!fracker.pos.isNearTo(mineral)) {
-        return false
-      }
+    const frackersInPlace = _.filter(frackers, function (fracker) {
+      return fracker.pos.isNearTo(mineral)
+    })
+    const frackersToEmpty = _.filter(frackersInPlace, function (fracker) {
       return _.sum(fracker.carry) > 0
     })
 
@@ -62,17 +66,24 @@ class CityExtract extends kernel.process {
       }
 
       if (frackersToEmpty.length < 1) {
-        if (hauler.pos.getRangeTo(mineral) > 2) {
+        const rangeToMineral = hauler.pos.getRangeTo(mineral)
+        const idealDistance = frackersInPlace.length ? 2 : 5
+        if (rangeToMineral < idealDistance) {
+          hauler.travelTo(storage)
+        } else if (rangeToMineral > idealDistance) {
           hauler.travelTo(mineral)
         }
         return
       }
 
       const closestExtractor = hauler.pos.findClosestByRange(frackersToEmpty)
-      if (!closestExtractor || !hauler.pos.isNearTo(closestExtractor)) {
-        hauler.travelTo(mineral)
-      } else {
+      if (closestExtractor && hauler.pos.isNearTo(closestExtractor)) {
         closestExtractor.transfer(hauler, mineral.mineralType)
+      }
+      frackersToEmpty.sort((a, b) => _.sum(b.carry) - _.sum(a.carry))
+      const fullestExtractor = frackersToEmpty[0]
+      if (fullestExtractor && !hauler.pos.isNearTo(fullestExtractor)) {
+        hauler.travelTo(fullestExtractor)
       }
     })
 

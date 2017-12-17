@@ -1,5 +1,12 @@
 'use strict'
 
+const roomPrograms = {
+  'spawns': 'spawns',
+  'defense': 'city_defense',
+  'reboot': 'city_reboot',
+  'works': 'city_publicworks'
+}
+
 class City extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -11,20 +18,47 @@ class City extends kernel.process {
   }
 
   main () {
-    if (!Game.rooms[this.data.room]) {
+    if (!Game.rooms[this.data.room] || !Game.rooms[this.data.room].controller.my) {
+      Room.removeCity(this.data.room)
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
 
-    this.launchChildProcess('spawns', 'spawns', {
-      'room': this.data.room
-    })
-    this.launchChildProcess('defense', 'city_defense', {
-      'room': this.data.room
-    })
-    this.launchChildProcess('reboot', 'city_reboot', {
-      'room': this.data.room
-    })
+    // Detect when room level changes and clear spawnqueue.
+    if (!this.data.prl) {
+      this.data.prl = this.room.getPracticalRoomLevel()
+    }
+    const roomLevel = this.room.getPracticalRoomLevel()
+    if (this.data.prl !== roomLevel) {
+      qlib.notify.send(`${this.data.room} has changed from PRL${this.data.prl} to PRL${roomLevel}`)
+      this.data.prl = roomLevel
+      this.room.clearSpawnQueue()
+    }
+
+    // Notify of room level changes
+    if (!this.data.level) {
+      this.data.level = this.room.controller.level
+    }
+    if (this.data.level !== this.room.controller.level) {
+      qlib.notify.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
+      this.data.level = this.room.controller.level
+    }
+
+    const spawns = this.room.find(FIND_MY_SPAWNS)
+    if (spawns.length <= 0) {
+      this.launchChildProcess('gethelp', 'empire_expand', {
+        'colony': this.data.room,
+        'recover': true
+      })
+      return
+    }
+
+    // Launch children programs
+    for (const label in roomPrograms) {
+      this.launchChildProcess(label, roomPrograms[label], {
+        'room': this.data.room
+      })
+    }
 
     // If the room isn't planned launch the room layout program, otherwise launch construction program
     if (!this.room.getLayout().isPlanned()) {
@@ -35,10 +69,15 @@ class City extends kernel.process {
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.room
       })
+      this.launchChildProcess('fortify', 'city_fortify', {
+        'room': this.data.room
+      })
     }
 
     // Launch fillers
-    let options = {}
+    let options = {
+      'priority': 3
+    }
     if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
       options['carry_only'] = true
       options['energy'] = Math.max(Math.min(1600, this.room.energyCapacityAvailable / 2), 400)
@@ -92,6 +131,10 @@ class City extends kernel.process {
     // Launch upgraders
     if (this.room.isEconomyCapable('UPGRADE_CONTROLLERS')) {
       let upgraderQuantity = this.room.getRoomSetting('UPGRADERS_QUANTITY')
+      // If the room is not done being built up reduce the upgraders.
+      if (this.room.controller.level > this.room.getPracticalRoomLevel()) {
+        upgraderQuantity = 0
+      }
       if (this.room.isEconomyCapable('EXTRA_UPGRADERS')) {
         upgraderQuantity += 2
       }
@@ -113,7 +156,7 @@ class City extends kernel.process {
     }
 
     // Launch scouts to map out neighboring rooms
-    if (this.room.getRoomSetting('SCOUTS')) {
+    if (this.data.room !== 'sim' && this.room.getRoomSetting('SCOUTS')) {
       this.launchCreepProcess('scouts', 'spook', this.data.room, 1, {
         'priority': 4
       })

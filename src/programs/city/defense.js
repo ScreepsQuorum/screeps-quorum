@@ -32,24 +32,10 @@ class CityDefense extends kernel.process {
       return this.suicide()
     }
 
-    const room = Game.rooms[this.data.room]
+    this.room = Game.rooms[this.data.room]
+    const towers = this.room.structures[STRUCTURE_TOWER]
 
-    const towers = sos.lib.cache.getOrUpdate(
-        [this.data.room, 'towers'],
-        () => room.find(FIND_MY_STRUCTURES, {
-          filter: {
-            structureType: STRUCTURE_TOWER
-          }
-        })
-        .map(s => s.id), {
-          persist: true,
-          maxttl: 5000,
-          chance: 0.001
-        })
-      .map(id => Game.getObjectById(id))
-      .filter(t => t)
-
-    const hostiles = room.find(FIND_HOSTILE_CREEPS)
+    const hostiles = this.room.find(FIND_HOSTILE_CREEPS)
 
     if (towers && towers.length > 0) {
       this.fireTowers(towers, hostiles)
@@ -59,11 +45,22 @@ class CityDefense extends kernel.process {
       this.launchCreepProcess('loader', 'replenisher', this.data.room, 1)
     }
 
-    const playerHostiles = hostiles.filter(c => c.owner.username !== 'Invader' && this.isPotentialHazard(c))
-
+    const playerHostiles = this.room.getHostilesByPlayer()
     if (playerHostiles.length > 0) {
-      Logger.log(`Hostile creep owned by ${playerHostiles[0].owner.username} detected in room ${this.data.room}.`, LOG_WARN)
-      this.safeMode(playerHostiles)
+      let aggression = AGGRESSION_INVADE
+      if (!this.room.controller.my || !this.room.structures[STRUCTURE_SPAWN]) {
+        aggression = AGGRESSION_RAZE
+      } else if (this.room.controller.safemode) {
+        aggression = AGGRESSION_TRIGGER_SAFEMODE
+      } else if (this.room.controller.upgradeBlocked) {
+        aggression = AGGRESSION_BLOCK_UPGRADE
+      }
+      for (const user in playerHostiles) {
+        Logger.log(`Hostile creep owned by ${user} detected in room ${this.data.room}.`, LOG_WARN)
+        qlib.notify.send(`Hostile creep owned by ${user} detected in room ${this.data.room}.`, TICKS_BETWEEN_ALERTS)
+        Empire.dossier.recordAggression(user, this.data.room, aggression)
+      }
+      this.safeMode()
     }
   }
 
@@ -125,33 +122,61 @@ class CityDefense extends kernel.process {
     }
   }
 
-  safeMode (hostiles) {
+  safeMode () {
+    const hostiles = this.room.getPlayerHostiles()
     const room = Game.rooms[this.data.room]
     if (room.controller.safeMode && room.controller.safeMode > 0) {
       return true
     }
-    if (room.controller.safeModeAvailable <= 0 || room.controller.safeModeCooldown || room.controller.upgradeBlocked) {
+    if (!room.controller.canSafemode()) {
       return false
     }
 
     let safeStructures = room.find(FIND_MY_SPAWNS)
+
+    // If there are no spawns this room isn't worth protecting with a safemode.
+    if (safeStructures.length <= 0) {
+      return false
+    }
+
+    // If other rooms are more important than this one save the safemode
+    if (!room.getRoomSetting('ALWAYS_SAFEMODE')) {
+      const cities = Room.getCities()
+      let highestLevel = 0
+      for (let cityName of cities) {
+        if (!Game.rooms[cityName]) {
+          continue
+        }
+        let city = Game.rooms[cityName]
+        if (!city.controller.canSafemode()) {
+          continue
+        }
+        if (city.getRoomSetting('ALWAYS_SAFEMODE')) {
+          return false
+        }
+        let level = city.getPracticalRoomLevel()
+        if (highestLevel < level) {
+          highestLevel = level
+        }
+      }
+      if (room.getPracticalRoomLevel() < highestLevel) {
+        return false
+      }
+    }
+
     safeStructures.push(room.controller)
     let structure
     for (structure of safeStructures) {
       const closest = structure.pos.findClosestByRange(hostiles)
       if (structure.pos.getRangeTo(closest) < 5) {
         // Trigger safemode
-        Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
-        room.controller.activateSafeMode()
+        if (room.controller.activateSafeMode() === OK) {
+          Logger.log(`Activating safemode in ${this.data.room}`, LOG_ERROR)
+        }
         return true
       }
     }
     return false
-  }
-
-  isPotentialHazard (hostile) {
-    const hazardTypes = [ATTACK, RANGED_ATTACK, HEAL, WORK, CLAIM]
-    return _.some(hostile.body, b => _.include(hazardTypes, b.type))
   }
 
   calculateWithFallOff (optimalValue, distance) {

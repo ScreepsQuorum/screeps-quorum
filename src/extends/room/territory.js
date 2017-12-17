@@ -4,7 +4,7 @@
 
 Room.getCities = function () {
   // When respawning the first room has to be autodetected, after which new cities will need to added.
-  if (!Memory.territory) {
+  if (!Memory.territory || Object.keys(Memory.territory).length <= 0) {
     Memory.territory = {}
     for (let roomName of Object.keys(Game.rooms)) {
       const room = Game.rooms[roomName]
@@ -22,6 +22,14 @@ Room.addCity = function (roomName) {
     Logger.log(`Adding city ${roomName}`)
     qlib.events.recordEvent('addcity')
     qlib.notify.send(`Adding city ${roomName} to empire`)
+  }
+}
+
+Room.removeCity = function (roomName) {
+  if (Memory.territory && Memory.territory[roomName]) {
+    delete Memory.territory[roomName]
+    Logger.log(`Removing city ${roomName}`)
+    qlib.notify.send(`Removing city ${roomName} from empire`)
   }
 }
 
@@ -157,21 +165,22 @@ Room.prototype.getMineScore = function (roomName) {
 // ex, 2 sources at 10 points is 25% of the overall score.
 // Penalties are not counts as they add "zero" to the score at best.
 
-/* Resources - 22 - 55% of total score not counting penalties */
+/* Resources - 24 - 60% of total score not counting penalties */
 /* No penalties */
 const CITY_WEIGHTS_TWO_SOURCES = 9 // Will be zero if less than 2 sources.
-const CITY_WEIGHTS_MINERAL_MARKET = 4
+const CITY_WEIGHTS_MINERAL_MARKET = 3
 const CITY_WEIGHTS_MINERAL_EMPIRE_NEED = 3
+const CITY_WEIGHTS_MINERAL_CATALYST = 3
 const CITY_WEIGHTS_REGION_RESOURCES = 2
 const CITY_WEIGHTS_NEIGHBOR_SOURCES = 4
 
-/* Terrain - 6 - 15% of total score not counting penalties  */
+/* Terrain - 4 - 10% of total score not counting penalties  */
 /* Up to 5 points in penalties */
 const CITY_WEIGHTS_SWAMPINESS = -5
 const CITY_WEIGHTS_WALKABILITY = 4
 
 // Currently looks for rooms with fewer exit tiles
-const CITY_WEIGHTS_DEFENSIBILITY = 2
+const CITY_WEIGHTS_DEFENSIBILITY = 0
 
 /* Location - 12 - 30% of total score not counting penalties  */
 /* Up to 12 points in penalties */
@@ -245,6 +254,7 @@ Room.getCityScore = function (roomName) {
   score += intel[INTEL_SWAMPINESS] * CITY_WEIGHTS_SWAMPINESS
   score += getMineralMarketScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_MARKET
   score += getMineralEmpireNeedsScore(intel[INTEL_MINERAL]) * CITY_WEIGHTS_MINERAL_EMPIRE_NEED
+  score += intel[INTEL_MINERAL] === RESOURCE_CATALYST ? CITY_WEIGHTS_MINERAL_CATALYST : 0
   score += getDefensibilityScore(roomName) * CITY_WEIGHTS_DEFENSIBILITY
   score += getRoomTypeScore(roomName) * CITY_WEIGHTS_ROOMTYPE
   score += getEmpireClutterScore(roomName) * CITY_WEIGHTS_EMPIRE_CLUTTERED

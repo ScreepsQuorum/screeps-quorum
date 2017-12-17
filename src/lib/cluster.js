@@ -54,6 +54,12 @@ class Cluster {
   }
 
   sizeCluster (role, quantity, options = {}, room = false) {
+    if (options.respawnAge) {
+      const creeps = this.getCreeps()
+      quantity += _.filter(creeps, function (creep) { return creep.ticksToLive <= options.respawnAge }).length
+      delete options.respawnAge
+    }
+
     if (this.memory.creeps.length >= quantity) {
       return true
     }

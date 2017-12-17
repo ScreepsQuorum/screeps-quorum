@@ -248,7 +248,12 @@ class CityLayout extends kernel.process {
 
     /* Get flower2 structures */
     const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
     if (!flower2Position) {
       return false
@@ -285,7 +290,12 @@ class CityLayout extends kernel.process {
 
     /* Get flower2 structures */
     const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
     if (!flower2Position) {
       return false
@@ -404,8 +414,8 @@ class CityLayout extends kernel.process {
    */
   planRoad (layout, fromPos, toPos, matrix) {
     if (!matrix) matrix = this.getConstructionMatrix(layout)
-    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
-    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 4, swampCost: 5, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
+    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 4, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
+    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 3, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
     let spot
     if (!path.path || path.path.length < 1) {
       Logger.log(`Unable to find path for road from: ${fromPos} to: ${toPos} in room: ${this.data.room} path returned was: ${JSON.stringify(path)}`, LOG_ERROR, 'layout')
@@ -429,15 +439,21 @@ class CityLayout extends kernel.process {
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (pos.isExit() || (pos.isSteppable() && pos.inFrontOfExit())) {
+        if (pos.isExit()) {
+          costMatrix.set(x, y, 0xff)
+          continue
+        }
+        if (pos.isSteppable() && pos.inFrontOfExit()) {
           costMatrix.set(x, y, 30)
+          continue
         }
         if (layout) {
           plannedStruct = layout.getStructureAt(x, y)
-          if (plannedStruct === 3) { // magic number due to lacking access to structureMap
-            costMatrix.set(x, y, 1)
-          } else if ([1, 2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].indexOf(plannedStruct) > -1) { // magic numbers due to lacking access to structureMap
-            costMatrix.set(x, y, 0xff)
+          if (plannedStruct === STRUCTURE_ROAD) {
+            costMatrix.set(x, y, 2)
+          } else if (OBSTACLE_OBJECT_TYPES.indexOf(plannedStruct) > -1) {
+            // By making them walkable we allow the road planner to accept positions that are not actually reachable.
+            costMatrix.set(x, y, 120)
           }
         }
       }
@@ -537,11 +553,17 @@ class CityLayout extends kernel.process {
     const costMatrix = new PathFinder.CostMatrix()
     let x,
       y
+    const exits = this.room.find(FIND_EXIT)
+    const minimumExitRange = 4
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (pos.inFrontOfExit()) {
-          continue
+        if (x < minimumExitRange || y < minimumExitRange) {
+          if (x > (49 - minimumExitRange) || y > (49 - minimumExitRange)) {
+            if (pos.findClosestByRange(exits).getRangeTo() < minimumExitRange) {
+              continue
+            }
+          }
         }
         if (pos.getTerrainAt() !== 'wall') {
           costMatrix.set(x, y, 1)

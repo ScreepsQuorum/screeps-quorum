@@ -1,7 +1,7 @@
 'use strict'
 
 Room.getCostmatrix = function (roomname, opts = {}) {
-  Logger.log(`Retrieving CostMatrix for ${roomname}`, LOG_INFO)
+  Logger.log(`Retrieving CostMatrix for ${roomname}`, LOG_TRACE)
 
   const cm = Room.getStructuresCostmatrix(roomname, opts)
 
@@ -39,9 +39,10 @@ Room.getCostmatrix = function (roomname, opts = {}) {
   return cm
 }
 
-const CACHE_IGNORE_DESTRUCTABLE = 1 // 0001
-const CACHE_IGNORE_ROADS = 2 // 0010
-const CACHE_IGNORE_SOURCE_KEEPER = 4 // 0100
+const CACHE_IGNORE_DESTRUCTABLE = 1 << 0
+const CACHE_IGNORE_ROADS = 1 << 1
+const CACHE_IGNORE_SOURCE_KEEPER = 1 << 2
+const CACHE_IGNORE_PORTALS = 1 << 3
 
 Room.getStructuresCostmatrix = function (roomname, opts) {
   let flags = 0
@@ -53,6 +54,9 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   }
   if (opts.ignoreSourceKeepers) {
     flags = flags | CACHE_IGNORE_SOURCE_KEEPER
+  }
+  if (opts.ignorePortals) {
+    flags = flags | CACHE_IGNORE_PORTALS
   }
   const cacheLabel = `${Room.serializeName(roomname)}_${(flags >>> 0)}`
 
@@ -75,21 +79,23 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   }
 
   // Attempt to get structures from room.
-  if ((!opts.ignoreDestructibleStructures || !opts.ignoreRoads) && Game.rooms[roomname]) {
+  if ((!opts.ignoreDestructibleStructures || !opts.ignoreRoads || !opts.ignorePortals) && Game.rooms[roomname]) {
     const room = Game.rooms[roomname]
     const structures = room.find(FIND_STRUCTURES)
     for (let structure of structures) {
-      if (structure.structureType === STRUCTURE_ROAD) {
+      if (!opts.ignoreRoads && structure.structureType === STRUCTURE_ROAD) {
         cm.set(structure.pos.x, structure.pos.y, 1)
         continue
       }
-      if (opts.ignoreDestructibleStructures) {
-        continue
+      if (!opts.ignorePortals && structure.structureType === STRUCTURE_PORTAL) {
+        cm.set(structure.pos.x, structure.pos.y, 255)
       }
-      if (!structure.my && structure.structureType === STRUCTURE_RAMPART) {
-        cm.set(structure.pos.x, structure.pos.y, 255)
-      } else if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
-        cm.set(structure.pos.x, structure.pos.y, 255)
+      if (!opts.ignoreDestructibleStructures) {
+        if (!structure.my && structure.structureType === STRUCTURE_RAMPART) {
+          cm.set(structure.pos.x, structure.pos.y, 255)
+        } else if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
+          cm.set(structure.pos.x, structure.pos.y, 255)
+        }
       }
     }
   }
@@ -120,14 +126,12 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   return cm
 }
 
-function setValuesInRange (cm, pos, range, value) {
-  const left = pos.x - value
-  const right = pos.x + value
-  const top = pos.y - value
-  const bottom = pos.y + value
-  for (let x = left > 0 ? left : 0; x <= (right < 40 ? right : 49); x++) {
-    for (let y = bottom > 0 ? bottom : 0; y <= (top < 40 ? top : 49); y++) {
-      cm.set(x, y, 255)
+function setValuesInRange (cm, pos, range, value = 255) {
+  const { left, right, top, bottom } = pos.getBoundingBoxForRange(range)
+
+  for (let x = left; x <= right; x++) {
+    for (let y = bottom; y <= top; y++) {
+      cm.set(x, y, value)
     }
   }
 }
