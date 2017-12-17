@@ -29,6 +29,8 @@ class Logger {
 
     if (group !== 'default') {
       message = `[${Game.shard.name}] ${group}: ${message}`
+    } else {
+      message = `[${Game.shard.name}] ${message}`
     }
 
     if (severity >= LOG_ERROR) {
