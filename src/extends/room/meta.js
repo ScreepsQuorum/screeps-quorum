@@ -58,10 +58,9 @@ Room.getCoordinates = function (name) {
   }
 }
 
-Room.getRoomsInRange = function (name, range) {
-  if (name === 'sim') {
-    return []
-  }
+function getRoomRangeBounds (name, range) {
+  const worldsize = Game.map.getWorldSize()
+  const maxValue = (worldsize - 2) / 2
   const coords = Room.getCoordinates(name)
   const startXdir = coords.x_dir
   const startYdir = coords.y_dir
@@ -70,30 +69,55 @@ Room.getRoomsInRange = function (name, range) {
   const top = coords.y - range
   const bottom = +coords.y + +range
   const lowerX = Math.min(left, right)
-  const upperX = Math.max(left, right)
+  const upperX = Math.min(Math.max(left, right), maxValue)
   const lowerY = Math.min(top, bottom)
-  const upperY = Math.max(top, bottom)
+  const upperY = Math.min(Math.max(top, bottom), maxValue)
+  return {
+    lowerX,
+    upperX,
+    lowerY,
+    upperY,
+    startXdir,
+    startYdir
+  }
+}
 
+function convertToRoomname (x, y, startXdir, startYdir) {
+  let xNorm, xdir
+  if (x < 0) {
+    xNorm = Math.abs(x) - 1
+    xdir = startXdir === 'E' ? 'W' : 'E'
+  } else {
+    xNorm = x
+    xdir = startXdir
+  }
+  let yNorm, ydir
+  if (y < 0) {
+    yNorm = Math.abs(y) - 1
+    ydir = startYdir === 'N' ? 'S' : 'N'
+  } else {
+    yNorm = y
+    ydir = startYdir
+  }
+  return xdir + xNorm + ydir + yNorm
+}
+
+Room.getRandomRoomInRange = function (name, range) {
+  const bounds = getRoomRangeBounds(name, range)
+  const x = _.random(bounds.lowerX, bounds.upperX)
+  const y = _.random(bounds.lowerY, bounds.upperY)
+  return convertToRoomname(x, y, bounds.startXdir, bounds.startYdir)
+}
+
+Room.getRoomsInRange = function (name, range) {
+  if (name === 'sim') {
+    return []
+  }
+  const bounds = getRoomRangeBounds(name, range)
   let rooms = []
-  for (var x = lowerX; x <= upperX; x++) {
-    for (var y = lowerY; y <= upperY; y++) {
-      let xNorm, xdir
-      if (x < 0) {
-        xNorm = Math.abs(x) - 1
-        xdir = startXdir === 'E' ? 'W' : 'E'
-      } else {
-        xNorm = x
-        xdir = startXdir
-      }
-      let yNorm, ydir
-      if (y < 0) {
-        yNorm = Math.abs(y) - 1
-        ydir = startYdir === 'N' ? 'S' : 'N'
-      } else {
-        yNorm = y
-        ydir = startYdir
-      }
-      rooms.push(xdir + xNorm + ydir + yNorm)
+  for (var x = bounds.lowerX; x <= bounds.upperX; x++) {
+    for (var y = bounds.lowerY; y <= bounds.upperY; y++) {
+      rooms.push(convertToRoomname(x, y, bounds.startXdir, bounds.startYdir))
     }
   }
   return rooms
