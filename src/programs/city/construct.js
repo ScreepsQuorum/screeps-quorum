@@ -11,6 +11,9 @@ const ignoreConstructionSites = [
   STRUCTURE_ROAD
 ]
 
+const ticksBetweenScans = 50
+const ticksConsideredActive = 150
+
 class CityConstruct extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -30,15 +33,24 @@ class CityConstruct extends kernel.process {
     const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (structure) {
       return !ignoreConstructionSites.includes(structure)
     }})
-    if (sites.length <= 0) {
+
+    if (sites.length > 0) {
+      this.data.lastactive = Game.time
+      if (this.room.isEconomyCapable('BUILD_STRUCTURES')) {
+        this.launchCreepProcess('builders', 'builder', this.data.room, 2)
+      }
+    } else {
+      // If we recently scanned *and* the system hasn't built new construction recently abort to save cpu.
+      if (this.data.lastscan && Game.time - this.data.lastscan < ticksBetweenScans) {
+        if (!this.data.lastactive || Game.time - this.data.lastactive > ticksConsideredActive) {
+          return
+        }
+      }
       let result = this.room.constructNextMissingStructure()
+      this.data.lastscan = Game.time
       if (Number.isInteger(result) && result < 0) {
         Logger.log(`Unable to build next structure: ${result}`, LOG_ERROR)
       }
-    }
-
-    if (sites.length > 0 && this.room.isEconomyCapable('BUILD_STRUCTURES')) {
-      this.launchCreepProcess('builders', 'builder', this.data.room, 2)
     }
   }
 }
