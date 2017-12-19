@@ -7,6 +7,7 @@ global.ECONOMY_STABLE = 3
 global.ECONOMY_SURPLUS = 4
 global.ECONOMY_BURSTING = 5
 
+// Will return true for economic levels at or above these values.
 const economySettings = {
   'SUPPLY_TERMINAL': ECONOMY_FALTERING,
 
@@ -19,15 +20,25 @@ const economySettings = {
 
   'EXTRA_UPGRADERS': ECONOMY_SURPLUS,
   'EXTRA_WALLBUILDERS': ECONOMY_SURPLUS,
+  'SHARE_ENERGY': ECONOMY_SURPLUS,
 
-  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING
+  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING,
+  'DUMP_ENERGY': ECONOMY_BURSTING
+}
+
+// Will return true for economic levels at or below these values.
+const economyNegativeSettings = {
+  'REQUEST_ENERGY': ECONOMY_FALTERING
 }
 
 Room.prototype.isEconomyCapable = function (key) {
-  if (!economySettings[key]) {
-    return false
+  if (Number.isInteger(economySettings[key])) {
+    return this.getEconomyLevel() >= economySettings[key]
   }
-  return this.getEconomyLevel() >= economySettings[key]
+  if (Number.isInteger(economyNegativeSettings[key])) {
+    return this.getEconomyLevel() <= economyNegativeSettings[key]
+  }
+  return false
 }
 
 Room.prototype.getEconomyLevel = function () {
