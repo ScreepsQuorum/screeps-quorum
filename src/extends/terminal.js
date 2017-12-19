@@ -23,7 +23,7 @@ if (!StructureTerminal.prototype.__send) {
   StructureTerminal.prototype.send = function (resourceType, amount, destination, description) {
     const ret = this.__send(resourceType, amount, destination, description)
     if (ret === OK) {
-      let log = `Termail sent ${amount} ${resourceType} to ${destination}`
+      let log = `Terminal sent ${amount} ${resourceType} to ${destination}`
       if (description) {
         log += `: ${description}`
       }
