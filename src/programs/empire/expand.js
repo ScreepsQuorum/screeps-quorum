@@ -30,28 +30,28 @@ class EmpireExpand extends kernel.process {
     if (!this.getClosestCity(this.data.colony)) {
       return
     }
-    if (!this.data.recover) {
-      this.scout()
-    }
 
-    if (!Game.rooms[this.data.colony]) {
-      if (!this.data.recover) {
-        this.claim()
-      }
-      return
-    }
-    this.colony = Game.rooms[this.data.colony]
-
-    // Don't continue futher until the room is claimed
-    if (!this.colony.controller.my) {
+    if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
       // If we're trying to recover a destroyed room and the controller times out just give up.
       if (this.data.recover) {
         this.suicide()
         return
       }
+
+      // Use observers if any are available.
+      StructureObserver.monitor(this.data.colony)
+
+      // Send scouts if there is no visibility. This may overlap with observers, but will also cover rooms on the way.
+      if (!Game.rooms[this.data.colony]) {
+        this.scout()
+      }
+
+      // Don't continue futher until the room is claimed
       this.claim()
       return
     }
+
+    this.colony = Game.rooms[this.data.colony]
 
     // First run after claiming- record tick and launch layout process
     if (!this.data.claimedAt) {
