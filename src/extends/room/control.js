@@ -39,7 +39,8 @@ let roomLevelOptions = {
   },
   8: {
     'UPGRADERS_QUANTITY': 1,
-    'REMOTE_MINES': 3
+    'REMOTE_MINES': 3,
+    'SHARE_ENERGY': true
   }
 }
 

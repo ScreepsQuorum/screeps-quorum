@@ -6,6 +6,25 @@ class Empire {
     }
     return this._dossier
   }
+
+  get terminals () {
+    if (!this._terminals) {
+      this._terminals = []
+      for (const city of this.cities) {
+        if (Game.rooms[city] && Game.rooms[city].terminal) {
+          this._terminals.push(Game.rooms[city].terminal)
+        }
+      }
+    }
+    return this._terminals
+  }
+
+  get cities () {
+    if (!this._cities) {
+      this._cities = Room.getCities()
+    }
+    return this._cities
+  }
 }
 
 module.exports = Empire

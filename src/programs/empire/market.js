@@ -12,11 +12,9 @@ class EmpireMarket extends kernel.process {
 
   main () {
     if (!this.data.lma || Game.time - this.data.lma > TERMINAL_COOLDOWN) {
-      const cities = Room.getCities()
-      for (let city of cities) {
-        if (Game.rooms[city] && Game.rooms[city].terminal) {
-          this.manageTerminal(Game.rooms[city].terminal)
-        }
+      this.terminals = _.shuffle(Empire.terminals)
+      for (let terminal of this.terminals) {
+        this.manageTerminal(terminal)
       }
     }
     if (!this.data.lra || Game.time - this.data.lra >= MARKET_STATS_INTERVAL) {
@@ -26,9 +24,22 @@ class EmpireMarket extends kernel.process {
   }
 
   manageTerminal (terminal) {
-    if (terminal.cooldown || terminal.store[RESOURCE_ENERGY] <= 100) {
+    if (terminal.cooldown || terminal.store[RESOURCE_ENERGY] < 1000) {
       return false
     }
+
+    // Check to see if terminal should send energy to other cities.
+    if (this.shouldSendEnergy(terminal)) {
+      const energyTarget = this.getEnergyTarget()
+      if (energyTarget) {
+        // Max cost of sending 1 energy is 1, for a total of two energy.
+        const amount = Math.min(5000, terminal.store[RESOURCE_ENERGY] / 2)
+        terminal.send(RESOURCE_ENERGY, amount, energyTarget, `interempire energy transfer`)
+        return
+      }
+    }
+
+    // Sell any resources in terminal.
     const carrying = Object.keys(terminal.store)
     for (let resource of carrying) {
       if (resource === RESOURCE_ENERGY) {
@@ -37,6 +48,49 @@ class EmpireMarket extends kernel.process {
       qlib.market.sellImmediately(resource, terminal.room, terminal.store[resource])
       break
     }
+  }
+
+  getEnergyTarget () {
+    // Set lowest level to 8 so RCL8 rooms only get economy support, not GCL support.
+    let lowestLevel = 8
+    let lowestCity = false
+    let lowestLevelProgress = 0
+    // Lazy way to ensure specific rooms aren't favored by order added to empire.
+    const terminals = _.shuffle(this.terminals)
+    for (const terminal of terminals) {
+      if (!terminal.canReceive(RESOURCE_ENERGY)) {
+        continue
+      }
+      if (terminal.room.isEconomyCapable('DUMP_ENERGY')) {
+        continue
+      }
+
+      // If room *needs* energy supply it.
+      if (terminal.room.isEconomyCapable('REQUEST_ENERGY')) {
+        return terminal.room.name
+      }
+
+      // Built up lowest level room.
+      // If two rooms are equal level, pick the one closer to the next level.
+      const roomLevel = terminal.room.controller.level
+      const roomProgress = terminal.room.controller.progress
+      if (roomLevel < lowestLevel || (roomLevel === lowestLevel && roomProgress > lowestLevelProgress)) {
+        lowestLevel = terminal.room.controller.level
+        lowestLevelProgress = terminal.room.controller.progress
+        lowestCity = terminal.room.name
+      }
+    }
+    return lowestCity
+  }
+
+  shouldSendEnergy (terminal) {
+    if (terminal.store[RESOURCE_ENERGY] < 10000) {
+      return false
+    }
+    if (terminal.room.getRoomSetting('SHARE_ENERGY') && terminal.room.isEconomyCapable('SHARE_ENERGY')) {
+      return true
+    }
+    return terminal.room.isEconomyCapable('DUMP_ENERGY')
   }
 
   recordAverages () {
