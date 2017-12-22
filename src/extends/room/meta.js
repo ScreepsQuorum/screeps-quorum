@@ -27,9 +27,9 @@ Room.serializeName = function (name) {
   const coords = Room.getCoordinates(name)
   let quad
   if (coords.x_dir === 'E') {
-    quad = coords.y === 'N' ? '0' : '1'
+    quad = coords.y_dir === 'N' ? '0' : '1'
   } else {
-    quad = coords.y === 'S' ? '2' : '3'
+    quad = coords.y_dir === 'S' ? '2' : '3'
   }
   const x = String.fromCodePoint(+coords.x + +unicodeModifier)
   const y = String.fromCodePoint(+coords.y + +unicodeModifier)
