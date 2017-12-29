@@ -103,6 +103,11 @@ class Scheduler {
 
       this.memory.processes.running = this.memory.processes.queues[x].shift()
 
+      // Don't run this pid twice in a single tick.
+      if (this.memory.processes.completed.includes(this.memory.processes.running)) {
+        continue
+      }
+
       // If process doesn't exist anymore don't use it.
       if (!this.memory.processes.index[this.memory.processes.running]) {
         continue
