@@ -41,7 +41,7 @@ class Performance {
   }
 
   reportHtml () {
-    const numTicks = Game.time - Memory.qos.performance.start
+    const numTicks = (Game.time - Memory.qos.performance.start) + 1
 
     let report = '\n'
 
