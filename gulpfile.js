@@ -7,7 +7,7 @@ let rename = require('gulp-rename')
 let insert = require('gulp-insert')
 let clean = require('gulp-clean')
 let minimist = require('minimist')
-let git = require('git-rev-sync');
+let git = require('git-rev-sync')
 
 let args = minimist(process.argv.slice(2))
 let commitdate = git.date()
@@ -84,9 +84,9 @@ gulp.task('ci-config', ['ci-version'], (cb) => {
 gulp.task('ci-version', (cb) => {
   let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
   let seconds = (commitdate.getHours() * 3600) + (commitdate.getMinutes() * 60) + commitdate.getSeconds()
-  let year = now.getFullYear()
-  let month = now.getMonth() + 1
-  let day = now.getDate()
+  let year = commitdate.getFullYear()
+  let month = commitdate.getMonth() + 1
+  let day = commitdate.getDate()
   pkg.version = `${year}.${month}.${day}-${seconds}`
   fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
 })
