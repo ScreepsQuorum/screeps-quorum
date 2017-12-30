@@ -75,6 +75,36 @@ Room.prototype.constructNextMissingStructure = function () {
     return false
   }
 
+  if (structureType === STRUCTURE_LINK) {
+    const storage = this.storage
+
+    if (storage.getLink()) {
+      const sources = this.find(FIND_SOURCES)
+      sources.sort((a, b) => b.pos.getRangeTo(storage) - a.pos.getRangeTo(storage))
+
+      // first mine link
+      if (!sources[0].getLink()) {
+        const pos = sources[0].getLinkPosition()
+        return this.createConstructionSite(pos, STRUCTURE_LINK)
+      }
+
+      // controller link
+      if (!this.controller.getLink()) {
+        const pos = this.controller.getLinkPosition()
+        return this.createConstructionSite(pos, STRUCTURE_LINK)
+      }
+
+      // second mine link
+      if (sources[1] && !sources[1].getLink()) {
+        const pos = sources[1].getLinkPosition()
+        return this.createConstructionSite(pos, STRUCTURE_LINK)
+      }
+    }
+
+    // Fall back to standard planned structure checks.
+    // First storage, then flowers.
+  }
+
   // Extractors are always built in minerals and thus aren't planned.
   if (structureType === STRUCTURE_EXTRACTOR) {
     const minerals = this.find(FIND_MINERALS)
@@ -124,9 +154,9 @@ Room.prototype.getNextMissingStructureType = function () {
   }
   const structureCount = this.getStructureCount(FIND_STRUCTURES)
   const constructionCount = this.getConstructionCount()
-  const nextLevel = this.getPracticalRoomLevel() + 1
+  let nextLevel = this.getPracticalRoomLevel() + 1
   if (!LEVEL_BREAKDOWN[nextLevel]) {
-    return false
+    nextLevel = 8
   }
   const nextLevelStructureCount = LEVEL_BREAKDOWN[nextLevel]
   const structures = Object.keys(nextLevelStructureCount)
@@ -142,11 +172,11 @@ Room.prototype.getNextMissingStructureType = function () {
     return false
   }
   const allStructurePositions = layout.getAllStructures()
-
+  const sources = this.find(FIND_SOURCES)
   // Build all other structures.
   let structureType
   for (structureType of structures) {
-    if (structureType === STRUCTURE_LINK || this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)) {
+    if (this.getRoomSetting(`SKIP_STRUCTURE_${structureType}`)) {
       continue
     }
     if (!nextLevelStructureCount[structureType] || nextLevelStructureCount[structureType] <= 0) {
@@ -166,6 +196,11 @@ Room.prototype.getNextMissingStructureType = function () {
     }
 
     if (totalStructures < nextLevelStructureCount[structureType]) {
+      if (structureType === STRUCTURE_LINK) {
+        if (totalStructures < (allStructurePositions[structureType].length + sources.length)) {
+          return structureType
+        }
+      }
       if (structureType === STRUCTURE_EXTRACTOR || totalStructures < allStructurePositions[structureType].length) {
         return structureType
       }

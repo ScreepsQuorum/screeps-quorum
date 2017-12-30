@@ -92,6 +92,10 @@ class City extends kernel.process {
       })
     }
 
+    if (this.room.storage.getLink()) {
+      this.launchCreepProcess('factotum', 'factotum', this.data.room)
+    }
+
     const mineCount = this.room.getRoomSetting('REMOTE_MINES')
     const lastAdd = qlib.events.getTimeSinceEvent('addmine')
     if (mineCount && lastAdd >= 2000) {

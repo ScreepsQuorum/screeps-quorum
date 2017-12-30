@@ -54,6 +54,7 @@ require('extends_room_territory')
 require('extends_roomposition')
 require('extends_terminal')
 require('extends_source')
+require('extends_storage')
 
 const QosKernel = require('qos_kernel')
 

@@ -56,6 +56,7 @@
       "BUCKET_FLOOR",
       "SCRIPT_VERSION",
       "sos",
+      "TERMINAL_ENERGY",
       "ECONOMY_BURSTING",
       "ECONOMY_CRASHED",
       "ECONOMY_DEVELOPING",

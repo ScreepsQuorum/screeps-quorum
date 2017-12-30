@@ -98,3 +98,24 @@ Room.prototype.getDesiredEnergyBuffer = function () {
   }
   return Math.min((roomLevel - 3) * 100000, 300000)
 }
+
+Room.prototype.getSinkLinks = function () {
+  if (this.__linksinks) {
+    return this.__linksinks
+  }
+  const links = this.structures[STRUCTURE_LINK]
+  const sources = this.find(FIND_SOURCES)
+  const sinks = []
+  for (const link of links) {
+    if (link.pos.getRangeTo(sources[0]) <= 2) {
+      continue
+    }
+    if (sources.length > 1 && link.pos.getRangeTo(sources[1]) <= 2) {
+      continue
+    }
+    sinks.push(link)
+  }
+  sinks.sort((a, b) => a.energy - b.energy)
+  this.__linksinks = sinks
+  return sinks
+}
