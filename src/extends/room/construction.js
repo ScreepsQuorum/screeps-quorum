@@ -82,20 +82,20 @@ Room.prototype.constructNextMissingStructure = function () {
       const sources = this.find(FIND_SOURCES)
       sources.sort((a, b) => b.pos.getRangeTo(storage) - a.pos.getRangeTo(storage))
 
-      // controller link
-      if (!this.controller.getLink()) {
-        const pos = this.controller.getLinkPosition()
-        return this.createConstructionSite(pos, STRUCTURE_LINK)
-      }
-
       // first mine link
       if (!sources[0].getLink()) {
         const pos = sources[0].getLinkPosition()
         return this.createConstructionSite(pos, STRUCTURE_LINK)
       }
 
+      // controller link
+      if (!this.controller.getLink()) {
+        const pos = this.controller.getLinkPosition()
+        return this.createConstructionSite(pos, STRUCTURE_LINK)
+      }
+
       // second mine link
-      if (!sources[1].getLink()) {
+      if (sources[1] && !sources[1].getLink()) {
         const pos = sources[1].getLinkPosition()
         return this.createConstructionSite(pos, STRUCTURE_LINK)
       }
@@ -172,7 +172,7 @@ Room.prototype.getNextMissingStructureType = function () {
     return false
   }
   const allStructurePositions = layout.getAllStructures()
-
+  const sources = this.find(FIND_SOURCES)
   // Build all other structures.
   let structureType
   for (structureType of structures) {
@@ -197,7 +197,7 @@ Room.prototype.getNextMissingStructureType = function () {
 
     if (totalStructures < nextLevelStructureCount[structureType]) {
       if (structureType === STRUCTURE_LINK) {
-        if (totalStructures < (allStructurePositions[structureType].length + 3)) {
+        if (totalStructures < (allStructurePositions[structureType].length + sources.length)) {
           return structureType
         }
       }
