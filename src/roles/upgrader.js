@@ -20,6 +20,13 @@ class Upgrader extends MetaRole {
   }
 
   manageCreep (creep) {
+    if (creep.carry[RESOURCE_ENERGY] / creep.carryCapacity < 0.5) {
+      const link = creep.room.controller.getLink()
+      if (link && link.energy > 0) {
+        creep.withdraw(link, RESOURCE_ENERGY)
+      }
+    }
+
     if (creep.recharge()) {
       return
     }

@@ -38,9 +38,9 @@ RoomPosition.prototype.getAdjacent = function () {
   return results
 }
 
-RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false) {
+RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false, includeStructures = true) {
   return _.filter(this.getAdjacent(), function (pos) {
-    return pos.isSteppable(includeCreeps)
+    return pos.isSteppable(includeCreeps, includeStructures)
   })
 }
 
@@ -68,15 +68,17 @@ RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
   return positions
 }
 
-RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
+RoomPosition.prototype.isSteppable = function (includeCreeps = false, includeStructures = true) {
   if (this.getTerrainAt() === 'wall') {
     return false
   }
-  const structures = this.lookFor(LOOK_STRUCTURES)
-  let structure
-  for (structure of structures) {
-    if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
-      return false
+  if (includeStructures) {
+    const structures = this.lookFor(LOOK_STRUCTURES)
+    let structure
+    for (structure of structures) {
+      if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
+        return false
+      }
     }
   }
   if (includeCreeps) {
@@ -87,13 +89,35 @@ RoomPosition.prototype.isSteppable = function (includeCreeps = false) {
   return true
 }
 
-RoomPosition.prototype.getMostOpenNeighbor = function () {
+RoomPosition.prototype.getLink = function () {
+  if (this.__link) {
+    return this.__link
+  }
+  const room = Game.rooms[this.roomName]
+  if (!room || !room.structures[STRUCTURE_LINK]) {
+    return false
+  }
+  const pos = this
+  const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= 2)
+  if (links.length < 1) {
+    return false
+  }
+  this.__link = links[0]
+  return this.__link
+}
+
+RoomPosition.prototype.getMostOpenNeighbor = function (isBuildable = false, includeStructures = true) {
   const steppable = this.getSteppableAdjacent()
   let pos
   let best
   let score = 0
   for (pos of steppable) {
-    const posScore = pos.getSteppableAdjacent().length
+    if (isBuildable) {
+      if (this.inFrontOfExit() || this.isEdge()) {
+        continue
+      }
+    }
+    const posScore = pos.getSteppableAdjacent(false, includeStructures).length
     if (posScore > score) {
       score = posScore
       best = pos

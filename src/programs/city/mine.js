@@ -62,14 +62,15 @@ class CityMine extends kernel.process {
   mineSource (source) {
     // Identify where the miner should sit and any container should be built
     const minerPos = source.getMiningPosition()
+    const link = source.getLink()
 
     // Look for a container
     const containers = _.filter(minerPos.lookFor(LOOK_STRUCTURES), (a) => a.structureType === STRUCTURE_CONTAINER)
-    const container = containers.length > 0 ? containers[0] : false
+    const container = !link && containers.length > 0 ? containers[0] : false
 
     // Build container if it isn't there
     let construction = false
-    if (!container) {
+    if (!container && !link) {
       const constructionSites = minerPos.lookFor(LOOK_CONSTRUCTION_SITES)
       if (constructionSites.length <= 0) {
         this.mine.createConstructionSite(minerPos, STRUCTURE_CONTAINER)
@@ -109,7 +110,15 @@ class CityMine extends kernel.process {
       } else if (source.energy > 0) {
         miner.harvest(source)
       }
+      if (link && (miner.carryCapacity - _.sum(miner.carry) < 15)) {
+        miner.transfer(link, RESOURCE_ENERGY)
+      }
     })
+
+    if (link.energy > 0 && !link.cooldown) {
+      const sinks = this.room.getSinkLinks()
+      link.transferEnergy(sinks[0])
+    }
 
     let storage = false
     if (this.room.storage) {
@@ -118,7 +127,6 @@ class CityMine extends kernel.process {
       storage = this.room.terminal
     } else if (this.remote) {
       const containers = this.room.structures[STRUCTURE_CONTAINER]
-
       if (containers && containers.length > 0) {
         if (containers.length > 1) {
           containers.sort((a, b) => a.store[RESOURCE_ENERGY] - b.store[RESOURCE_ENERGY])
@@ -136,7 +144,7 @@ class CityMine extends kernel.process {
     }
 
     // If using containers spawn haulers
-    if (!container || !storage) {
+    if (link || !container || !storage) {
       return
     }
 

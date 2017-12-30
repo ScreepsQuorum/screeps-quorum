@@ -37,3 +37,30 @@ Mineral.getEmpireRatio = function () {
   this.mineralRatioSave = Game.time
   return this.mineralRatio
 }
+
+Mineral.getResourceType = function (resource) {
+  // Resource Specific
+  switch (resource) {
+    case RESOURCE_GHODIUM:
+      return RESOURCE_GHODIUM
+    case RESOURCE_HYDROXIDE:
+      return RESOURCE_HYDROXIDE
+    case RESOURCE_ZYNTHIUM_KEANITE:
+    case RESOURCE_UTRIUM_LEMERGITE:
+      return 'comp'
+  }
+
+  // Boost Families
+  switch (resource.length) {
+    case 1:
+      return 'base'
+    case 2:
+      return 'tier1'
+    case 4:
+      return 'tier2'
+    case 5:
+      return 'tier3'
+    default:
+      return false
+  }
+}

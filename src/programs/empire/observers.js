@@ -6,6 +6,9 @@ class EmpireObservers extends kernel.process {
   }
 
   main () {
+    if (Game.rooms['sim']) {
+      return
+    }
     const cities = Room.getCities()
     this.targets = []
     for (const cityName of cities) {
