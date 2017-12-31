@@ -44,6 +44,9 @@ class CityPublicWorks extends kernel.process {
     if (this.room.find(FIND_HOSTILE_CREEPS).length > 0) {
       return
     }
+    if (!this.room.isEconomyCapable('MAINTAIN_STRUCTURES')) {
+      return
+    }
     let lowestHealth = 1
     let lowestStructure = false
     for (const structureType of maintainStructures) {
