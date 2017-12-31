@@ -14,6 +14,7 @@ class MetaMaintenance extends kernel.process {
   }
 
   construction () {
+    qlib.cluster.clean()
     const memSites = Object.keys(Memory.construction)
     for (const id of memSites) {
       if (!Game.constructionSites[id]) {
