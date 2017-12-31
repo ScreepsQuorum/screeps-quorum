@@ -107,18 +107,30 @@ Room.prototype.getSinkLinks = function () {
     return this.__linksinks
   }
   const links = this.structures[STRUCTURE_LINK]
+  const storageLink = this.storage ? this.storage.getLink() : false
   const sources = this.find(FIND_SOURCES)
   const sinks = []
   for (const link of links) {
+    if (storageLink && storageLink.id === link.id) {
+      continue
+    }
     if (link.pos.getRangeTo(sources[0]) <= 2) {
       continue
     }
-    if (sources.length > 1 && link.pos.getRangeTo(sources[1]) <= 2) {
+    if (sources.length > 1 && link.pos.getRangeTo(sources[1].getMiningPosition()) <= 1) {
+      continue
+    }
+    // Don't include links that don't have room for energy.
+    if ((link.energyCapacity - link.energy) < 50) {
       continue
     }
     sinks.push(link)
   }
   sinks.sort((a, b) => a.energy - b.energy)
+  // Always put storageLink last.
+  if (storageLink) {
+    sinks.push(storageLink)
+  }
   this.__linksinks = sinks
   return sinks
 }
