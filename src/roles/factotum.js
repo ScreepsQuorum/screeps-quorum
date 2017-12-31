@@ -74,11 +74,32 @@ class Factotum extends MetaRole {
       }
       return
     }
+
+    if (creep.room.structures[STRUCTURE_NUKER] && creep.room.isEconomyCapable('FILL_NUKER')) {
+      const nuker = creep.room.structures[STRUCTURE_NUKER][0]
+      if (nuker.energy < nuker.energyCapacity) {
+        this.dumpEnergyToStructure(creep, nuker)
+        return
+      }
+    }
+
+    if (creep.room.structures[STRUCTURE_POWER_SPAWN] && creep.room.isEconomyCapable('FILL_POWER_SPAWN')) {
+      const powerspawn = creep.room.structures[STRUCTURE_POWER_SPAWN][0]
+      if (powerspawn.energy < powerspawn.energyCapacity) {
+        this.dumpEnergyToStructure(creep, powerspawn)
+        return
+      }
+    }
+
     // fill storage with energy
-    if (creep.pos.isNearTo(creep.room.storage)) {
-      creep.transfer(creep.room.storage, RESOURCE_ENERGY)
+    this.dumpEnergyToStructure(creep, creep.room.storage)
+  }
+
+  dumpEnergyToStructure (creep, structure) {
+    if (creep.pos.isNearTo(structure)) {
+      creep.transfer(structure, RESOURCE_ENERGY)
     } else {
-      creep.travelTo(creep.room.storage)
+      creep.travelTo(structure)
     }
   }
 
