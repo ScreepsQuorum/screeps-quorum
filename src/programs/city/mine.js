@@ -71,7 +71,12 @@ class CityMine extends kernel.process {
 
     // Look for a container
     const containers = _.filter(minerPos.lookFor(LOOK_STRUCTURES), (a) => a.structureType === STRUCTURE_CONTAINER)
-    const container = !link && containers.length > 0 ? containers[0] : false
+    let container = containers.length > 0 ? containers[0] : false
+
+    if (link && container) {
+      container.destroy()
+      container = false
+    }
 
     // Build container if it isn't there
     let construction = false
