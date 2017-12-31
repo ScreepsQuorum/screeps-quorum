@@ -44,9 +44,14 @@ class CityMine extends kernel.process {
       }
       this.mine = Game.rooms[this.data.mine]
       this.underAttack = this.mine.find(FIND_HOSTILE_CREEPS).length > 0
-      this.reserveRoom()
-      if (this.room.getEconomyLevel() >= ECONOMY_BURSTING) {
-        this.strictSpawning = this.room.getRoomSetting('ALLOW_MINING_SCALEBACK')
+      if (this.room.isEconomyCapable('REMOTE_MINES')) {
+        this.reserveRoom(!this.underAttack)
+        if (this.room.getEconomyLevel() >= ECONOMY_BURSTING) {
+          this.strictSpawning = this.room.getRoomSetting('ALLOW_MINING_SCALEBACK')
+        }
+      } else {
+        this.reserveRoom(false)
+        this.strictSpawning = true
       }
     } else {
       this.mine = this.room
@@ -221,14 +226,11 @@ class CityMine extends kernel.process {
     })
   }
 
-  reserveRoom () {
-    if (this.underAttack) {
-      return
-    }
+  reserveRoom (shouldSpawn) {
     const controller = this.mine.controller
     const timeout = controller.reservation ? controller.reservation.ticksToEnd : 0
     let quantity = 0
-    if (timeout < 3500) {
+    if (timeout < 3500 && shouldSpawn) {
       quantity = Math.min(this.room.getRoomSetting('RESERVER_COUNT'), controller.pos.getSteppableAdjacent().length)
     }
 
