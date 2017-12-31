@@ -20,26 +20,27 @@ class Upgrader extends MetaRole {
   }
 
   manageCreep (creep) {
+    const link = creep.room.controller.getLink()
     if (creep.carry[RESOURCE_ENERGY] / creep.carryCapacity < 0.5) {
-      const link = creep.room.controller.getLink()
-      if (link && link.energy > 0) {
+      if (link && link.energy > 0 && creep.pos.isNearTo(link)) {
         creep.withdraw(link, RESOURCE_ENERGY)
+      } else if (creep.recharge()) {
+        return
       }
-    }
-
-    if (creep.recharge()) {
-      return
     }
 
     if (!creep.room.controller.sign || creep.room.controller.sign.text !== CONTROLLER_MESSAGE) {
-      if (!creep.pos.inRangeTo(creep.room.controller, 1)) {
+      if (!creep.pos.isNearTo(creep.room.controller)) {
         creep.travelTo(creep.room.controller)
-      }
-      if (creep.pos.inRangeTo(creep.room.controller, 3)) {
+      } else {
         creep.signController(creep.room.controller, CONTROLLER_MESSAGE)
       }
     } else {
-      if (!creep.pos.inRangeTo(creep.room.controller, 2)) {
+      if (link) {
+        if (!creep.pos.isNearTo(link)) {
+          creep.travelTo(link)
+        }
+      } else if (!creep.pos.inRangeTo(creep.room.controller, 2)) {
         creep.travelTo(creep.room.controller)
       }
     }
