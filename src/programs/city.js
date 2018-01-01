@@ -92,7 +92,7 @@ class City extends kernel.process {
       })
     }
 
-    if (this.room.storage.getLink()) {
+    if (this.room.storage && this.room.storage.getLink()) {
       this.launchCreepProcess('factotum', 'factotum', this.data.room)
     }
 
