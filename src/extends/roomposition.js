@@ -113,7 +113,7 @@ RoomPosition.prototype.getMostOpenNeighbor = function (isBuildable = false, incl
   let score = 0
   for (pos of steppable) {
     if (isBuildable) {
-      if (this.inFrontOfExit() || this.isEdge()) {
+      if (pos.inFrontOfExit() || pos.isEdge()) {
         continue
       }
     }
