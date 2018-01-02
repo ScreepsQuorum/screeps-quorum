@@ -53,16 +53,16 @@ Room.prototype.getEconomyLevel = function () {
   const desiredBuffer = this.getDesiredEnergyBuffer()
   const energy = this.getEnergyAmount()
 
-  if (energy < 15000) {
+  if (energy < 20000) {
     return ECONOMY_CRASHED
   }
 
-  // When fully developed between 15000 and 280000
-  if (energy < (desiredBuffer - 20000)) {
+  // When fully developed between 20,000 and 200,000
+  if (energy < (desiredBuffer - 100000)) {
     return ECONOMY_FALTERING
   }
 
-  // When fully developed between 280000 and 300000
+  // When fully developed between 200,000 and 300,000
   if (energy < (desiredBuffer)) {
     return ECONOMY_DEVELOPING
   }
@@ -100,7 +100,7 @@ Room.prototype.getDesiredEnergyBuffer = function () {
   if (this.name === 'sim') {
     return 40000
   }
-  return Math.min((roomLevel - 3) * 100000, 300000)
+  return Math.max(Math.min((roomLevel - 3) * 100000, 300000), 150000)
 }
 
 Room.prototype.getSinkLinks = function () {
