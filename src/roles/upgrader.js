@@ -24,9 +24,10 @@ class Upgrader extends MetaRole {
     if (creep.carry[RESOURCE_ENERGY] / creep.carryCapacity < 0.5) {
       if (link && link.energy > 0 && creep.pos.isNearTo(link)) {
         creep.withdraw(link, RESOURCE_ENERGY)
-      } else if (creep.recharge()) {
-        return
       }
+    }
+    if (creep.recharge()) {
+      return
     }
 
     if (!creep.room.controller.sign || creep.room.controller.sign.text !== CONTROLLER_MESSAGE) {
