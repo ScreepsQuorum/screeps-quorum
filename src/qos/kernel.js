@@ -140,7 +140,7 @@ class QosKernel {
 
   getCpuLimit () {
     if (Game.cpu.bucket > BUCKET_CEILING) {
-      return Game.cpu.tickLimit - CPU_BUFFER
+      return Math.min(Game.cpu.tickLimit - CPU_BUFFER, Game.cpu.bucket * 0.05)
     }
 
     if (Game.cpu.bucket < BUCKET_EMERGENCY) {
