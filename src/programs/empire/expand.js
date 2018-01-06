@@ -4,6 +4,8 @@
  * Scans all currently visible rooms and records useful information about them.
  */
 
+const VERSION = 1.1
+
 class EmpireExpand extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -18,6 +20,18 @@ class EmpireExpand extends kernel.process {
   }
 
   main () {
+    Logger.log(`expansion: ${this.getDescriptor()}`)
+
+    // Resart program (if it hasn't gone to far) so that the best candidate gets picked.
+    if (!this.data.version || this.data.version !== VERSION) {
+      if (this.data.colony || this.data.candidates || this.data.candidateList) {
+        if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
+          this.suicide()
+        }
+      }
+    }
+    this.data.version = VERSION
+
     if (!this.data.colony && !this.data.recover) {
       const candidate = this.getNextCandidate()
       if (candidate && this.validateRoom(candidate)) {
@@ -31,6 +45,10 @@ class EmpireExpand extends kernel.process {
       return
     }
 
+    if (Game.rooms[this.data.colony]) {
+      this.colony = Game.rooms[this.data.colony]
+    }
+
     if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
       // If we're trying to recover a destroyed room and the controller times out just give up.
       if (this.data.recover) {
@@ -42,16 +60,12 @@ class EmpireExpand extends kernel.process {
       StructureObserver.monitor(this.data.colony)
 
       // Send scouts if there is no visibility. This may overlap with observers, but will also cover rooms on the way.
-      if (!Game.rooms[this.data.colony]) {
-        this.scout()
-      }
+      this.scout()
 
       // Don't continue futher until the room is claimed
       this.claim()
       return
     }
-
-    this.colony = Game.rooms[this.data.colony]
 
     // First run after claiming- record tick and launch layout process
     if (!this.data.claimedAt) {
