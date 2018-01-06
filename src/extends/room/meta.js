@@ -59,8 +59,14 @@ Room.getCoordinates = function (name) {
 }
 
 function getRoomRangeBounds (name, range) {
-  const worldsize = Game.map.getWorldSize()
-  const maxValue = (worldsize - 2) / 2
+  let worldsize = Game.map.getWorldSize()
+  let maxValue = worldsize
+
+  // If this is the public server (or one emulating it) optimize to not look beyond edges.
+  if (Game.shard && Game.shard.name.startsWith('shard')) {
+    maxValue = (worldsize - 2) / 2
+  }
+
   const coords = Room.getCoordinates(name)
   const startXdir = coords.x_dir
   const startYdir = coords.y_dir
