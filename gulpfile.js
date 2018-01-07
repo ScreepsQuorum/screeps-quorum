@@ -55,8 +55,14 @@ gulp.task('deploy', ['copy'], () => {
 
   options.ptr = opts.ptr || false
   options.branch = opts.branch || 'default'
-  options.email = opts.email || opts.username
-  options.password = opts.password
+
+  if (opts.token) {
+    options.token = opts.token
+  } else {
+    options.email = opts.email || opts.username
+    options.password = opts.password
+  }
+
   if (args.server && args.server !== 'main' && !opts.host) {
     options.host = args.server
   } else {
@@ -73,8 +79,7 @@ gulp.task('ci-config', ['ci-version'], (cb) => {
     main: {
       ptr: !!process.env.SCREEPS_PTR,
       branch: process.env.SCREEPS_BRANCH,
-      email: process.env.SCREEPS_EMAIL,
-      password: process.env.SCREEPS_PASSWORD,
+      token: process.env.SCREEPS_TOKEN,
       host: process.env.SCREEPS_HOST,
       ssl: !!process.env.SCREEPS_SSL,
       port: process.env.SCREEPS_PORT
