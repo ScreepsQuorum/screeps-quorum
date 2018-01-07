@@ -35,12 +35,11 @@ let roomLevelOptions = {
   7: {
     'RESERVER_COUNT': 1,
     'ALLOW_MINING_SCALEBACK': false,
-    'REMOTE_MINES': 3,
     'ALWAYS_SAFEMODE': true
   },
   8: {
     'UPGRADERS_QUANTITY': 1,
-    'REMOTE_MINES': 4,
+    'REMOTE_MINES': 3,
     'SHARE_ENERGY': true
   }
 }
