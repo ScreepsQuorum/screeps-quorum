@@ -60,6 +60,23 @@ Room.prototype.addMine = function (mine) {
   qlib.notify.send(`Adding mine from ${this.name} to ${mine}`)
 }
 
+Room.prototype.removeMine = function (mine) {
+  const id = this.getMineId()
+  if (id < 0) {
+    return
+  }
+
+  Logger.log(`Removing mine ${mine} from ${this.name}`)
+  qlib.events.recordEvent('removemine')
+  qlib.notify.send(`Removing mine ${mine} from ${this.name}`)
+  Memory.territory[this.name].mines.splice(id, 1)
+}
+
+Room.prototype.getMineId = function (mine) {
+  const id = Memory.territory[this.name].mines.indexOf(mine)
+  return id >= 0 ? id : false
+}
+
 Room.getMineOwner = function (mine) {
   if (!Memory.territory) {
     return false
