@@ -86,14 +86,14 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
     const structures = room.find(FIND_STRUCTURES)
     for (let structure of structures) {
       if (structure.structureType === STRUCTURE_ROAD) {
-        if (!opts.ignoreRoads) {
+        if (opts.ignoreRoads) {
           continue
         }
         cm.set(structure.pos.x, structure.pos.y, 1)
         continue
       }
       if (structure.structureType === STRUCTURE_PORTAL) {
-        if (!opts.ignorePortals) {
+        if (opts.ignorePortals) {
           continue
         }
         cm.set(structure.pos.x, structure.pos.y, 255)
