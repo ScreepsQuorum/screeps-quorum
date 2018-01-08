@@ -33,6 +33,20 @@ class CityMine extends kernel.process {
 
     if (this.data.mine && this.data.mine !== this.data.room) {
       // If main room can not support mines kill this program.
+      const desiredMines = this.room.getRoomSetting('REMOTE_MINES')
+      // mineId starts at 0 for the first mine.
+      const mineId = this.room.getMineId(this.data.mine)
+
+      if (mineId === false) {
+        return this.suicide()
+      }
+
+      // Adjust mineId to start with 1, then clear it if it is greater than desired.
+      if ((mineId + 1) > desiredMines) {
+        this.room.removeMine(this.data.mine)
+        return this.suicide()
+      }
+
       if (this.room.getRoomSetting('REMOTE_MINES') <= 0) {
         return this.suicide()
       }
