@@ -60,11 +60,13 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   }
   const cacheLabel = `${Room.serializeName(roomname)}_${(flags >>> 0)}`
 
-  let cmSerialized = sos.lib.cache.get(cacheLabel, {
-    ttl: Game.rooms[roomname] ? 25 : false
-  })
-  if (cmSerialized) {
-    return PathFinder.CostMatrix.deserialize(cmSerialized)
+  if (!opts.noCache) {
+    let cmSerialized = sos.lib.cache.get(cacheLabel, {
+      ttl: Game.rooms[roomname] ? 25 : false
+    })
+    if (cmSerialized) {
+      return PathFinder.CostMatrix.deserialize(cmSerialized)
+    }
   }
   const cm = new PathFinder.CostMatrix()
 
@@ -83,14 +85,22 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
     const room = Game.rooms[roomname]
     const structures = room.find(FIND_STRUCTURES)
     for (let structure of structures) {
-      if (!opts.ignoreRoads && structure.structureType === STRUCTURE_ROAD) {
+      if (structure.structureType === STRUCTURE_ROAD) {
+        if (opts.ignoreRoads) {
+          continue
+        }
         cm.set(structure.pos.x, structure.pos.y, 1)
         continue
       }
-      if (!opts.ignorePortals && structure.structureType === STRUCTURE_PORTAL) {
+      if (structure.structureType === STRUCTURE_PORTAL) {
+        if (opts.ignorePortals) {
+          continue
+        }
         cm.set(structure.pos.x, structure.pos.y, 255)
       }
-      if (!opts.ignoreDestructibleStructures) {
+      if (opts.ignoreDestructibleStructures) {
+        continue
+      } else {
         if (!structure.my && structure.structureType === STRUCTURE_RAMPART) {
           cm.set(structure.pos.x, structure.pos.y, 255)
         } else if (OBSTACLE_OBJECT_TYPES.indexOf(structure.structureType) >= 0) {
@@ -118,11 +128,13 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
     }
   }
 
-  sos.lib.cache.set(cacheLabel, cm.serialize(), {
-    persist: true,
-    maxttl: 3000,
-    compress: true
-  })
+  if (!opts.noCache) {
+    sos.lib.cache.set(cacheLabel, cm.serialize(), {
+      persist: true,
+      maxttl: 3000,
+      compress: true
+    })
+  }
   return cm
 }
 

@@ -38,7 +38,8 @@ Room.prototype.saveIntel = function (refresh = false) {
     }
   }
 
-  roominfo[INTEL_UPDATED] = Game.time
+  // Add some random variance to this value to spread out intel expirations
+  roominfo[INTEL_UPDATED] = Game.time - _.random(0, 10)
 
   // Record room owner, level, and blocked exits
   if (this.controller) {
@@ -57,31 +58,38 @@ Room.prototype.saveIntel = function (refresh = false) {
       delete roominfo[INTEL_PRACTICAL_LEVEL]
     }
 
-    let candidates = this.find(FIND_SOURCES)
-    candidates.push(this.controller)
-    const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates).pos
-    const exits = _.values(Game.map.describeExits(this.name))
-    const name = this.name
+    // Detect blocked exits in rooms where walls or ramparts are built.
     let blocked = []
-    for (let exit of exits) {
-      const targetPos = new RoomPosition(25, 25, exit)
-      const path = PathFinder.search(centerish, {pos: targetPos, range: 24},
-        {
-          swampCost: 1,
-          maxRooms: 2,
-          maxCost: 2500,
-          roomCallback: function (roomName) {
-            if (roomName !== name && roomName !== exit) {
-              return false
+    if (this.structures[STRUCTURE_WALL] || this.structures[STRUCTURE_RAMPART]) {
+      let candidates = this.find(FIND_SOURCES)
+      candidates.push(this.controller)
+      const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates).pos
+      const exits = _.values(Game.map.describeExits(this.name))
+      const name = this.name
+      for (let exit of exits) {
+        const targetPos = new RoomPosition(25, 25, exit)
+        const path = PathFinder.search(centerish, {pos: targetPos, range: 24},
+          {
+            swampCost: 1,
+            maxRooms: 2,
+            maxCost: 1000,
+            roomCallback: function (roomName) {
+              if (roomName !== name && roomName !== exit) {
+                return false
+              }
+              return Room.getCostmatrix(roomName, {
+                ignoreSourceKeepers: true,
+                ignoreCreeps: true,
+                ignoreExits: true,
+                ignoreRoads: true,
+                ignorePortals: true,
+                noCache: true
+              })
             }
-            return Room.getCostmatrix(roomName, {
-              ignoreSourceKeepers: true,
-              ignoreCreeps: true
-            })
-          }
-        })
-      if (path.incomplete) {
-        blocked.push(exit)
+          })
+        if (path.incomplete) {
+          blocked.push(exit)
+        }
       }
     }
     if (blocked.length > 0) {

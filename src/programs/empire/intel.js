@@ -22,18 +22,35 @@ class EmpireIntel extends kernel.process {
   }
 
   gatherIntel () {
+    const start = Game.cpu.getUsed()
     const roomnames = Object.keys(Game.rooms)
+    let scannedRoomsCount = 0
     let roomname
     for (roomname of roomnames) {
       const room = Game.rooms[roomname]
-      if (room.controller && room.controller.my) {
-        continue
+      if (room.controller) {
+        if (room.controller.my) {
+          continue
+        }
+        if (room.controller.reservation && room.controller.reservation === USERNAME) {
+          continue
+        }
       }
       const roominfo = room.getIntel(roomname)
-      if (Game.time - roominfo[INTEL_UPDATED] > 60) {
+      if (!roominfo) {
+        scannedRoomsCount++
         room.saveIntel()
+        continue
+      }
+      const timeout = room.controller && room.controller.level ? 100 : 2000
+      if (Game.time - roominfo[INTEL_UPDATED] > timeout) {
+        scannedRoomsCount++
+        room.saveIntel()
+        continue
       }
     }
+    const end = Game.cpu.getUsed()
+    Logger.log(`Intel program scanned ${scannedRoomsCount} rooms using ${_.round(end - start, 3)} cpu`)
   }
 
   flushIntel () {
