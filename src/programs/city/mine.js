@@ -47,9 +47,6 @@ class CityMine extends kernel.process {
         return this.suicide()
       }
 
-      if (this.room.getRoomSetting('REMOTE_MINES') <= 0) {
-        return this.suicide()
-      }
       this.remote = true
       this.scout()
       this.defend()
