@@ -27,7 +27,7 @@ class Respawn extends kernel.process {
     }
     /* Remove all construction sites */
     for (let siteId of Object.keys(Game.constructionSites)) {
-      Game.constructionSites(siteId).remove()
+      Game.constructionSites[siteId].remove()
     }
   }
 }
