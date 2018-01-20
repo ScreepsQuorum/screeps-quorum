@@ -1,5 +1,7 @@
 'use strict'
 
+const defaultHighestMaxOps = 5000
+const defaultMaxOpsPerRoom = 1500
 const struckThreshold = 2
 const struckRerouteThreshold = 4
 const travelToDefaults = {
@@ -34,7 +36,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
 
   // Compute max operations based on number of rooms.
   if (typeof moveToOpts.maxOps === 'undefined') {
-    moveToOpts.maxOps = 2000 * moveToOpts.maxRooms
+    moveToOpts.maxOps = Math.min(defaultMaxOpsPerRoom * moveToOpts.maxRooms, defaultHighestMaxOps)
   }
 
   // If stuck detection isn't disabled attempt to detect and remediate creeps that are stuck.
