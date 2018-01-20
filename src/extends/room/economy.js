@@ -48,7 +48,11 @@ const economyNegativeSettings = {
 Room.prototype.isEconomyCapable = function (key) {
   if (this.controller.level === 8) {
     if (typeof economySettingsLevel8[key] !== 'undefined') {
-      return economySettingsLevel8[key]
+      if (Number.isInteger(economySettingsLevel8[key])) {
+        return this.getEconomyLevel() >= economySettingsLevel8[key]
+      } else {
+        return false
+      }
     }
   }
   if (Number.isInteger(economySettings[key])) {
