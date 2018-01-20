@@ -12,22 +12,32 @@ const economySettings = {
   'SUPPLY_TERMINAL': ECONOMY_FALTERING,
 
   'EXPAND_FROM': ECONOMY_DEVELOPING,
-  'WALLBUILDERS': ECONOMY_DEVELOPING,
   'BUILD_STRUCTURES': ECONOMY_DEVELOPING,
   'MAINTAIN_STRUCTURES': ECONOMY_DEVELOPING,
   'REMOTE_MINES': ECONOMY_DEVELOPING,
 
   'EXTRACT_MINERALS': ECONOMY_STABLE,
   'UPGRADE_CONTROLLERS': ECONOMY_STABLE,
+  'WALLBUILDERS': ECONOMY_STABLE,
+
+  'EXTRA_UPGRADERS': ECONOMY_SURPLUS,
+  'SHARE_ENERGY': ECONOMY_SURPLUS,
+
+  'EXTRA_WALLBUILDERS': ECONOMY_BURSTING,
+  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING,
+  'DUMP_ENERGY': ECONOMY_BURSTING
+}
+
+// When the room is at RCL8 (not PRL8) use these settings.
+const economySettingsLevel8 = {
+  'EXTRA_UPGRADERS': false,
+  'MORE_EXTRA_UPGRADERS': false,
+
   'FILL_NUKER': ECONOMY_STABLE,
   'FILL_POWER_SPAWN': ECONOMY_STABLE,
 
-  'EXTRA_UPGRADERS': ECONOMY_SURPLUS,
-  'EXTRA_WALLBUILDERS': ECONOMY_SURPLUS,
-  'SHARE_ENERGY': ECONOMY_SURPLUS,
-
-  'MORE_EXTRA_UPGRADERS': ECONOMY_BURSTING,
-  'DUMP_ENERGY': ECONOMY_BURSTING
+  'UPGRADE_CONTROLLERS': ECONOMY_SURPLUS,
+  'EXTRA_WALLBUILDERS': ECONOMY_SURPLUS
 }
 
 // Will return true for economic levels at or below these values.
@@ -36,6 +46,11 @@ const economyNegativeSettings = {
 }
 
 Room.prototype.isEconomyCapable = function (key) {
+  if (this.controller.level === 8) {
+    if (typeof economySettingsLevel8[key] !== 'undefined') {
+      return economySettingsLevel8[key]
+    }
+  }
   if (Number.isInteger(economySettings[key])) {
     return this.getEconomyLevel() >= economySettings[key]
   }
