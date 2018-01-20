@@ -7,6 +7,7 @@ const Process = require('qos_process')
 global.BUCKET_EMERGENCY = 1000
 global.BUCKET_FLOOR = 2000
 global.BUCKET_CEILING = 9500
+const BUCKET_BUILD_LIMIT = 15000
 const CPU_BUFFER = 130
 const CPU_MINIMUM = 0.50
 const CPU_ADJUST = 0.05
@@ -109,6 +110,24 @@ class QosKernel {
   shouldContinue () {
     if (this.simulation) {
       return true
+    }
+
+    // If the bucket has dropped below the emergency level enable the bucket rebuild functionality.
+    if (Game.cpu.bucket <= BUCKET_EMERGENCY) {
+      if (!Memory.qos.last_build_bucket || (Game.time - Memory.qos.last_build_bucket) > BUCKET_BUILD_LIMIT) {
+        Memory.qos.build_bucket = true
+        Memory.qos.last_build_bucket = Game.time
+        return false
+      }
+    }
+
+    // If the bucket rebuild flag is set don't run anything until the bucket has been reset.
+    if (Memory.qos.build_bucket) {
+      if (Game.cpu.bucket >= BUCKET_CEILING) {
+        delete Memory.qos.build_bucket
+      } else {
+        return false
+      }
     }
 
     // Make sure to stop if cpuUsed has hit the maximum allowed cpu.
