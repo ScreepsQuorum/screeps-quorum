@@ -11,7 +11,7 @@ quorum: 3
 threshold: 0.74
 
 # Number of hours after last action (commit or opening the pull request) before issue can be merged
-mergedelay: 6
+mergedelay: 3
 
 # Number of votes at which the mergedelay gets ignored, assuming no negative votes.
 delayoverride: 5
