@@ -554,15 +554,15 @@ class CityLayout extends kernel.process {
     let x,
       y
     const exits = this.room.find(FIND_EXIT)
-    const minimumExitRange = 4
+    const minimumExitRange = 3
     for (x = 1; x < 49; ++x) {
       for (y = 1; y < 49; ++y) {
         const pos = new RoomPosition(x, y, this.data.room)
-        if (x < minimumExitRange || y < minimumExitRange) {
-          if (x > (49 - minimumExitRange) || y > (49 - minimumExitRange)) {
-            if (pos.findClosestByRange(exits).getRangeTo() < minimumExitRange) {
-              continue
-            }
+        const isNearHorizontalBorder = y < minimumExitRange || y > (49 - minimumExitRange)
+        const isNearVerticalBorder = x < minimumExitRange || x > (49 - minimumExitRange)
+        if (isNearVerticalBorder || isNearHorizontalBorder) {
+          if (pos.findClosestByRange(exits).getRangeTo(pos) < minimumExitRange) {
+            continue
           }
         }
         if (pos.getTerrainAt() !== 'wall') {
