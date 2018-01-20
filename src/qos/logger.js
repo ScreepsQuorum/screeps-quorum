@@ -37,7 +37,8 @@ class Logger {
       qlib.notify.send(message, 500)
     }
 
-    if (Memory.loglevel && Memory.loglevel > severity) {
+    const loglevel = Number.isInteger(Memory.loglevel) ? Memory.loglevel : LOG_DEBUG
+    if (loglevel > severity) {
       return
     }
 
