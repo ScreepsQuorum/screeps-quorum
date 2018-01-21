@@ -18,6 +18,10 @@ Room.getCities = function () {
 
 Room.addCity = function (roomName) {
   if (!Memory.territory[roomName]) {
+    const mineOwner = Room.getMineOwner(roomName)
+    if (mineOwner && Game.rooms[mineOwner]) {
+      Game.rooms[mineOwner].removeMine(roomName)
+    }
     Memory.territory[roomName] = {}
     Logger.log(`Adding city ${roomName}`)
     qlib.events.recordEvent('addcity')
@@ -243,11 +247,6 @@ Room.getCityScore = function (roomName) {
 
   // Don't try to claim another player's mine or room.
   if (intel[INTEL_OWNER]) {
-    return false
-  }
-
-  // Don't try to add another room's mine to this room.
-  if (Room.getMineOwner(roomName)) {
     return false
   }
 
