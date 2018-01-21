@@ -2,7 +2,11 @@
 module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   if (!opts.routeCallback) {
     opts.routeCallback = function (toRoom, fromRoom) {
-      return module.exports.getRoomScore(toRoom, fromRoom)
+      const score = module.exports.getRoomScore(toRoom, fromRoom)
+      if (opts.avoidHostileRooms && score > PATH_WEIGHT_NEUTRAL) {
+        return Infinity
+      }
+      return score
     }
     if (!opts.ignoreCache) {
       const cacheLabel = `route_${Room.serializeName(fromRoom)}_${Room.serializeName(toRoom)}`
