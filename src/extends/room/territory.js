@@ -61,8 +61,8 @@ Room.prototype.addMine = function (mine) {
 }
 
 Room.prototype.removeMine = function (mine) {
-  const id = this.getMineId()
-  if (id < 0) {
+  const id = this.getMineId(mine)
+  if (!id || id < 0) {
     return
   }
 
