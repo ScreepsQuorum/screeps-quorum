@@ -8,6 +8,10 @@ class Factotum extends MetaRole {
     this.defaultEnergy = 800
   }
 
+  getPriority (creep) {
+    return PRIORITIES_CREEP_FACTOTUM
+  }
+
   getBuild (room, options) {
     this.setBuildDefaults(room, options)
     let build = [MOVE, CARRY, CARRY, CARRY, CARRY]

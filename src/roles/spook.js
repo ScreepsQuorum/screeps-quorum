@@ -9,6 +9,10 @@ if (PUBLIC_ACCOUNT) {
 }
 
 class Spook extends MetaRole {
+  getPriority (creep) {
+    return PRIORITIES_CREEP_SPOOK
+  }
+
   getBuild (room, options) {
     return [MOVE]
   }
