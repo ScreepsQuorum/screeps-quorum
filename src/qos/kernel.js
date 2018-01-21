@@ -14,6 +14,8 @@ const CPU_ADJUST = 0.05
 const CPU_GLOBAL_BOOST = 60
 const MINIMUM_PROGRAMS = 0.3
 const PROGRAM_NORMALIZING_BURST = 2
+const RECURRING_BURST = 1.75
+const RECURRING_BURST_FREQUENCY = 25
 const GLOBAL_LAST_RESET = Game.time
 
 class QosKernel {
@@ -178,6 +180,8 @@ class QosKernel {
       this._cpuLimit = (minToAllocate + this.sigmoidSkewed(depthInRange) * (maxToAllocate - minToAllocate)) * (1 - CPU_ADJUST)
       if (this.newglobal) {
         this._cpuLimit += CPU_GLOBAL_BOOST
+      } else if (RECURRING_BURST_FREQUENCY && Game.time % RECURRING_BURST_FREQUENCY === 0) {
+        this._cpuLimit *= RECURRING_BURST
       }
     }
 
