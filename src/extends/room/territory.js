@@ -140,7 +140,12 @@ Room.prototype.getMineScore = function (roomName) {
   if (Room.isSourcekeeper(roomName)) {
     return false
   }
-  let distance = Game.map.findRoute(this.name, roomName).length
+  const route = qlib.map.findRoute(this.name, roomName, {'avoidHostileRooms': true})
+  if (route === ERR_NO_PATH) {
+    return false
+  }
+
+  const distance = route.length
   if (distance > MINE_MAX_DISTANCE) {
     return false
   }

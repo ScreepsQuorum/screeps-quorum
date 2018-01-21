@@ -47,6 +47,15 @@ class CityMine extends kernel.process {
         return this.suicide()
       }
 
+      // If the mine is not reachable remove it.
+      if (!Game.rooms[this.data.mine]) {
+        const route = qlib.map.findRoute(this.data.room, this.data.mine, {'avoidHostileRooms': true})
+        if (route === ERR_NO_PATH) {
+          //this.room.removeMine(this.data.mine)
+          //return this.suicide()
+        }
+      }
+
       this.remote = true
       this.scout()
       this.defend()
