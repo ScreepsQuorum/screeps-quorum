@@ -7,7 +7,7 @@
 class CityMine extends kernel.process {
   constructor (...args) {
     super(...args)
-    this.priority = PRIORITIES_CONSTRUCTION
+    this.priority = PRIORITIES_MINE
   }
 
   getDescriptor () {
