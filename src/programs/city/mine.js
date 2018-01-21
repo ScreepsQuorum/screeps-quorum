@@ -51,8 +51,8 @@ class CityMine extends kernel.process {
       if (!Game.rooms[this.data.mine]) {
         const route = qlib.map.findRoute(this.data.room, this.data.mine, {'avoidHostileRooms': true})
         if (route === ERR_NO_PATH) {
-          //this.room.removeMine(this.data.mine)
-          //return this.suicide()
+          this.room.removeMine(this.data.mine)
+          return this.suicide()
         }
       }
 
