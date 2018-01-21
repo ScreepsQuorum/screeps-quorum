@@ -22,6 +22,11 @@ timeout: 168
 # Don't count any vote from a user who votes for multiple options
 prevent_doubles: true
 
+# Do not allow changes to the license.
+locklicense: true
+
+# Wait for at least four days before merging any new consensus rules.
+consensusdelay: 96
 
 #
 # Disabled Consensus Rules
