@@ -9,7 +9,7 @@ const travelToDefaults = {
   'moveToOverride': true,
   'ignoreStuck': false,
   'ignoreHostileCities': true,
-  'ignoreHostileReservations': true
+  'ignoreHostileReservations': false
 }
 
 Creep.prototype.travelTo = function (pos, opts = {}) {
