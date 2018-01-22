@@ -2,7 +2,7 @@
 module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   if (!opts.routeCallback) {
     opts.routeCallback = function (toRoom, fromRoom) {
-      const score = module.exports.getRoomScore(toRoom, fromRoom)
+      const score = module.exports.getRoomScore(toRoom, fromRoom, opts)
       if (opts.avoidHostileRooms && score > PATH_WEIGHT_NEUTRAL) {
         return Infinity
       }
@@ -47,25 +47,27 @@ module.exports.reachableFromEmpire = function (roomname) {
   return module.exports.getDistanceToEmpire(roomname) <= (Math.ceil(CREEP_LIFE_TIME / 50) + 1)
 }
 
+// Define default scores (can be overridden)
 const PATH_WEIGHT_HALLWAY = 1
 const PATH_WEIGHT_SOURCEKEEPER = 1
 const PATH_WEIGHT_OWN = 1
-const PATH_WEIGHT_NEUTRAL = 3
+const PATH_WEIGHT_NEUTRAL = 2
 const PATH_WEIGHT_HOSTILE = 10
 const PATH_WEIGHT_HOSTILE_RESERVATION = 5
 
-module.exports.getRoomScore = function (toRoom, fromRoom) {
+module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
   if (!Game.map.isRoomAvailable(toRoom)) {
     return Infinity
   }
   if (!module.exports.reachableFromEmpire(toRoom)) {
     return Infinity
   }
+  const scores = opts.scores ? opts.scores : {}
   if (Room.isSourcekeeper(toRoom)) {
-    return PATH_WEIGHT_SOURCEKEEPER
+    return scores['SOURCEKEEPER'] ? scores['SOURCEKEEPER'] : PATH_WEIGHT_SOURCEKEEPER
   }
   if (Room.isHallway(toRoom)) {
-    return PATH_WEIGHT_HALLWAY
+    return scores['WEIGHT_HALLWAY'] ? scores['WEIGHT_HALLWAY'] : PATH_WEIGHT_HALLWAY
   }
 
   const fromRoomIntel = Room.getIntel(fromRoom)
@@ -76,9 +78,13 @@ module.exports.getRoomScore = function (toRoom, fromRoom) {
   const roomIntel = Room.getIntel(toRoom)
   if (roomIntel && roomIntel[INTEL_OWNER]) {
     if (roomIntel[INTEL_OWNER] === USERNAME) {
-      return PATH_WEIGHT_OWN
+      return scores['WEIGHT_OWN'] ? opts.scores['WEIGHT_OWN'] : PATH_WEIGHT_OWN
     }
-    return roomIntel[INTEL_LEVEL] ? PATH_WEIGHT_HOSTILE : PATH_WEIGHT_HOSTILE_RESERVATION
+    if (roomIntel[INTEL_LEVEL]) {
+      return scores['WEIGHT_HOSTILE'] ? scores['WEIGHT_HOSTILE'] : PATH_WEIGHT_HOSTILE
+    } else {
+      return scores['WEIGHT_HOSTILE_RESERVATION'] ? scores['WEIGHT_HOSTILE_RESERVATION'] : PATH_WEIGHT_HOSTILE_RESERVATION
+    }
   }
-  return PATH_WEIGHT_NEUTRAL
+  return scores['WEIGHT_NEUTRAL'] ? scores['WEIGHT_NEUTRAL'] : PATH_WEIGHT_NEUTRAL
 }
