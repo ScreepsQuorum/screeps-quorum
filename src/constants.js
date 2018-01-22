@@ -60,7 +60,8 @@ global.MINERALS_EXTRACTABLE = [
 // Which priorities to monitor.
 global.MONITOR_PRIORITIES = _.uniq([
   PRIORITIES_CREEP_DEFAULT,
-  PRIORITIES_DEFAULT
+  PRIORITIES_DEFAULT,
+  9
 ])
 
 global.AGGRESSION_SCORES = {}
