@@ -9,11 +9,11 @@ const travelToDefaults = {
   'moveToOverride': true,
   'ignoreStuck': false,
   'ignoreHostileCities': true,
-  'ignoreHostileReservations': true
+  'ignoreHostileReservations': true,
+  'avoidHostileRooms': false
 }
 
 Creep.prototype.travelTo = function (pos, opts = {}) {
-  const that = this
   if (this.fatigue) {
     return ERR_TIRED
   }
@@ -31,6 +31,20 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
       moveToOpts.maxRooms = 1
     } else {
       moveToOpts.maxRooms = 16
+    }
+  }
+
+  if (!moveToOpts.scores && !moveToOpts.avoidHostileRooms) {
+    moveToOpts.scores = {}
+    if (moveToOpts.ignoreHostileCities && moveToOpts.ignoreHostileCities) {
+      moveToOpts.avoidHostileRooms = true
+    } else {
+      if (moveToOpts.ignoreHostileCities) {
+        moveToOpts.scores['WEIGHT_HOSTILE'] = Infinity
+      }
+      if (moveToOpts.ignoreHostileReservations) {
+        moveToOpts.scores['HOSTILE_RESERVATION'] = Infinity
+      }
     }
   }
 
@@ -88,7 +102,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     if (!moveToOpts.allowedRooms) {
       moveToOpts.allowedRooms = []
     }
-    const worldRoute = qlib.map.findRoute(this.room.name, pos.roomName)
+    const worldRoute = qlib.map.findRoute(this.room.name, pos.roomName, moveToOpts)
     if (Number.isInteger(worldRoute)) {
       return worldRoute
     }
@@ -109,21 +123,6 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     moveToOpts.costCallback = function (roomname) {
       if (moveToOpts.allowedRooms && moveToOpts.allowedRooms.indexOf(roomname) < 0) {
         return false
-      }
-      // See if hostile cities or reservations are blocked
-      if (!opts.ignoreHostileCities || !opts.ignoreHostileReservations) {
-        // Make sure not to deny costmatrix data for the room the creep is in or going to.
-        if (pos.roomName !== roomname && that.pos.roomName !== roomname) {
-          const roominfo = Room.getIntel(roomname)
-          // Don't block rooms owner by the player
-          if (roominfo[INTEL_OWNER] && roominfo[INTEL_OWNER] !== USERNAME) {
-            if (roominfo[INTEL_LEVEL] && !opts.ignoreHostileCities) {
-              return false
-            } else if (!roominfo[INTEL_LEVEL] && !opts.ignoreHostileReservations) {
-              return false
-            }
-          }
-        }
       }
       return Room.getCostmatrix(roomname, opts)
     }
