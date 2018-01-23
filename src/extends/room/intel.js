@@ -3,7 +3,6 @@
 global.SEGMENT_INTEL = 'room_intel'
 sos.lib.vram.markCritical(SEGMENT_INTEL)
 
-const recheckInterval = 50000
 const maxScoutDistance = 11
 
 // To reduce memory we use short keys for the room objects, so for readability those are mapped to global constants.
