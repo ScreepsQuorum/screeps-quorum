@@ -8,6 +8,13 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
       }
       return score
     }
+
+    // If destination is not reachable do not attempt to route to it.
+    const toRoomScore = opts.routeCallback(toRoom)
+    if (toRoomScore === Infinity) {
+      return ERR_NO_PATH
+    }
+
     if (!opts.ignoreCache) {
       const cacheLabel = `route_${Room.serializeName(fromRoom)}_${Room.serializeName(toRoom)}`
       const cachedPath = sos.lib.cache.get(cacheLabel)
