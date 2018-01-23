@@ -64,7 +64,7 @@ module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
   }
   const scores = opts.scores ? opts.scores : {}
   if (Room.isSourcekeeper(toRoom)) {
-    return scores['SOURCEKEEPER'] ? scores['SOURCEKEEPER'] : PATH_WEIGHT_SOURCEKEEPER
+    return scores['WEIGHT_SOURCEKEEPER'] ? scores['WEIGHT_SOURCEKEEPER'] : PATH_WEIGHT_SOURCEKEEPER
   }
   if (Room.isHallway(toRoom)) {
     return scores['WEIGHT_HALLWAY'] ? scores['WEIGHT_HALLWAY'] : PATH_WEIGHT_HALLWAY

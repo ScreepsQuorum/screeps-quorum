@@ -43,7 +43,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
         moveToOpts.scores['WEIGHT_HOSTILE'] = Infinity
       }
       if (moveToOpts.ignoreHostileReservations) {
-        moveToOpts.scores['HOSTILE_RESERVATION'] = Infinity
+        moveToOpts.scores['WEIGHT_HOSTILE_RESERVATION'] = Infinity
       }
     }
   }
