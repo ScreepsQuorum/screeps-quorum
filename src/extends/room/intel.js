@@ -195,9 +195,6 @@ Room.getIntel = function (roomname, opts = {}) {
 
   const intelmap = sos.lib.vram.getData(SEGMENT_INTEL)
   if (intelmap[roomname]) {
-    if (!opts.skipRequest && Game.time - intelmap[roomname][INTEL_UPDATED] > recheckInterval) {
-      Room.requestIntel(roomname)
-    }
     return intelmap[roomname]
   }
 
@@ -206,7 +203,7 @@ Room.getIntel = function (roomname, opts = {}) {
     if (Memory.intel && Memory.intel.buffer[roomname]) {
       return Memory.intel.buffer[roomname]
     }
-  } else {
+  } else if (!qlib.map.getDistanceToEmpire(roomname, 'manhattan') <= 18) {
     Room.requestIntel(roomname)
   }
 
@@ -220,7 +217,6 @@ Room.prototype.getIntel = function (opts = {}) {
 Room.getResourcesPositions = function (roomname) {
   const roominfo = Room.getIntel(roomname)
   if (!roominfo[INTEL_RESOURCE_POSITIONS]) {
-    Room.requestIntel(roomname)
     return false
   }
   let positions = []
@@ -239,7 +235,7 @@ Room.requestIntel = function (roomname) {
   if (!Game.map.isRoomAvailable(roomname)) {
     return
   }
-  if (!qlib.map.reachableFromEmpire(roomname)) {
+  if (!qlib.map.reachableFromEmpire(roomname, 'manhattan')) {
     return
   }
   if (!Memory.intel) {
@@ -249,6 +245,12 @@ Room.requestIntel = function (roomname) {
       active: {}
     }
   }
+
+  // Hard limit on MAX_INTEL_TARGETS rooms targetted to prevent memory leak.
+  const current = Object.keys(Memory.intel.targets)
+  if (current.length >= MAX_INTEL_TARGETS) {
+    return
+  }
   if (!Memory.intel.targets[roomname]) {
     Memory.intel.targets[roomname] = Game.time
   }
@@ -256,8 +258,14 @@ Room.requestIntel = function (roomname) {
 
 Room.getScoutTarget = function (creep) {
   let target = false
-  const targetRooms = !Memory.intel ? [] : _.shuffle(Object.keys(Memory.intel.targets))
+  let targetRooms = !Memory.intel ? [] : _.shuffle(Object.keys(Memory.intel.targets))
   const assignedRooms = !Memory.intel ? [] : Object.keys(Memory.intel.active)
+
+  // In case target room cleanup failed manually clear it instead of wasting cpu.
+  if (targetRooms.length > (MAX_INTEL_TARGETS * 2)) {
+    Memory.intel.targets = {}
+    targetRooms = []
+  }
 
   if (targetRooms.length > 0) {
     let oldest = false
@@ -305,11 +313,10 @@ Room.getScoutTarget = function (creep) {
         age = Infinity
       } else {
         age = assignedRooms.indexOf(testRoom) >= 0 ? 0 : Game.time - roominfo[INTEL_UPDATED]
+        age = Math.floor(age / 10000) * 10000
       }
       if (target && oldest === age) {
-        let curDistance = Game.map.getRoomLinearDistance(creep.room.name, target)
-        let testDistance = Game.map.getRoomLinearDistance(creep.room.name, testRoom)
-        if (curDistance > testDistance) {
+        if (Math.random() >= 0.5) {
           target = testRoom
         }
       } else if (oldest < age) {

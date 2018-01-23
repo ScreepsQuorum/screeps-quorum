@@ -51,8 +51,8 @@ Room.getCoordinates = function (name) {
   const coordinateRegex = /(E|W)(\d+)(N|S)(\d+)/g
   const match = coordinateRegex.exec(name)
   return {
-    'x': match[2],
-    'y': match[4],
+    'x': +match[2],
+    'y': +match[4],
     'x_dir': match[1],
     'y_dir': match[3]
   }

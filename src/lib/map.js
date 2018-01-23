@@ -33,25 +33,50 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   return Game.map.findRoute(fromRoom, toRoom, opts)
 }
 
-module.exports.getDistanceToEmpire = function (roomname) {
-  const cachedDistance = sos.lib.cache.get(`empire_distance_${roomname}`)
+module.exports.getDistanceToEmpire = function (roomname, algorithm = 'linear') {
+  const cachedDistance = sos.lib.cache.get(`empire_distance_${algorithm}_${roomname}`)
   if (cachedDistance) {
     return cachedDistance
   }
   let minimum = Infinity
+  const df = algorithm === 'linear' ? Game.map.getRoomLinearDistance : module.exports.getRoomManhattanDistance
   const cities = Room.getCities()
   for (const city of cities) {
-    const distance = Game.map.getRoomLinearDistance(city, roomname)
+    const distance = df(city, roomname)
     if (minimum > distance) {
       minimum = distance
     }
   }
-  sos.lib.cache.set(`empire_distance_${roomname}`, minimum, {'maxttl': 50})
+  sos.lib.cache.set(`empire_distance_${algorithm}_${roomname}`, minimum, {'maxttl': 50})
   return minimum
 }
 
-module.exports.reachableFromEmpire = function (roomname) {
-  return module.exports.getDistanceToEmpire(roomname) <= (Math.ceil(CREEP_LIFE_TIME / 50) + 1)
+module.exports.getRoomManhattanDistance = function (start, finish) {
+  const startCoords = Room.getCoordinates(start)
+  const finishCoords = Room.getCoordinates(finish)
+
+  let x = 0
+  if (startCoords.x_dir === finishCoords.x_dir) {
+    x = Math.abs(startCoords.x - finishCoords.x)
+  } else {
+    x = startCoords.x + finishCoords.x + 1
+  }
+
+  let y = 0
+  if (startCoords.y_dir === finishCoords.y_dir) {
+    y = Math.abs(startCoords.y - finishCoords.y)
+  } else {
+    y = startCoords.y + finishCoords.y + 1
+  }
+
+  return y + x
+}
+
+module.exports.reachableFromEmpire = function (roomname, algorithm = 'linear', distance = false) {
+  if (!distance) {
+    distance = (Math.ceil(CREEP_LIFE_TIME / 50) + 1)
+  }
+  return module.exports.getDistanceToEmpire(roomname, algorithm) <= distance
 }
 
 // Define default scores (can be overridden)
