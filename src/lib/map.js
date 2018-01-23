@@ -102,9 +102,11 @@ module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
     return scores['WEIGHT_HALLWAY'] ? scores['WEIGHT_HALLWAY'] : PATH_WEIGHT_HALLWAY
   }
 
-  const fromRoomIntel = Room.getIntel(fromRoom)
-  if (fromRoomIntel[INTEL_BLOCKED_EXITS] && fromRoomIntel[INTEL_BLOCKED_EXITS].indexOf(toRoom) >= 0) {
-    return Infinity
+  if (fromRoom) {
+    const fromRoomIntel = Room.getIntel(fromRoom)
+    if (fromRoomIntel[INTEL_BLOCKED_EXITS] && fromRoomIntel[INTEL_BLOCKED_EXITS].indexOf(toRoom) >= 0) {
+      return Infinity
+    }
   }
 
   const roomIntel = Room.getIntel(toRoom)
