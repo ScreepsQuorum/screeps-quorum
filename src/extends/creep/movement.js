@@ -43,7 +43,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
         moveToOpts.scores['WEIGHT_HOSTILE'] = Infinity
       }
       if (moveToOpts.ignoreHostileReservations) {
-        moveToOpts.scores['HOSTILE_RESERVATION'] = Infinity
+        moveToOpts.scores['WEIGHT_HOSTILE_RESERVATION'] = Infinity
       }
     }
   }
@@ -100,7 +100,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
 
   if (!moveToOpts.direct && this.room.name !== pos.roomName) {
     if (!moveToOpts.allowedRooms) {
-      moveToOpts.allowedRooms = []
+      moveToOpts.allowedRooms = [this.room.name, pos.roomName]
     }
     const worldRoute = qlib.map.findRoute(this.room.name, pos.roomName, moveToOpts)
     if (Number.isInteger(worldRoute)) {

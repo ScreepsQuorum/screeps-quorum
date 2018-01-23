@@ -8,6 +8,13 @@ module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
       }
       return score
     }
+
+    // If destination is not reachable do not attempt to route to it.
+    const toRoomScore = opts.routeCallback(toRoom)
+    if (toRoomScore === Infinity) {
+      return ERR_NO_PATH
+    }
+
     if (!opts.ignoreCache) {
       const cacheLabel = `route_${Room.serializeName(fromRoom)}_${Room.serializeName(toRoom)}`
       const cachedPath = sos.lib.cache.get(cacheLabel)
@@ -64,7 +71,7 @@ module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
   }
   const scores = opts.scores ? opts.scores : {}
   if (Room.isSourcekeeper(toRoom)) {
-    return scores['SOURCEKEEPER'] ? scores['SOURCEKEEPER'] : PATH_WEIGHT_SOURCEKEEPER
+    return scores['WEIGHT_SOURCEKEEPER'] ? scores['WEIGHT_SOURCEKEEPER'] : PATH_WEIGHT_SOURCEKEEPER
   }
   if (Room.isHallway(toRoom)) {
     return scores['WEIGHT_HALLWAY'] ? scores['WEIGHT_HALLWAY'] : PATH_WEIGHT_HALLWAY
