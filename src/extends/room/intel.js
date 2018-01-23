@@ -202,7 +202,7 @@ Room.getIntel = function (roomname, opts = {}) {
     if (Memory.intel && Memory.intel.buffer[roomname]) {
       return Memory.intel.buffer[roomname]
     }
-  } else if (!qlib.map.getDistanceToEmpire(roomname, 'manhattan') <= 18) {
+  } else if (qlib.map.getDistanceToEmpire(roomname, 'manhattan') <= 18) {
     Room.requestIntel(roomname)
   }
 
