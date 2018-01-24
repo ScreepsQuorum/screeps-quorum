@@ -39,6 +39,7 @@ class QosKernel {
       Logger.log(`New script upload detected: ${SCRIPT_VERSION}`, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
       Memory.qos.script_upload = Game.time
+      this.performance.clear()
     }
 
     sos.lib.segments.moveToGlobalCache()
