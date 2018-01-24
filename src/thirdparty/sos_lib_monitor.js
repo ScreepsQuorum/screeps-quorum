@@ -75,6 +75,10 @@ Monitor.prototype.getPriorityRunStats = function (priority) {
   var buckets = Object.keys(data)
   buckets.sort((a,b) => parseInt(b) - parseInt(a))
 
+  if (!data[currbucket]) {
+    data[currbucket] = 0
+  }
+
   var shortticks = data[currbucket]
   var mediumticks = data[currbucket]
   var longticks = data[currbucket]
