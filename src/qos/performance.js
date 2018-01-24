@@ -96,7 +96,10 @@ class Performance {
   }
 
   clear () {
-    delete Memory.qos.performance
+    Memory.qos.performance = {
+      'start': Game.time,
+      'programs': {}
+    }
   }
 }
 
