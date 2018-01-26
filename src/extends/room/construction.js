@@ -236,8 +236,9 @@ Room.prototype.getConstructionCount = function (constructionFind = FIND_MY_CONST
 }
 
 Room.prototype.getPracticalRoomLevel = function () {
-  if (this.__level) {
-    return this.__level
+  let prl = sos.lib.cache.get(`${this.name}.prl`)
+  if (prl) {
+    return prl
   }
   const structureCount = this.getStructureCount(FIND_STRUCTURES)
   let level
@@ -250,13 +251,19 @@ Room.prototype.getPracticalRoomLevel = function () {
       }
       if (LEVEL_BREAKDOWN[level + 1][structureType] > 0) {
         if (!structureCount[structureType] || structureCount[structureType] < LEVEL_BREAKDOWN[level + 1][structureType]) {
-          this.__level = level
+          sos.lib.cache.set(`${this.name}.prl`, level, {
+            maxttl: 30,
+            persist: true
+          })
           return level
         }
       }
     }
   }
-  this.__level = 8
+  sos.lib.cache.set(`${this.name}.prl`, 8, {
+    maxttl: 30,
+    persist: true
+  })
   return 8
 }
 
