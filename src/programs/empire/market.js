@@ -48,6 +48,10 @@ class EmpireMarket extends kernel.process {
         continue
       }
 
+      if (terminal.store[resource] < TERMINAL_MIN_SEND) {
+        continue
+      }
+
       const resourceType = Mineral.getResourceType(resource)
       if (resourceType === 'tier1' && resourceType === 'tier2') {
         continue
