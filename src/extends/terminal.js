@@ -23,13 +23,13 @@ if (!StructureTerminal.prototype.__send) {
   StructureTerminal.prototype.send = function (resourceType, amount, destination, description) {
     const ret = this.__send(resourceType, amount, destination, description)
     if (ret === OK) {
-      let log = `Terminal sent ${amount} ${resourceType} to ${destination}`
+      let log = `Terminal in ${this.room.name} sent ${amount} ${resourceType} to ${destination}`
       if (description) {
         log += `: ${description}`
       }
       Logger.log(log, LOG_INFO)
     } else {
-      let log = `Terminal failed to send ${amount} ${resourceType} to ${destination} due to error ${ret}`
+      let log = `Terminal in ${this.room.name} failed to send ${amount} ${resourceType} to ${destination} due to error ${ret}`
       Logger.log(log, LOG_ERROR)
     }
     return ret
