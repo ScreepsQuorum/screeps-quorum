@@ -13,7 +13,6 @@ class EmpireMarket extends kernel.process {
   }
 
   main () {
-
     if (!this.data.sent) {
       this.data.sent = {}
     }
