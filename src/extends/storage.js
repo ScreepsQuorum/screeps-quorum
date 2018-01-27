@@ -8,7 +8,7 @@ StructureStorage.prototype.getLink = function () {
 }
 
 const needs = {
-  'base': 5000, // 8 = 40000
+  'base': 10000, // 8 = 80000
   'tier1': 3000, // 10 = 30000
   'tier2': 3000, // 10 = 30000
   'tier3': 20000, // 10 = 200000
@@ -16,8 +16,8 @@ const needs = {
   'comp': 10000, // 2 = 20000
   'G': 5000 // 1 = 5000
 }
-// max resource storage = 335,000
-// amount for energy and overflow = 665,000
+// max resource storage = 375,000
+// amount for energy and overflow = 625,000
 
 StructureStorage.prototype.getResourceNeed = function (resource) {
   const type = Mineral.getResourceType(resource)
@@ -29,4 +29,17 @@ StructureStorage.prototype.getResourceNeed = function (resource) {
     return needs[type]
   }
   return needs[type] - this.store[resource]
+}
+
+StructureStorage.prototype.getContentsByType = function () {
+  const contents = Object.keys(this.store)
+  const byType = {}
+  for (const resource of contents) {
+    const type = Mineral.getResourceType(resource)
+    if (!byType[type]) {
+      byType[type] = []
+    }
+    byType[type].push(resource)
+  }
+  return byType
 }

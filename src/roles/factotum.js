@@ -32,8 +32,11 @@ class Factotum extends MetaRole {
       return
     }
 
+    const storage = creep.room.storage
+    const terminal = creep.room.terminal
+
     // empty link
-    const storageLink = creep.room.storage.getLink()
+    const storageLink = storage.getLink()
     if (storageLink && storageLink.energy) {
       if (creep.pos.isNearTo(storageLink)) {
         creep.withdraw(storageLink, RESOURCE_ENERGY)
@@ -43,10 +46,10 @@ class Factotum extends MetaRole {
       return
     }
 
-    if (creep.room.terminal && creep.room.terminal.store[RESOURCE_ENERGY] > TERMINAL_ENERGY) {
-      const overflow = creep.room.terminal.store[RESOURCE_ENERGY] - TERMINAL_ENERGY
+    if (terminal && terminal.store[RESOURCE_ENERGY] > TERMINAL_ENERGY) {
+      const overflow = terminal.store[RESOURCE_ENERGY] - TERMINAL_ENERGY
       const transferAmount = overflow < creep.carryCapacity ? overflow : creep.carryCapacity
-      creep.withdraw(creep.room.terminal, RESOURCE_ENERGY, transferAmount)
+      creep.withdraw(terminal, RESOURCE_ENERGY, transferAmount)
       return
     }
 
@@ -59,11 +62,35 @@ class Factotum extends MetaRole {
       }
     }
 
-    // Get storage balance
+    if (terminal && storage) {
+      // Does terminal have something storage needs?
+      const terminalResources = _.shuffle(Object.keys(terminal.store))
+      for (const resource of terminalResources) {
+        if (resource === RESOURCE_ENERGY) {
+          continue
+        }
+        const need = storage.getResourceNeed(resource)
+        if (need > 0) {
+          const amount = Math.min(need, creep.carryCapacity - creep.carry, terminal.store[resource])
+          creep.withdraw(terminal, resource, amount)
+          return
+        }
+      }
 
-    // Does terminal have something storage needs?
-
-    // Does storage have something terminal needs?
+      // Does storage have terminal overflow?
+      const storageResources = _.shuffle(Object.keys(storage.store))
+      for (const resource of storageResources) {
+        if (resource === RESOURCE_ENERGY) {
+          continue
+        }
+        const need = storage.getResourceNeed(resource)
+        if (need < 0) {
+          const amount = Math.min((-need), creep.carryCapacity - creep.carry, terminal.store[resource])
+          creep.withdraw(storage, resource, amount)
+          return
+        }
+      }
+    }
   }
 
   emptyEnergy (creep) {
