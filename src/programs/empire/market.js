@@ -4,6 +4,8 @@
  * Scans all currently visible rooms and records useful information about them.
  */
 
+const RESERVE_AMOUNT = 5000
+
 class EmpireMarket extends kernel.process {
   constructor (...args) {
     super(...args)
@@ -45,9 +47,46 @@ class EmpireMarket extends kernel.process {
       if (resource === RESOURCE_ENERGY) {
         continue
       }
-      qlib.market.sellImmediately(resource, terminal.room, terminal.store[resource])
-      break
+
+      const resourceType = Mineral.getResourceType(resource)
+      if (resourceType === 'tier1' && resourceType === 'tier2') {
+        continue
+      }
+
+      let useableAmount = terminal.store[resource]
+
+      // Is it needed by storage?
+      const storageNeed = terminal.room.storage.getResourceNeed(resource)
+      if (storageNeed > 0) {
+        continue
+      }
+
+      // Is it needed elsehwere in the empire?
+      const target = this.getResourceTarget(resource)
+      if (target) {
+        terminal.send(resource, Math.min(1000, useableAmount), target, `interempire resource transfer`)
+        return
+      }
+
+      // Is there more than `buffer` amount?
+      if (useableAmount - RESERVE_AMOUNT > 100) {
+        qlib.market.sellImmediately(resource, terminal.room, useableAmount - RESERVE_AMOUNT)
+        return
+      }
     }
+  }
+
+  getResourceTarget (resource) {
+    const terminals = _.shuffle(this.terminals)
+    for (const terminal of terminals) {
+      const room = terminal.room
+      if (!terminal.store[resource] || terminal.store[resource] < RESERVE_AMOUNT) {
+        if (room.storage.getResourceNeed(resource)) {
+          return room.name
+        }
+      }
+    }
+    return false
   }
 
   getEnergyTarget () {
