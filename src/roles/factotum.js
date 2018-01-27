@@ -147,6 +147,13 @@ class Factotum extends MetaRole {
       return true
     }
 
+    // Intermediate boosts should stay in room.
+    const resourceType = Mineral.getResourceType(resource)
+    if (resourceType === 'tier1' || resourceType === 'tier2') {
+      creep.transfer(creep.room.storage, resource)
+      return true
+    }
+
     // Put needed resources into storage and excess into terminal.
     const currentNeed = creep.room.storage.getResourceNeed(resource)
     if (currentNeed > 0) {
