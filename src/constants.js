@@ -57,6 +57,16 @@ global.MINERALS_EXTRACTABLE = [
   RESOURCE_CATALYST
 ]
 
+global.MINERAL_INGREDIENTS = {}
+const primaryIngredients = Object.keys(REACTIONS)
+for (const primaryIngredient of primaryIngredients) {
+  const secondaryIngredients = Object.keys(REACTIONS[primaryIngredient])
+  for (const secondaryIngredient of secondaryIngredients) {
+    const product = REACTIONS[primaryIngredient][secondaryIngredient]
+    MINERAL_INGREDIENTS[product] = [primaryIngredient, secondaryIngredient]
+  }
+}
+
 // Which priorities to monitor.
 global.MONITOR_PRIORITIES = _.uniq([
   PRIORITIES_CREEP_DEFAULT,
