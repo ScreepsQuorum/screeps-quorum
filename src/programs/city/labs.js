@@ -26,6 +26,9 @@ class CityLabs extends kernel.process {
     if (!feeders || !vats) {
       return
     }
+    if (!feeders[0].mineralType || !feeders[1].mineralType) {
+      return
+    }
     const product = REACTIONS[feeders[0].mineralType][feeders[1].mineralType]
     for (const vat of vats) {
       if (vat.cooldown) {
