@@ -30,7 +30,8 @@ let roomLevelOptions = {
   6: {
     'EXTRACT_MINERALS': true,
     'RESERVER_COUNT': 2,
-    'UPGRADERS_QUANTITY': 3
+    'UPGRADERS_QUANTITY': 3,
+    'LABS': true
   },
   7: {
     'RESERVER_COUNT': 1,
