@@ -117,14 +117,14 @@ class Factotum extends MetaRole {
       creep.memory.labs = 'empty'
       return
     }
-    if (feeders[1].mineralAmount > 0 && feeders[1].mineralType !== reaction[0]) {
+    if (feeders[1].mineralAmount > 0 && feeders[1].mineralType !== reaction[1]) {
       creep.memory.labs = 'empty'
       return
     }
 
     if (_.sum(creep.carry) <= 0) {
       if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
-        if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
+        if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
           creep.memory.labs = 'empty'
         }
       }
