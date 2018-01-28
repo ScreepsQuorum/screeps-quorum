@@ -67,7 +67,11 @@ class Factotum extends MetaRole {
     if (suicideBooth) {
       const resources = suicideBooth.lookFor(LOOK_RESOURCES)
       if (resources.length > 0) {
-        creep.pickup(resources[0])
+        if (creep.pos.isNearTo(suicideBooth)) {
+          creep.pickup(resources[0])
+        } else {
+          creep.travelTo(suicideBooth)
+        }
       }
     }
 
