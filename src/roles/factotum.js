@@ -146,8 +146,22 @@ class Factotum extends MetaRole {
       reactionSecondaryAvailable += creep.carry[reaction[1]]
     }
 
-    const targetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
-    if (targetAmount <= 0 || creep.carry[carrying[0]] > targetAmount || creep.carry[carrying[1]] > targetAmount) {
+    let primaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
+    if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
+      primaryTargetAmount = 0
+    }
+
+    let secondaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
+    if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
+      secondaryTargetAmount = 0
+    }
+
+    if (primaryTargetAmount <= 0 && secondaryTargetAmount <= 0) {
+      creep.memory.labs = 'empty'
+      return
+    }
+
+    if (creep.carry[carrying[0]] > primaryTargetAmount || creep.carry[carrying[1]] > secondaryTargetAmount) {
       creep.memory.labs = 'empty'
       return
     }
@@ -175,12 +189,12 @@ class Factotum extends MetaRole {
         return
       }
 
-      if (!creep.carry[reaction[0]] || creep.carry[reaction[0]] < targetAmount) {
-        const amount = creep.carry[reaction[0]] ? targetAmount - creep.carry[reaction[0]] : targetAmount
-        creep.withdraw(creep.room.storage, reaction[0], amount)
-      } else if (!creep.carry[reaction[1]] || creep.carry[reaction[1]] < targetAmount) {
-        const amount = creep.carry[reaction[1]] ? targetAmount - creep.carry[reaction[1]] : targetAmount
-        creep.withdraw(creep.room.storage, reaction[1], amount)
+      if (!creep.carry[reaction[0]] || creep.carry[reaction[0]] < primaryTargetAmount) {
+        const amount = creep.carry[reaction[0]] ? primaryTargetAmount - creep.carry[reaction[0]] : primaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[0], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
+      } else if (!creep.carry[reaction[1]] || creep.carry[reaction[1]] < secondaryTargetAmount) {
+        const amount = creep.carry[reaction[1]] ? secondaryTargetAmount - creep.carry[reaction[1]] : secondaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[1], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
       } else {
         creep.memory.filling = true
       }
