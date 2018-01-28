@@ -153,13 +153,13 @@ class Factotum extends MetaRole {
     }
 
     if (creep.memory.filling) {
-      if (creep.carry[reaction[0]]) {
+      if (creep.carry[reaction[0]] && feeders[0].canFill()) {
         if (creep.pos.isNearTo(feeders[0])) {
           creep.transfer(feeders[0], reaction[0])
         } else {
           creep.travelTo(feeders[0])
         }
-      } else if (creep.carry[reaction[1]]) {
+      } else if (creep.carry[reaction[1]] && feeders[1].canFill()) {
         if (creep.pos.isNearTo(feeders[1])) {
           creep.transfer(feeders[1], reaction[1])
         } else {
