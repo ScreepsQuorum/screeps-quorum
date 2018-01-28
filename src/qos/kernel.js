@@ -42,8 +42,16 @@ class QosKernel {
       this.performance.clear()
     }
 
+    if (this.newglobal) {
+      Logger.log(`New Global Detected`, LOG_INFO)
+    }
+
     sos.lib.segments.moveToGlobalCache()
     sos.lib.stormtracker.track()
+
+    if (sos.lib.stormtracker.isStorming()) {
+      Logger.log(`Reset Storm Detected`, LOG_INFO)
+    }
 
     if (Game.time % 7 === 0) {
       this.cleanMemory()
