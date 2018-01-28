@@ -294,6 +294,12 @@ class Factotum extends MetaRole {
   }
 
   emptyResources (creep) {
+    // Must be near storage to empty creep.
+    if (!creep.pos.isNearTo(creep.room.storage)) {
+      creep.travelTo(creep.room.storage)
+      return
+    }
+
     const resources = _.filter(Object.keys(creep.carry), a => a !== RESOURCE_ENERGY)
     if (resources.length < 1) {
       return false
@@ -319,7 +325,11 @@ class Factotum extends MetaRole {
       const amount = creep.carry[resource] < currentNeed ? creep.carry[resource] : currentNeed
       creep.transfer(creep.room.storage, resource, amount)
     } else {
-      creep.transfer(creep.room.terminal, resource)
+      if (creep.pos.isNearTo(creep.room.terminal)) {
+        creep.transfer(creep.room.terminal, resource)
+      } else {
+        creep.travelTo(creep.room.terminal)
+      }
     }
     return true
   }
