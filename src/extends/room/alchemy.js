@@ -92,7 +92,7 @@ Room.prototype.getNextReaction = function () {
         }
       }
       if (resource) {
-        return [resource, RESOURCE_HYDROXIDE]
+        return [resource, RESOURCE_CATALYST]
       }
     }
   }
