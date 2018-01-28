@@ -13,6 +13,10 @@ class EmpireMarket extends kernel.process {
   }
 
   main () {
+    if (!this.data.sent) {
+      this.data.sent = {}
+    }
+
     if (!this.data.lma || Game.time - this.data.lma > TERMINAL_COOLDOWN) {
       this.terminals = _.shuffle(Empire.terminals)
       for (let terminal of this.terminals) {
@@ -48,6 +52,17 @@ class EmpireMarket extends kernel.process {
         continue
       }
 
+      if (terminal.store[resource] < TERMINAL_MIN_SEND) {
+        continue
+      }
+
+      // Don't send resources that were recently received.
+      if (this.data.sent[terminal.room.name] && this.data.sent[terminal.room.name][resource]) {
+        if (Game.time - this.data.sent[terminal.room.name][resource] < 5000) {
+          continue
+        }
+      }
+
       const resourceType = Mineral.getResourceType(resource)
       if (resourceType === 'tier1' && resourceType === 'tier2') {
         continue
@@ -64,6 +79,10 @@ class EmpireMarket extends kernel.process {
       // Is it needed elsehwere in the empire?
       const target = this.getResourceTarget(resource)
       if (target) {
+        if (!this.data.sent[target]) {
+          this.data.sent[target] = {}
+        }
+        this.data.sent[target][resource] = Game.time
         terminal.send(resource, Math.min(1000, useableAmount), target, `interempire resource transfer`)
         return
       }
