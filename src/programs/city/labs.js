@@ -19,7 +19,7 @@ class CityLabs extends kernel.process {
       return this.suicide()
     }
 
-    const limit = 1
+    const limit = 2
     let run = 0
     const feeders = this.room.getFeederLabs()
     const vats = this.room.getVatLabs()
