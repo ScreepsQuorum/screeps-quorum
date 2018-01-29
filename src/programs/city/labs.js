@@ -22,6 +22,14 @@ class CityLabs extends kernel.process {
     const limit = 2
     let run = 0
     const feeders = this.room.getFeederLabs()
+
+    if (!feeders[0].mineralAmount || feeders[0].mineralAmount < LAB_REACTION_AMOUNT) {
+      return
+    }
+    if (!feeders[1].mineralAmount || feeders[1].mineralAmount < LAB_REACTION_AMOUNT) {
+      return
+    }
+
     const vats = this.room.getVatLabs()
     if (!feeders || !vats) {
       return
