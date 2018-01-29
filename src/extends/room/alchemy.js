@@ -63,7 +63,7 @@ Room.prototype.getActiveReaction = function () {
   this.__activeReaction = this.getNextReaction()
   sos.lib.cache.set(`${this.name}.reaction`, this.__activeReaction, {
     persist: true,
-    maxttl: 400
+    maxttl: 600
   })
   return this.__activeReaction
 }
