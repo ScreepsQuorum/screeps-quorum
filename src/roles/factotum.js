@@ -193,6 +193,11 @@ class Factotum extends MetaRole {
         return
       }
 
+      if (creep.carryCapacity === _.sum(creep.carry)) {
+        creep.memory.filling = true
+        return
+      }
+
       if (!creep.carry[reaction[0]] || creep.carry[reaction[0]] < primaryTargetAmount) {
         const amount = creep.carry[reaction[0]] ? primaryTargetAmount - creep.carry[reaction[0]] : primaryTargetAmount
         creep.withdraw(creep.room.storage, reaction[0], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
