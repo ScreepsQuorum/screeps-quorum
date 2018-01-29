@@ -233,12 +233,12 @@ class Factotum extends MetaRole {
 
     // If one feeder doesn't have the right mineral and the other is empty then empty the first.
     if (feeders[0].mineralAmount) {
-      if (feeders[1].mineralAmount === 0 && feeders[0].mineralType !== reaction[0]) {
+      if (feeders[1].mineralAmount < LAB_REACTION_AMOUNT && feeders[0].mineralType !== reaction[0]) {
         return feeders[0]
       }
     }
     if (feeders[1].mineralAmount) {
-      if (feeders[0].mineralAmount === 0 && feeders[1].mineralType !== reaction[1]) {
+      if (feeders[0].mineralAmount < LAB_REACTION_AMOUNT && feeders[1].mineralType !== reaction[1]) {
         return feeders[1]
       }
     }
