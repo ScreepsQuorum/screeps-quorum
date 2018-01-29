@@ -23,6 +23,15 @@ class Factotum extends MetaRole {
       return creep.recycle()
     }
 
+    if (creep.memory.labs) {
+      if (creep.memory.labs === 'fill') {
+        this.fillFeeders(creep)
+      } else {
+        this.emptyLabs(creep)
+      }
+      return
+    }
+
     if (_.sum(creep.carry) > 0) {
       if (creep.carry[RESOURCE_ENERGY]) {
         this.emptyEnergy(creep)
@@ -58,7 +67,11 @@ class Factotum extends MetaRole {
     if (suicideBooth) {
       const resources = suicideBooth.lookFor(LOOK_RESOURCES)
       if (resources.length > 0) {
-        creep.pickup(resources[0])
+        if (creep.pos.isNearTo(suicideBooth)) {
+          creep.pickup(resources[0])
+        } else {
+          creep.travelTo(suicideBooth)
+        }
       }
     }
 
@@ -91,6 +104,175 @@ class Factotum extends MetaRole {
         }
       }
     }
+
+    creep.memory.labs = 'fill'
+  }
+
+  fillFeeders (creep) {
+    const reaction = creep.room.getActiveReaction()
+    const feeders = creep.room.getFeederLabs()
+    if (feeders.length < 2) {
+      delete creep.memory.labs
+      delete creep.memory.filling
+      return
+    }
+
+    if (feeders[0].mineralAmount > 0 && feeders[0].mineralType !== reaction[0]) {
+      creep.memory.labs = 'empty'
+      return
+    }
+    if (feeders[1].mineralAmount > 0 && feeders[1].mineralType !== reaction[1]) {
+      creep.memory.labs = 'empty'
+      return
+    }
+
+    if (_.sum(creep.carry) <= 0) {
+      if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
+        if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
+          creep.memory.labs = 'empty'
+        }
+      }
+    }
+
+    const carrying = Object.keys(creep.carry)
+    if (carrying.length > 3) {
+      creep.memory.labs = 'empty'
+      return
+    }
+
+    const individualMax = creep.carryCapacity / 2
+    let reactionPrimaryAvailable = creep.room.storage.store[reaction[0]]
+    if (creep.carry[reaction[0]]) {
+      reactionPrimaryAvailable += creep.carry[reaction[0]]
+    }
+    let reactionSecondaryAvailable = creep.room.storage.store[reaction[1]]
+    if (creep.carry[reaction[1]]) {
+      reactionSecondaryAvailable += creep.carry[reaction[1]]
+    }
+
+    let primaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
+    if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
+      primaryTargetAmount = 0
+    }
+
+    let secondaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
+    if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
+      secondaryTargetAmount = 0
+    }
+
+    if (primaryTargetAmount <= 0 && secondaryTargetAmount <= 0) {
+      creep.memory.labs = 'empty'
+      return
+    }
+
+    if (creep.carry[carrying[0]] > primaryTargetAmount || creep.carry[carrying[1]] > secondaryTargetAmount) {
+      creep.memory.labs = 'empty'
+      return
+    }
+
+    if (creep.memory.filling) {
+      if (creep.carry[reaction[0]] && feeders[0].canFill()) {
+        if (creep.pos.isNearTo(feeders[0])) {
+          creep.transfer(feeders[0], reaction[0])
+        } else {
+          creep.travelTo(feeders[0])
+        }
+      } else if (creep.carry[reaction[1]] && feeders[1].canFill()) {
+        if (creep.pos.isNearTo(feeders[1])) {
+          creep.transfer(feeders[1], reaction[1])
+        } else {
+          creep.travelTo(feeders[1])
+        }
+      } else {
+        delete creep.memory.filling
+        creep.memory.labs = 'empty'
+      }
+    } else {
+      if (!creep.pos.isNearTo(creep.room.storage)) {
+        creep.travelTo(creep.room.storage)
+        return
+      }
+
+      if (creep.carryCapacity === _.sum(creep.carry)) {
+        creep.memory.filling = true
+        return
+      }
+
+      if (!creep.carry[reaction[0]] || creep.carry[reaction[0]] < primaryTargetAmount) {
+        const amount = creep.carry[reaction[0]] ? primaryTargetAmount - creep.carry[reaction[0]] : primaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[0], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
+      } else if (!creep.carry[reaction[1]] || creep.carry[reaction[1]] < secondaryTargetAmount) {
+        const amount = creep.carry[reaction[1]] ? secondaryTargetAmount - creep.carry[reaction[1]] : secondaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[1], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
+      } else {
+        creep.memory.filling = true
+      }
+    }
+  }
+
+  emptyLabs (creep) {
+    if (creep.carryCapacity - _.sum(creep.carry) <= 0) {
+      delete creep.memory.labs
+      return
+    }
+    const lab = this.getLabToEmpty(creep)
+    if (!lab) {
+      delete creep.memory.labs
+      return
+    }
+    if (creep.pos.isNearTo(lab)) {
+      creep.withdraw(lab, lab.mineralType)
+    } else {
+      creep.travelTo(lab)
+    }
+  }
+
+  getLabToEmpty (creep) {
+    const feeders = creep.room.getFeederLabs()
+    const reaction = creep.room.getActiveReaction()
+
+    // If one feeder doesn't have the right mineral and the other is empty then empty the first.
+    if (feeders[0].mineralAmount) {
+      if (feeders[1].mineralAmount < LAB_REACTION_AMOUNT && feeders[0].mineralType !== reaction[0]) {
+        return feeders[0]
+      }
+    }
+    if (feeders[1].mineralAmount) {
+      if (feeders[0].mineralAmount < LAB_REACTION_AMOUNT && feeders[1].mineralType !== reaction[1]) {
+        return feeders[1]
+      }
+    }
+
+    // If feeders can not produce a reaction start emptying them.
+    // Once one is empty the above code will finish the other.
+    if (feeders[0].mineralAmount > 0 && feeders[1].mineralAmount > 0) {
+      if (!REACTIONS[feeders[0].mineralType][feeders[1].mineralType]) {
+        return feeders[0]
+      }
+    }
+
+    // Empty vats that don't have a boost that will work with the feeders, or that are filling up.
+    const vats = creep.room.getVatLabs()
+    let currentProduct = false
+    if (feeders[0].mineralAmount > 0 && feeders[1].mineralAmount > 0) {
+      currentProduct = REACTIONS[feeders[0].mineralType][feeders[1].mineralType]
+    }
+    const desiredProduct = REACTIONS[reaction[0]][reaction[1]]
+    let target = false
+    let amount = 150
+    for (const vat of vats) {
+      if (!vat.mineralType) {
+        continue
+      }
+      if ((!currentProduct || vat.mineralType !== currentProduct) && vat.mineralType !== desiredProduct) {
+        return vat
+      }
+      if (vat.mineralAmount > amount) {
+        amount = vat.mineralAmount
+        target = vat
+      }
+    }
+    return target
   }
 
   emptyEnergy (creep) {
@@ -135,6 +317,12 @@ class Factotum extends MetaRole {
   }
 
   emptyResources (creep) {
+    // Must be near storage to empty creep.
+    if (!creep.pos.isNearTo(creep.room.storage)) {
+      creep.travelTo(creep.room.storage)
+      return
+    }
+
     const resources = _.filter(Object.keys(creep.carry), a => a !== RESOURCE_ENERGY)
     if (resources.length < 1) {
       return false
@@ -160,7 +348,11 @@ class Factotum extends MetaRole {
       const amount = creep.carry[resource] < currentNeed ? creep.carry[resource] : currentNeed
       creep.transfer(creep.room.storage, resource, amount)
     } else {
-      creep.transfer(creep.room.terminal, resource)
+      if (creep.pos.isNearTo(creep.room.terminal)) {
+        creep.transfer(creep.room.terminal, resource)
+      } else {
+        creep.travelTo(creep.room.terminal)
+      }
     }
     return true
   }

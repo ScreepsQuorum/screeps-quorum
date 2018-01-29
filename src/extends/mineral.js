@@ -41,6 +41,10 @@ Mineral.getEmpireRatio = function () {
 Mineral.getResourceType = function (resource) {
   // Resource Specific
   switch (resource) {
+    case RESOURCE_ENERGY:
+      return RESOURCE_ENERGY
+    case RESOURCE_POWER:
+      return RESOURCE_POWER
     case RESOURCE_GHODIUM:
       return RESOURCE_GHODIUM
     case RESOURCE_HYDROXIDE:

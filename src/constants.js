@@ -33,6 +33,7 @@ global.PRIORITIES_CREEP_REPLENISHER = 6
 global.PRIORITIES_PUBLICWORKS = 7
 global.PRIORITIES_EXPAND = 8
 global.PRIORITIES_PLAYER = 8
+global.PRIORITIES_CITY_LABS = 8
 
 global.PRIORITIES_CONSTRUCTION = 9
 global.PRIORITIES_CITY_REBOOT = 9
@@ -56,6 +57,16 @@ global.MINERALS_EXTRACTABLE = [
   RESOURCE_ZYNTHIUM,
   RESOURCE_CATALYST
 ]
+
+global.MINERAL_INGREDIENTS = {}
+const primaryIngredients = Object.keys(REACTIONS)
+for (const primaryIngredient of primaryIngredients) {
+  const secondaryIngredients = Object.keys(REACTIONS[primaryIngredient])
+  for (const secondaryIngredient of secondaryIngredients) {
+    const product = REACTIONS[primaryIngredient][secondaryIngredient]
+    MINERAL_INGREDIENTS[product] = [primaryIngredient, secondaryIngredient]
+  }
+}
 
 // Which priorities to monitor.
 global.MONITOR_PRIORITIES = _.uniq([
