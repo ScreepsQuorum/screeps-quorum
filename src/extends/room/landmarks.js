@@ -14,5 +14,14 @@ Room.prototype.getSuicideBooth = function () {
   }
 
   // Pick the location immediately above the spawn and recycle there.
-  return new RoomPosition(spawn.pos.x, spawn.pos.y - 1, spawn.room.name)
+  return new RoomPosition(spawn.pos.x - 1, spawn.pos.y, spawn.room.name)
+}
+
+Room.prototype.getFactotumHome = function () {
+  if (this.storage) {
+    return this.getPositionAt(this.storage.pos.x - 1, this.storage.pos.y + 1)
+  } else {
+    const suicideBooth = this.getSuicideBooth()
+    return this.getPositionAt(suicideBooth.pos.x, suicideBooth.pos.y - 1)
+  }
 }
