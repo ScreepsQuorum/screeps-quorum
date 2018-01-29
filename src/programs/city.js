@@ -59,6 +59,12 @@ class City extends kernel.process {
       })
     }
 
+    if (this.room.getRoomSetting('LABS')) {
+      this.launchChildProcess('labs', 'city_labs', {
+        'room': this.data.room
+      })
+    }
+
     // If the room isn't planned launch the room layout program, otherwise launch construction program
     if (!this.room.getLayout().isPlanned()) {
       this.launchChildProcess('layout', 'city_layout', {
