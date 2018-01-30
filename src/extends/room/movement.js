@@ -6,11 +6,31 @@ Room.getCostmatrix = function (roomname, opts = {}) {
   const cm = Room.getStructuresCostmatrix(roomname, opts)
 
   // Add in creeps
-  if (!opts.ignoreCreeps && Game.rooms[roomname]) {
+  if (Game.rooms[roomname]) {
     const room = Game.rooms[roomname]
-    const creeps = room.find(FIND_CREEPS)
-    for (let creep of creeps) {
-      cm.set(creep.pos.x, creep.pos.y, 255)
+
+    if (!opts.ignoreCreeps) {
+      const creeps = room.find(FIND_CREEPS)
+      for (let creep of creeps) {
+        cm.set(creep.pos.x, creep.pos.y, 255)
+      }
+    }
+
+    // Keep creeps from cluttering up core structure hallways.
+    if (!opts.ignoreCore && room.storage && room.storage.my) {
+      // Above terminal, near tower cluster entrance
+      cm.set(room.storage.pos.x - 1, room.storage.pos.y - 1, 15)
+      cm.set(room.storage.pos.x - 2, room.storage.pos.y - 1, 20)
+      cm.set(room.storage.pos.x - 3, room.storage.pos.y - 1, 20)
+
+      // Row below terminal and storage
+      cm.set(room.storage.pos.x - 1, room.storage.pos.y + 1, 15)
+      cm.set(room.storage.pos.x, room.storage.pos.y + 1, 15)
+      cm.set(room.storage.pos.x + 1, room.storage.pos.y + 1, 7)
+
+      // Column below terminal (first element covered above)
+      cm.set(room.storage.pos.x - 1, room.storage.pos.y + 2, 15)
+      cm.set(room.storage.pos.x - 1, room.storage.pos.y + 3, 7)
     }
   }
 

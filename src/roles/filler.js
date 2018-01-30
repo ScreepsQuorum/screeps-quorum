@@ -74,7 +74,11 @@ class Filler extends MetaRole {
     if (creep.pos.isNearTo(structure)) {
       creep.transfer(structure, RESOURCE_ENERGY, Math.min(creep.carry[RESOURCE_ENERGY], structure.energyCapacity - structure.energy))
     } else {
-      creep.travelTo(structure)
+      const opts = {}
+      if (structure.structureType === STRUCTURE_TOWER) {
+        opts.ignoreCore = true
+      }
+      creep.travelTo(structure, opts)
     }
   }
 }
