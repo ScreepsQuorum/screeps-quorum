@@ -44,7 +44,7 @@ class City extends kernel.process {
       this.data.level = this.room.controller.level
     }
 
-    if (!this.room.structures[STRUCTURE_SPAWN] || !this.room.structures[STRUCTURE_SPAWN].length <= 0) {
+    if (!this.room.structures[STRUCTURE_SPAWN] || this.room.structures[STRUCTURE_SPAWN].length <= 0) {
       this.launchChildProcess('gethelp', 'empire_expand', {
         'colony': this.data.room,
         'recover': true
