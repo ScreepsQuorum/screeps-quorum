@@ -24,6 +24,24 @@ class City extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
+    // Limit how often this program runs, as it can get expensive. We don't want it to be a lower CPU priority, as
+    // it needs to run often to be effective. We just don't need it every tick.
+    if (this.data.lastrun && Game.time - this.data.lastrun < 10) {
+      return
+    } else {
+      this.data.lastrun = Game.time
+    }
+
+    this.manageLevelChanges()
+    this.remoteMines()
+    this.launchBasicPrograms()
+    if (!this.requestAid()) {
+      this.launchCorePrograms()
+      this.launchCreeps()
+    }
+  }
+
+  manageLevelChanges () {
     // Detect when room level changes and clear spawnqueue.
     if (!this.data.prl) {
       this.data.prl = this.room.getPracticalRoomLevel()
@@ -43,15 +61,20 @@ class City extends kernel.process {
       qlib.notify.send(`${this.data.room} has changed from level ${this.data.level} to level ${this.room.controller.level}`)
       this.data.level = this.room.controller.level
     }
+  }
 
+  requestAid () {
     if (!this.room.structures[STRUCTURE_SPAWN] || this.room.structures[STRUCTURE_SPAWN].length <= 0) {
       this.launchChildProcess('gethelp', 'empire_expand', {
         'colony': this.data.room,
         'recover': true
       })
-      return
+      return true
     }
+    return false
+  }
 
+  launchBasicPrograms () {
     // Launch children programs
     for (const label in roomPrograms) {
       this.launchChildProcess(label, roomPrograms[label], {
@@ -59,8 +82,9 @@ class City extends kernel.process {
       })
     }
 
-    if (this.room.getRoomSetting('LABS')) {
-      this.launchChildProcess('labs', 'city_labs', {
+    // Launch mining if all level 2 extensions are build.
+    if (this.room.energyCapacityAvailable > 500) {
+      this.launchChildProcess('mining', 'city_mine', {
         'room': this.data.room
       })
     }
@@ -79,20 +103,22 @@ class City extends kernel.process {
       })
     }
 
-    // Launch fillers
-    let options = {
-      'priority': 3
+    // Launch mineral extraction
+    if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
+      // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
+      // conditions.
+      const mineral = this.room.find(FIND_MINERALS)[0]
+      if (mineral.mineralAmount > 0 && !mineral.ticksToRegeneration) {
+        this.launchChildProcess('extraction', 'city_extract', {
+          'room': this.data.room
+        })
+      }
     }
-    if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
-      options['carry_only'] = true
-      options['energy'] = Math.max(Math.min(1600, this.room.energyCapacityAvailable / 2), 400)
-    }
-    const fillerQuantity = this.room.getRoomSetting('ADDITIONAL_FILLERS') ? 4 : 2
-    this.launchCreepProcess('fillers', 'filler', this.data.room, fillerQuantity, options)
+  }
 
-    // Launch mining if all level 2 extensions are build.
-    if (this.room.energyCapacityAvailable > 500) {
-      this.launchChildProcess('mining', 'city_mine', {
+  launchCorePrograms () {
+    if (this.room.getRoomSetting('LABS')) {
+      this.launchChildProcess('labs', 'city_labs', {
         'room': this.data.room
       })
     }
@@ -100,7 +126,9 @@ class City extends kernel.process {
     if (this.room.storage && this.room.storage.getLink()) {
       this.launchCreepProcess('factotum', 'factotum', this.data.room)
     }
+  }
 
+  remoteMines () {
     const mineCount = this.room.getRoomSetting('REMOTE_MINES')
     const lastAdd = qlib.events.getTimeSinceEvent('addmine')
     if (mineCount && lastAdd >= 2000) {
@@ -124,18 +152,19 @@ class City extends kernel.process {
         })
       }
     }
+  }
 
-    // Launch mineral extraction
-    if (this.room.isEconomyCapable('EXTRACT_MINERALS') && this.room.getRoomSetting('EXTRACT_MINERALS')) {
-      // Note that once the program starts it won't stop until the minerals are mined out regardless of economic
-      // conditions.
-      const mineral = this.room.find(FIND_MINERALS)[0]
-      if (mineral.mineralAmount > 0 && !mineral.ticksToRegeneration) {
-        this.launchChildProcess('extraction', 'city_extract', {
-          'room': this.data.room
-        })
-      }
+  launchCreeps () {
+    // Launch fillers
+    let options = {
+      'priority': 3
     }
+    if (this.room.getRoomSetting('PURE_CARRY_FILLERS')) {
+      options['carry_only'] = true
+      options['energy'] = Math.max(Math.min(1600, this.room.energyCapacityAvailable / 2), 400)
+    }
+    const fillerQuantity = this.room.getRoomSetting('ADDITIONAL_FILLERS') ? 4 : 2
+    this.launchCreepProcess('fillers', 'filler', this.data.room, fillerQuantity, options)
 
     // Launch upgraders
     if (this.room.isEconomyCapable('UPGRADE_CONTROLLERS')) {
@@ -157,6 +186,7 @@ class City extends kernel.process {
         'priority': 5
       })
     }
+
     if (this.room.controller.isTimingOut()) {
       this.launchCreepProcess('eupgrader', 'upgrader', this.data.room, 1, {
         priority: 1,
