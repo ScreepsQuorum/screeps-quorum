@@ -1,42 +1,38 @@
-# See https://github.com/tedivm/GitConsensus for more information about this file.
-version: 2
-#
-# Consensus Rules
-#
-
-# Minimum number of voters
-quorum: 3
-
-# Required percentage of "yes" votes (ignoring abstentions)
-threshold: 0.74
-
-# Number of hours after last action (commit or opening the pull request) before issue can be merged
-mergedelay: 6
-
-# Number of votes at which the mergedelay gets ignored, assuming no negative votes.
-delayoverride: 5
-
-# Number of hours after last action (commit or opening the pull request) before issue is autoclosed
-timeout: 168
-
-# Don't count any vote from a user who votes for multiple options
-prevent_doubles: true
-
-# Do not allow changes to the license.
-locklicense: true
-
-# Wait for at least four days before merging any new consensus rules.
-consensusdelay: 96
-
-#
-# Disabled Consensus Rules
-#
+# See http://www.gitconsensus for more information about this file.
+version: 3
 
 # Add extra labels for the vote counts and age when merging
 extra_labels: false
 
-# Only process votes by contributors
-contributors_only: false
+# Don't count any vote from a user who votes for multiple options
+prevent_doubles: true
 
-# Only process votes by collaborators
-collaborators_only: false
+# Pull Request Specific Rules
+pull_requests:
+
+  # Minimum number of voters
+  quorum: 3
+
+  # Required percentage of "yes" votes (ignoring abstentions)
+  threshold: 0.74
+
+  # Number of hours after last action (commit or opening the pull request) before issue can be merged
+  merge_delay: 6
+
+  # Number of votes at which the mergedelay gets ignored, assuming no negative votes.
+  delay_override: 5
+
+  # Number of hours after last action (commit or opening the pull request) before issue is autoclosed
+  timeout: 168
+
+  # Do not allow changes to the license.
+  license_lock: true
+
+  # Wait for at least four days before merging any new consensus rules.
+  consensus_delay: 96
+
+  # Only process votes by contributors
+  contributors_only: false
+
+  # Only process votes by collaborators
+  collaborators_only: false
