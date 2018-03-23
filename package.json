@@ -11,8 +11,8 @@
   "main": "dist/main.js",
   "repository": "ScreepsQuorum/screeps-quorum",
   "scripts": {
-    "test": "ava test",
-    "testci": "ava test --tap | tap-xunit > test-results.xml",
+    "test": "standard && ava test",
+    "testci": "standard && ava test --tap | tap-xunit > test-results.xml",
     "watch": "ava test --watch",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
