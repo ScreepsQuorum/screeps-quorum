@@ -3,7 +3,7 @@
 if (!Memory.username) {
   const struc = _.find(Game.structures)
   const creep = _.find(Game.creeps)
-  Memory.username = (struc ? struc.owner.username : false) || (creep ? creep.owner.username : false)
+  Memory.username = (struc && struc.owner.username) || (creep && creep.owner.username)
 }
 
 global.USERNAME = Memory.username
