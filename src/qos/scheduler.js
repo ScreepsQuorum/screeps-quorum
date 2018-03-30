@@ -168,6 +168,31 @@ class Scheduler {
       delete this.memory.processes.index[pid]
     }
   }
+  
+  sleep (pid, ticks) {
+    if ((typeof ticks) == 'number' && this.memory.processes.index[pid]) {
+      const priority = this.getPriorityForPid(pid)
+      // Remove process from execution queue
+      delete this.memory.processes.queues[priority][pid]
+      
+      // Create new sleep array if necessary
+      if (!this.memory.processes.sleep) {
+        this.memory.processes.sleep = []
+      }
+      // Add process to sleep list or update its unsleep time
+      this.memory.processes.sleep[pid] = ticks
+    }
+  }
+  
+  unsleep (pid) {
+    if (this.memory.processes.index[pid]) {
+      const priority = this.getPriorityForPid(pid)
+      // Push the process back to the execution queue
+      this.memory.processes.queues[priority].push(pid)
+      // and remove it from sleep list
+      delete this.memory.processes.sleep[pid]
+    }
+  }
 
   getProcessCount () {
     return Object.keys(this.memory.processes.index).length
