@@ -21,6 +21,14 @@ class Scheduler {
         'queues': {}
       }
     }
+    
+    // Update sleep timers and resume right processes
+    this.memory.processes.sleep = this.memory.processes.sleep.forEach(function(ticks, pid) {
+      this.memory.processes.sleep[pid] -= 1
+      if (this.memory.processes.sleep[pid] == 0)
+        this.unsleep(pid)
+    });
+      
   }
 
   shift () {
