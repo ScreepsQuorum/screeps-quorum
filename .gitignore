@@ -60,3 +60,6 @@ typings/
 # project specific ignores
 .screeps.json
 /dist
+
+# for Visual Studio users
+/.vs

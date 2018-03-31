@@ -205,7 +205,7 @@ class Scheduler {
   }
   
   unsleep (pid) {
-    if (this.memory.processes.index[pid]) {
+    if (this.memory.processes.index[pid] && this.memory.processes.sleep.list && this.memory.processes.sleep.list[pid]) {
       const priority = this.getPriorityForPid(pid)
       // Push the process back to the execution queue
       this.memory.processes.queues[priority].push(pid)
