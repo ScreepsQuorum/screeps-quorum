@@ -178,6 +178,8 @@ class Scheduler {
 
   kill (pid) {
     if (this.memory.processes.index[pid]) {
+      // Process needs to be waked up first
+      this.unsleep(pid)
       delete this.memory.processes.index[pid]
     }
   }
