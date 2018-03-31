@@ -25,12 +25,13 @@ class Scheduler {
     
     if (this.memory.processes.sleep.nextCheck && this.memory.processes.sleep.nextCheck <= Game.time) {
       // Update sleep timers and resume right processes
-      this.memory.processes.sleep = this.memory.processes.sleep.forEach(function(tick, pid) {
-        if (this.memory.processes.sleep.list[pid] <= Game.time) {
+      this.memory.processes.index.forEach(function(process, pid) {
+        if (process.w <= Game.time) {
           this.unsleep (pid)
         } else {
-          if (this.memory.processes.sleep.nextCheck <= Game.time || this.memory.processes.sleep.nextCheck > tick)
-            this.memory.processes.sleep.nextCheck = tick
+          if (this.memory.processes.nextSleepCheck <= Game.time || this.memory.processes.nextSleepCheck > tick) {
+              this.memory.processes.nextSleepCheck = tick
+          }
         }
       });
     }
@@ -116,6 +117,11 @@ class Scheduler {
 
       this.memory.processes.running = this.memory.processes.queues[x].shift()
 
+
+      // Don't run sleeping processes
+      if (this.isPidSleeping(this.memory.processes.running)) {
+        continue
+      }
       // Don't run this pid twice in a single tick.
       if (this.memory.processes.completed.includes(this.memory.processes.running)) {
         continue
@@ -146,7 +152,8 @@ class Scheduler {
     this.memory.processes.index[pid] = {
       n: name,
       d: data,
-      p: parent
+      p: parent,
+      w: -1
     }
     const priority = this.getPriorityForPid(pid)
     if (!this.memory.processes.queues[priority]) {
@@ -176,41 +183,28 @@ class Scheduler {
     return !!this.memory.processes.index[pid]
   }
 
+  isPidSleeping(pid) {
+    return this.isPidActive(pid) && (this.memory.processes.index[pid].w !== -1)
+  }
+
   kill (pid) {
     if (this.memory.processes.index[pid]) {
-      // Process needs to be waked up first
-      this.unsleep(pid)
       delete this.memory.processes.index[pid]
     }
   }
   
   sleep (pid, ticks) {
     if ((typeof ticks) === 'number' && this.memory.processes.index[pid]) {
-      const priority = this.getPriorityForPid(pid)
-      // Remove process from execution queue
-      delete this.memory.processes.queues[priority][pid]
-      
-      // Create new sleep list if necessary
-      if (!this.memory.processes.sleep.list) {
-        this.memory.processes.sleep = []
-      }
-      const unsleepTime = Game.time + ticks
-      // Add process to sleep list or update its unsleep time
-      this.memory.processes.sleep.list[pid] = unsleepTime
-      // Tell the scheduler when next to check for processes needing to be waked up
-      if (!this.memory.processes.sleep.nextCheck || this.memory.processes.sleep.nextCheck < unsleepTime) {
-        this.memory.processes.sleep.nextCheck = unsleepTime
+      this.memory.processes.index[pid].w = Game.time + ticks
+      if (this.memory.processes.nextSleepCheck > Game.time + ticks) {
+        this.memory.processes.nextSleepCheck = Game.time + ticks
       }
     }
   }
   
-  unsleep (pid) {
-    if (this.memory.processes.index[pid] && this.memory.processes.sleep.list && this.memory.processes.sleep.list[pid]) {
-      const priority = this.getPriorityForPid(pid)
-      // Push the process back to the execution queue
-      this.memory.processes.queues[priority].push(pid)
-      // and remove it from sleep list
-      delete this.memory.processes.sleep.list[pid]
+  wake (pid) {
+    if (this.memory.processes.index[pid]) {
+      this.memory.processes.index[pid].w = -1
     }
   }
 
