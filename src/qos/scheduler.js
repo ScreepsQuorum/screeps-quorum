@@ -38,7 +38,7 @@ class Scheduler {
           sleepCount++
         }
       })
-      if (sleepCount == 0) {
+      if (sleepCount === 0) {
         this.memory.processes.sleep.nextCheck = -1
       }
     }
