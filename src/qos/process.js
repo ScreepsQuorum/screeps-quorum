@@ -137,7 +137,7 @@ class Process {
 
     return false
   }
-  
+
   sleep (ticks) {
     kernel.scheduler.sleep(this.pid, ticks)
   }
