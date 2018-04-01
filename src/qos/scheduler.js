@@ -22,18 +22,19 @@ class Scheduler {
         'sleep': {}
       }
     }
-    
+  }
+
+  wakeProcesses () {
     if (this.memory.processes.sleep.nextCheck && this.memory.processes.sleep.nextCheck <= Game.time) {
-        let scheduler = this
-      // Update sleep timers and resume right processes
-      this.memory.processes.sleep.list = this.memory.processes.sleep.list.forEach(function(tick, pid) {
+      let scheduler = this
+      // Resume right processes
+      this.memory.processes.sleep.list = this.memory.processes.sleep.list.forEach(function (tick, pid) {
         if (scheduler.memory.processes.sleep.list[pid] <= Game.time) {
-          scheduler.unsleep (pid)
+          scheduler.wake(pid)
         } else {
-          if (scheduler.memory.processes.sleep.nextCheck <= Game.time || scheduler.memory.processes.sleep.nextCheck > tick)
-            scheduler.memory.processes.sleep.nextCheck = tick
+          if (scheduler.memory.processes.sleep.nextCheck <= Game.time || scheduler.memory.processes.sleep.nextCheck > tick) { scheduler.memory.processes.sleep.nextCheck = tick }
         }
-      });
+      })
     }
   }
 
@@ -184,19 +185,18 @@ class Scheduler {
       delete this.memory.processes.index[pid]
     }
   }
-  
+
   sleep (pid, ticks) {
-      try {
     if ((typeof ticks) === 'number' && this.memory.processes.index[pid]) {
       const priority = this.getPriorityForPid(pid)
       // Remove process from execution queue
       delete this.memory.processes.queues[priority][pid]
       const completedIndex = this.memory.processes.completed.indexOf(pid)
       if (completedIndex !== -1) {
-          delete this.memory.processes.completed[completedIndex]
+        delete this.memory.processes.completed[completedIndex]
       }
-      this.memory.processes.running = false
-      
+      if (this.memory.process.running === pid) { this.memory.processes.running = false }
+
       // Create new sleep list if necessary
       if (!this.memory.processes.sleep.list) {
         this.memory.processes.sleep.list = []
@@ -209,11 +209,9 @@ class Scheduler {
         this.memory.processes.sleep.nextCheck = unsleepTime
       }
     }
-      }
-      catch (err) { console.log(err) }
   }
-  
-  unsleep (pid) {
+
+  wake (pid) {
     if (this.memory.processes.index[pid] && this.memory.processes.sleep.list && this.memory.processes.sleep.list[pid]) {
       const priority = this.getPriorityForPid(pid)
       // Push the process back to the execution queue
