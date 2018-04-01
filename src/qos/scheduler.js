@@ -187,7 +187,7 @@ class Scheduler {
   kill (pid) {
     if (this.memory.processes.index[pid]) {
       // Process needs to be waked up first
-      this.unsleep(pid)
+      this.wake(pid)
       delete this.memory.processes.index[pid]
     }
   }
@@ -201,7 +201,7 @@ class Scheduler {
       if (completedIndex !== -1) {
         delete this.memory.processes.completed[completedIndex]
       }
-      if (this.memory.process.running === pid) { this.memory.processes.running = false }
+      if (this.memory.processes.running === pid) { this.memory.processes.running = false }
 
       // Create new sleep list if necessary
       if (!this.memory.processes.sleep.list) {
