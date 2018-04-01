@@ -26,15 +26,21 @@ class Scheduler {
 
   wakeProcesses () {
     if (this.memory.processes.sleep.nextCheck && this.memory.processes.sleep.nextCheck <= Game.time) {
-      let scheduler = this
+      let sleepCount = 0
       // Resume right processes
       this.memory.processes.sleep.list = this.memory.processes.sleep.list.forEach(function (tick, pid) {
-        if (scheduler.memory.processes.sleep.list[pid] <= Game.time) {
-          scheduler.wake(pid)
+        if (kernel.scheduler.memory.processes.sleep.list[pid] <= Game.time) {
+          kernel.scheduler.wake(pid)
         } else {
-          if (scheduler.memory.processes.sleep.nextCheck <= Game.time || scheduler.memory.processes.sleep.nextCheck > tick) { scheduler.memory.processes.sleep.nextCheck = tick }
+          if (kernel.scheduler.memory.processes.sleep.nextCheck <= Game.time || kernel.scheduler.memory.processes.sleep.nextCheck > tick) {
+            kernel.scheduler.memory.processes.sleep.nextCheck = tick
+          }
+          sleepCount++
         }
       })
+      if (sleepCount == 0) {
+        this.memory.processes.sleep.nextCheck = -1
+      }
     }
   }
 
