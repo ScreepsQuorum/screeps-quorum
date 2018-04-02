@@ -139,7 +139,7 @@ class Process {
   }
 
   sleep (ticks) {
-    kernel.scheduler.sleep(this.pid, ticks)
+    kernel.scheduler.sleep(this.pid, ticks, true)
   }
 
   suicide () {
