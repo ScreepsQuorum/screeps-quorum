@@ -24,7 +24,7 @@ class Scheduler {
     }
   }
 
-  doSleepingTasks () {
+  wakeSleepingProcesses () {
     if (this.memory.processes.sleep.newProcesses) {
       // We remove processes from the completed list now because else the kernel wouldn't know that they were run
       this.memory.processes.sleep.newProcesses.forEach(function (pid) {
@@ -201,7 +201,7 @@ class Scheduler {
 
   kill (pid) {
     if (this.memory.processes.index[pid]) {
-      // Process needs to be waked up first
+      // Process needs to be woken up first
       this.wake(pid)
       delete this.memory.processes.index[pid]
     }
@@ -230,12 +230,12 @@ class Scheduler {
       if (!this.memory.processes.sleep.list) {
         this.memory.processes.sleep.list = []
       }
-      const unsleepTime = Game.time + 1 + ticks
-      // Add process to sleep list or update its unsleep time
-      this.memory.processes.sleep.list[pid] = unsleepTime
+      const sleepUntil = Game.time + 1 + ticks
+      // Add process to sleep list or update the tick it should sleep until
+      this.memory.processes.sleep.list[pid] = sleepUntil
       // Tell the scheduler when next to check for processes needing to be waked up
-      if (!this.memory.processes.sleep.nextCheck || this.memory.processes.sleep.nextCheck < unsleepTime) {
-        this.memory.processes.sleep.nextCheck = unsleepTime
+      if (!this.memory.processes.sleep.nextCheck || this.memory.processes.sleep.nextCheck < sleepUntil) {
+        this.memory.processes.sleep.nextCheck = sleepUntil
       }
     }
   }
