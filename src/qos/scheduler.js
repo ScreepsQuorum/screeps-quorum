@@ -25,8 +25,8 @@ class Scheduler {
   }
 
   doSleepingTasks () {
-      if (this.memory.processes.sleep.newProcesses) {
-        // We remove processes from the completed list now because else the kernel wouldn't know that they were run
+    if (this.memory.processes.sleep.newProcesses) {
+      // We remove processes from the completed list now because else the kernel wouldn't know that they were run
       this.memory.processes.sleep.newProcesses.forEach(function (pid) {
         const i = kernel.scheduler.memory.processes.completed.indexOf(pid)
         if (i > -1) {
@@ -34,7 +34,7 @@ class Scheduler {
         }
       })
       delete this.memory.processes.sleep.newProcesses
-      }
+    }
 
     if (this.memory.processes.sleep.nextCheck && this.memory.processes.sleep.nextCheck <= Game.time) {
       let sleepCount = 0
@@ -219,8 +219,8 @@ class Scheduler {
             queue.splice(index, 1)
           }
         }
-        }
-        // Add process to list of new sleeping processes
+      }
+      // Add process to list of new sleeping processes
       if (!this.memory.processes.sleep.newProcesses) {
         this.memory.processes.sleep.newProcesses = []
       }
