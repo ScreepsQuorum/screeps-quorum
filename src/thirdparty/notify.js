@@ -58,7 +58,7 @@ Notify.getUUID = function () {
     num = 0
   }
   num++
-  return shardid + Game.time.toString(36) + num.toString(36).leftPad(3, '0')
+  return shardid + Game.time.toString(36) + num.toString(36)
 }
 
 
