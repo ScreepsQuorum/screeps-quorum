@@ -21,6 +21,11 @@ class Scheduler {
         'queues': {},
         'sleep': {}
       }
+    } else {
+      // For upgrading
+      if (!this.memory.processes.sleep) {
+        this.memory.processes.sleep = {}
+      }
     }
   }
 
