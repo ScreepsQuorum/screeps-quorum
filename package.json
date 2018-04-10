@@ -29,6 +29,9 @@
     "gulp-screeps": "^1.0.6",
     "minimist": "^1.2.0",
     "standard": "^10.0.3",
+    "typescript": "^2.8.1",
+    "eslint": "^4.19.1",
+    "tslint": "^5.9.1",
     "tap-xunit": "^1.7.0"
   },
   "screeps_bot": true,
