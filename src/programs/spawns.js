@@ -18,7 +18,7 @@ class Spawns extends kernel.process {
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
-    const spawns = this.room.find(FIND_MY_SPAWNS, {filter: (a}=>a.isActive()})
+    const spawns = this.room.find(FIND_MY_SPAWNS, {filter: (a)}=>a.isActive()})
 
     let spawn
     for (spawn of spawns) {
