@@ -19,7 +19,7 @@ class Spawns extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
     const maxspawns = CONTROLLER_STRUCTURES[STRUCTURE_SPAWN][this.room.controller.level]
-    const spawns = this.room.find(FIND_MY_SPAWNS, {filter: (s,i,c) => ((c.length>maxspawns)||(s.isActive()))})
+    const spawns = this.room.find(FIND_MY_SPAWNS, {filter: (s, i, c) => ((c.length > maxspawns) || (s.isActive()))})
 
     let spawn
     for (spawn of spawns) {
