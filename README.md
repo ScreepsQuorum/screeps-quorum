@@ -62,7 +62,7 @@ This codebase uses [Gulp](https://gulpjs.com/) to deploy to the screeps server. 
   "myserver.example.com" : {
     "username": "Quorum",
     "password": "random123",
-    "secure": true
+    "ssl": true
   }
 }
 ```
