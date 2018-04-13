@@ -16,7 +16,9 @@ const MINIMUM_PROGRAMS = 0.3
 const PROGRAM_NORMALIZING_BURST = 2
 const RECURRING_BURST = 1.75
 const RECURRING_BURST_FREQUENCY = 25
+const MIN_TICKS_BETWEEN_GC = 20
 const GLOBAL_LAST_RESET = Game.time
+const IVM = typeof Game.getHeapStatistics === 'function'
 
 class QosKernel {
   constructor () {
@@ -33,8 +35,13 @@ class QosKernel {
   }
 
   start () {
+    if (IVM) {
+      Logger.log(`Initializing Kernel for tick ${Game.time} with IVM support`, LOG_TRACE, 'kernel')
+    } else {
+      Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_TRACE, 'kernel')
+    }
+
     // Announce new uploads
-    Logger.log(`Initializing Kernel for tick ${Game.time}`, LOG_TRACE, 'kernel')
     if (!Memory.qos.script_version || Memory.qos.script_version !== SCRIPT_VERSION) {
       Logger.log(`New script upload detected: ${SCRIPT_VERSION}`, LOG_WARN)
       Memory.qos.script_version = SCRIPT_VERSION
@@ -44,6 +51,16 @@ class QosKernel {
 
     if (this.newglobal) {
       Logger.log(`New Global Detected`, LOG_INFO)
+    }
+
+    if (IVM && global.gc && (!Memory.qos.gc || Game.time - Memory.qos.gc >= MIN_TICKS_BETWEEN_GC)) {
+      const heap = Game.getHeapStatistics()
+      const heapPercent = heap.total_heap_size / heap.heap_size_limit
+      if (heapPercent > 0.95) {
+        Logger.log(`Garbage Collection Initiated`, LOG_INFO, 'kernel')
+        Memory.qos.gc = Game.time
+        global.gc()
+      }
     }
 
     sos.lib.segments.moveToGlobalCache()
@@ -209,6 +226,12 @@ class QosKernel {
     Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
     Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')
     Logger.log(`Bucket: ${Game.cpu.bucket}`, LOG_INFO, 'kernel')
+
+    if (IVM) {
+      const heap = Game.getHeapStatistics()
+      const heapPercent = Math.round((heap.total_heap_size / heap.heap_size_limit) * 100)
+      Logger.log(`Heap Used: ${heapPercent} (${heap.total_heap_size} / ${heap.heap_size_limit})`, LOG_INFO, 'kernel')
+    }
 
     if (Game.time % 50 === 0) {
       this.performance.reportHtml()
