@@ -18,7 +18,48 @@ class Scheduler {
         'index': {},
         'running': false,
         'completed': [],
-        'queues': {}
+        'queues': {},
+        'sleep': {}
+      }
+    } else {
+      // For upgrading
+      if (!this.memory.processes.sleep) {
+        this.memory.processes.sleep = {}
+      }
+    }
+  }
+
+  wakeSleepingProcesses () {
+    if (this.memory.processes.sleep.newProcesses) {
+      // We remove processes from the completed list now because else the kernel wouldn't know that they were run
+      this.memory.processes.sleep.newProcesses.forEach(function (pid) {
+        const i = kernel.scheduler.memory.processes.completed.indexOf(pid)
+        if (i > -1) {
+          kernel.scheduler.memory.processes.completed.splice(i, 1)
+        }
+      })
+      delete this.memory.processes.sleep.newProcesses
+    }
+
+    if (this.memory.processes.sleep.nextCheck && this.memory.processes.sleep.nextCheck <= Game.time) {
+      let sleepCount = 0
+      // Resume the right processes
+      for (let pid in this.memory.processes.sleep.list) {
+        pid = Number(pid)
+        let tick = this.memory.processes.sleep.list[pid]
+        if (tick <= Game.time) {
+          this.wake(pid)
+        } else {
+          if (this.memory.processes.sleep.nextCheck <= Game.time || this.memory.processes.sleep.nextCheck > tick) {
+            this.memory.processes.sleep.nextCheck = tick
+          }
+          sleepCount++
+        }
+      }
+
+      // If there are no sleeping processes we don't need to check for them the next time
+      if (sleepCount === 0) {
+        this.memory.processes.sleep.nextCheck = -1
       }
     }
   }
@@ -165,7 +206,52 @@ class Scheduler {
 
   kill (pid) {
     if (this.memory.processes.index[pid]) {
+      // Process needs to be woken up first
+      this.wake(pid)
       delete this.memory.processes.index[pid]
+    }
+  }
+
+  sleep (pid, ticks, self = false) {
+    if ((typeof ticks) === 'number' && this.memory.processes.index[pid]) {
+      // Remove process from execution queue, but not if the process has called sleeping itself
+      if (!self) {
+        for (let i in this.memory.processes.queues) {
+          i = Number(i)
+          let queue = this.memory.processes.queues[i]
+          const index = queue.indexOf(pid)
+          if (index > -1) {
+            queue.splice(index, 1)
+          }
+        }
+      }
+      // Add process to list of new sleeping processes
+      if (!this.memory.processes.sleep.newProcesses) {
+        this.memory.processes.sleep.newProcesses = []
+      }
+      this.memory.processes.sleep.newProcesses.push(pid)
+
+      // Create new sleep list if necessary
+      if (!this.memory.processes.sleep.list) {
+        this.memory.processes.sleep.list = []
+      }
+      const sleepUntil = Game.time + 1 + ticks
+      // Add process to sleep list or update the tick it should sleep until
+      this.memory.processes.sleep.list[pid] = sleepUntil
+      // Tell the scheduler when next to check for processes needing to be waked up
+      if (!this.memory.processes.sleep.nextCheck || this.memory.processes.sleep.nextCheck < sleepUntil) {
+        this.memory.processes.sleep.nextCheck = sleepUntil
+      }
+    }
+  }
+
+  wake (pid) {
+    if (this.memory.processes.index[pid] && this.memory.processes.sleep.list && this.memory.processes.sleep.list[pid]) {
+      const priority = this.getPriorityForPid(pid)
+      // Push the process back to the execution queue
+      this.memory.processes.queues[priority].push(pid)
+      // and remove it from sleep list
+      delete this.memory.processes.sleep.list[pid]
     }
   }
 

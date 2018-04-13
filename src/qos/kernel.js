@@ -57,6 +57,7 @@ class QosKernel {
       this.cleanMemory()
     }
 
+    this.scheduler.wakeSleepingProcesses()
     this.scheduler.shift()
 
     if (this.scheduler.getProcessCount() <= 0) {
