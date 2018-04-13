@@ -161,7 +161,7 @@ cache.clean = function () {
   }
 
   const globalKeys = Object.keys(this.__items)
-  for (const key of globalKeys) {
+  for (const label of globalKeys) {
     if(!!this.__items[label].exp) {
       if(this.__items[label].exp < Game.time) {
         delete this.__items[label]
