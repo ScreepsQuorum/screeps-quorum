@@ -117,7 +117,7 @@ RoomPosition.prototype.getActiveLink = function () {
   }
 
   if (typeof this.__linkActive === 'undefined') {
-    this.__linkActive = link.isActive()
+    this.__linkActive = Game.rooms[this.roomName].controller.level === 8 || link.isActive()
   }
 
   return (this.__linkActive) ? link : false
