@@ -17,6 +17,7 @@ const PROGRAM_NORMALIZING_BURST = 2
 const RECURRING_BURST = 1.75
 const RECURRING_BURST_FREQUENCY = 25
 const MIN_TICKS_BETWEEN_GC = 20
+const GC_HEAP_TRIGGER = 0.85
 const GLOBAL_LAST_RESET = Game.time
 const IVM = typeof Game.cpu.getHeapStatistics === 'function'
 
@@ -56,7 +57,7 @@ class QosKernel {
     if (IVM && global.gc && (!Memory.qos.gc || Game.time - Memory.qos.gc >= MIN_TICKS_BETWEEN_GC)) {
       const heap = Game.cpu.getHeapStatistics()
       const heapPercent = heap.total_heap_size / heap.heap_size_limit
-      if (heapPercent > 0.95) {
+      if (heapPercent > GC_HEAP_TRIGGER) {
         Logger.log(`Garbage Collection Initiated`, LOG_INFO, 'kernel')
         Memory.qos.gc = Game.time
         global.gc()
@@ -231,7 +232,7 @@ class QosKernel {
     if (IVM) {
       const heap = Game.cpu.getHeapStatistics()
       const heapPercent = Math.round((heap.total_heap_size / heap.heap_size_limit) * 100)
-      Logger.log(`Heap Used: ${heapPercent} (${heap.total_heap_size} / ${heap.heap_size_limit})`, LOG_INFO, 'kernel')
+      Logger.log(`Heap Used: ${heapPercent}% (${heap.total_heap_size} / ${heap.heap_size_limit})`, LOG_INFO, 'kernel')
     }
 
     if (Game.time % 50 === 0) {
