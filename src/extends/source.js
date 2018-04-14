@@ -14,3 +14,7 @@ Source.prototype.getLink = function () {
   }
   return this.__link
 }
+
+Source.prototype.getActiveLink = function () {
+  return this.pos.getActiveLink()
+}
