@@ -88,6 +88,7 @@ class CityMine extends kernel.process {
     // Identify where the miner should sit and any container should be built
     const minerPos = source.getMiningPosition()
     const link = source.getLink()
+    link = (link.isActive()) ? link : false
 
     // Look for a container
     const containers = _.filter(minerPos.lookFor(LOOK_STRUCTURES), (a) => a.structureType === STRUCTURE_CONTAINER)
