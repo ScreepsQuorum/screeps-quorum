@@ -107,20 +107,20 @@ RoomPosition.prototype.getLink = function () {
 }
 
 RoomPosition.prototype.getActiveLink = function () {
-    const link = this.getLink()
-    if (!link) {
-        return false
-    }
+  const link = this.getLink()
+  if (!link) {
+    return false
+  }
 
-    if (this.__linkActive) {
-        return link
-    }
+  if (this.__linkActive) {
+    return link
+  }
 
-    if (typeof this.__linkActive === 'undefined') {
-        this.__linkActive = link.isActive()
-    }
+  if (typeof this.__linkActive === 'undefined') {
+    this.__linkActive = link.isActive()
+  }
 
-    return (this.__linkActive) ? link : false
+  return (this.__linkActive) ? link : false
 }
 
 RoomPosition.prototype.getMostOpenNeighbor = function (isBuildable = false, includeStructures = true) {

@@ -16,5 +16,5 @@ Source.prototype.getLink = function () {
 }
 
 Source.prototype.getActiveLink = function () {
-    return this.pos.getActiveLink()
+  return this.pos.getActiveLink()
 }
