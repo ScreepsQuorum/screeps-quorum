@@ -160,6 +160,14 @@ cache.clean = function () {
     this.__cleankey(Memory.sos.cache, label)
   }
 
+  const globalKeys = Object.keys(this.__items)
+  for (const label of globalKeys) {
+    if(!!this.__items[label].exp) {
+      if(this.__items[label].exp < Game.time) {
+        delete this.__items[label]
+      }
+    }
+  }
 }
 
 cache.__cleankey = function (object, key) {
