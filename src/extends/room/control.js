@@ -91,13 +91,11 @@ roomLevelOptions[8]['RAMPART_LEVELS'][RAMPART_GATEWAY] = 0
 roomLevelOptions[8]['RAMPART_LEVELS'][WALL_GATEWAY] = 0
 
 // Have each level inherit the settings from the previous level unless already set.
-for (let level = 0; level <= 8; level++) {
-  for (let addLevel = level - 1; addLevel > 0; addLevel--) {
-    const keys = Object.keys(roomLevelOptions[addLevel])
-    for (let key of keys) {
-      if (typeof roomLevelOptions[level][key] === 'undefined') {
-        roomLevelOptions[level][key] = roomLevelOptions[addLevel][key]
-      }
+for (let level = 2; level <= 8; level++) {
+  const keys = Object.keys(roomLevelOptions[level - 1])
+  for (let key of keys) {
+    if (typeof roomLevelOptions[level][key] === 'undefined') {
+      roomLevelOptions[level][key] = roomLevelOptions[level - 1][key]
     }
   }
 }
