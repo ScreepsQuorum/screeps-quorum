@@ -106,6 +106,23 @@ RoomPosition.prototype.getLink = function () {
   return this.__link
 }
 
+RoomPosition.prototype.getActiveLink = function () {
+    const link = this.getLink()
+    if (!link) {
+        return false
+    }
+
+    if (this.__linkActive) {
+        return link
+    }
+
+    if (typeof this.__linkActive === 'undefined') {
+        this.__linkActive = link.isActive()
+    }
+
+    return (this.__linkActive) ? link : false
+}
+
 RoomPosition.prototype.getMostOpenNeighbor = function (isBuildable = false, includeStructures = true) {
   const steppable = this.getSteppableAdjacent()
   let pos
