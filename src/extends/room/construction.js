@@ -512,48 +512,81 @@ class DefenseMap extends RoomLayout {
         if (horizontal) {
           let endpointOffset = exit === TOP ? 1 : -1
           let y = piece[0].y
-          let left = new RoomPosition(piece[0].x - 1, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[0].x - 1, y + endpointOffset, this.roomname) !== 'wall') {
-            map.set(piece[0].x - 1, y + endpointOffset, WALL_GATEWAY)
+          let left1 = new RoomPosition(piece[0].x - 1, y, this.roomname)
+          let left2 = new RoomPosition(piece[0].x - 2, y, this.roomname)
+          if (Game.map.getTerrainAt(piece[0].x - 2, y + endpointOffset, this.roomname) !== 'wall') {
+            map.set(piece[0].x - 2, y + endpointOffset, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
-          let right = new RoomPosition(piece[lastPiece].x + 1, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[lastPiece].x + 1, y + endpointOffset, this.roomname) !== 'wall') {
-            map.set(piece[lastPiece].x + 1, y + endpointOffset, WALL_GATEWAY)
+          let right1 = new RoomPosition(piece[lastPiece].x + 1, y, this.roomname)
+          let right2 = new RoomPosition(piece[lastPiece].x + 2, y, this.roomname)
+          if (Game.map.getTerrainAt(piece[lastPiece].x + 2, y + endpointOffset, this.roomname) !== 'wall') {
+            map.set(piece[lastPiece].x + 2, y + endpointOffset, WALL_GATEWAY)
           }
-          piece.unshift(left)
-          piece.push(right)
+          piece.unshift(left1)
+          piece.unshift(left2)
+          piece.push(right1)
+          piece.push(right2)
         } else {
           let endpointOffset = exit === LEFT ? 1 : -1
           let x = piece[0].x
-          let top = new RoomPosition(x, piece[0].y - 1, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[0].y - 1, this.roomname) !== 'wall') {
-            map.set(x + endpointOffset, piece[0].y - 1, WALL_GATEWAY)
+          let top1 = new RoomPosition(x, piece[0].y - 1, this.roomname)
+          let top2 = new RoomPosition(x, piece[0].y - 2, this.roomname)
+          if (Game.map.getTerrainAt(x + endpointOffset, piece[0].y - 2, this.roomname) !== 'wall') {
+            map.set(x + endpointOffset, piece[0].y - 2, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
-          let bottom = new RoomPosition(x, piece[lastPiece].y + 1, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[lastPiece].y + 1, this.roomname) !== 'wall') {
-            map.set(x + endpointOffset, piece[lastPiece].y + 1, WALL_GATEWAY)
+          let bottom1 = new RoomPosition(x, piece[lastPiece].y + 1, this.roomname)
+          let bottom2 = new RoomPosition(x, piece[lastPiece].y + 2, this.roomname)
+          if (Game.map.getTerrainAt(x + endpointOffset, piece[lastPiece].y + 2, this.roomname) !== 'wall') {
+            map.set(x + endpointOffset, piece[lastPiece].y + 2, WALL_GATEWAY)
           }
-          piece.unshift(top)
-          piece.push(bottom)
+          piece.unshift(top1)
+          piece.unshift(top2)
+          piece.push(bottom1)
+          piece.push(bottom2)
         }
 
-        let type
-        for (let position of piece) {
-          type = type !== RAMPART_GATEWAY ? RAMPART_GATEWAY : WALL_GATEWAY
-          let x
-          let y
+        let set = (position, type) => {
+          let x, x1, x2
+          let y, y1, y2
           if (horizontal) {
             x = position.x
             y = position.y + (exit === TOP ? 2 : -2)
+            x1 = x
+            y1 = y - 1
+            x2 = x
+            y2 = y + 1
           } else {
             x = position.x + (exit === LEFT ? 2 : -2)
             y = position.y
+            x1 = x - 1
+            y1 = y
+            x2 = x + 1
+            y2 = y
           }
+          // This overrides ramparts with walls if there is a wall blocking it.
+          // It doesn't account for diagonal movement, which is probably ok.
           if (Game.map.getTerrainAt(x, y, this.roomname) !== 'wall') {
-            map.set(x, y, type)
+            if (Game.map.getTerrainAt(x1, y1, this.roomname) === 'wall' ||
+                Game.map.getTerrainAt(x2, y2, this.roomname) === 'wall') {
+              map.set(x, y, WALL_GATEWAY)
+            } else {
+              map.set(x, y, type)
+            }
           }
+        }
+        // This results in a look like the following:
+        // (W = Wall, X = Exit, C = Constructed Wall, R = Rampart)
+        //
+        // WCCRCCRCRC   CRCRCRCRCRCRC   WWCRCRCRC
+        // WW       C   C           W   WW      C
+        // WWXXXXXXWW   WWXXXXXXXXXWW   WWXXXXXWW
+        let type = RAMPART_GATEWAY
+        for (let i = 0; i < piece.length / 2; i++) {
+          type = type !== RAMPART_GATEWAY ? RAMPART_GATEWAY : WALL_GATEWAY
+          set(piece[i], type)
+          set(piece[piece.length - i - 1], type)
         }
       }
     }
