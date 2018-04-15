@@ -97,8 +97,8 @@ RoomPosition.prototype.getLink = function (near = false) {
   if (!room || !room.structures[STRUCTURE_LINK]) {
     return false
   }
-    const pos = this
-    // Find the possible link(s) respecting the callers wish to get a link near the given position
+  const pos = this
+  // Find the possible link(s) respecting the callers wish to get a link near the given position
   const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= 2 && (near) ? near.isNearTo(a) : true)
   if (links.length < 1) {
     return false
