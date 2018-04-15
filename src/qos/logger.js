@@ -37,7 +37,11 @@ class Logger {
       qlib.notify.send(message, 500)
     }
 
-    if (Memory.loglevel && Memory.loglevel > severity) {
+    let loglevel = Memory.loglevel
+    if (typeof loglevel === 'object') {
+      loglevel = loglevel[group] || loglevel.default
+    }
+    if (loglevel && loglevel > severity) {
       return
     }
 
