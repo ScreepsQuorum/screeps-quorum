@@ -223,16 +223,34 @@ class QosKernel {
     const processCount = this.scheduler.getProcessCount()
     const completedCount = this.scheduler.memory.processes.completed.length
 
-    Logger.log(`Processes Run: ${completedCount}/${processCount}`, LOG_INFO, 'kernel')
-    Logger.log(`Tick Limit: ${Game.cpu.tickLimit}`, LOG_INFO, 'kernel')
-    Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
-    Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')
-    Logger.log(`Bucket: ${Game.cpu.bucket}`, LOG_INFO, 'kernel')
+    if (Memory.userConfig && Memory.userConfig.terseConsole) {
+      let message = ''
+      message += `PS: ${_.padLeft(`${completedCount}/${processCount}`, 7)}`
+      message += `, TL: ${_.padLeft(Game.cpu.tickLimit, 3)}`
+      message += `, KL: ${_.padLeft(this.getCpuLimit(), 3)}`
+      message += `, CPU: ${_.padLeft(Game.cpu.getUsed().toFixed(5), 8)}`
+      message += `, B: ${_.padLeft(Game.cpu.bucket, 5)}`
 
-    if (IVM) {
-      const heap = Game.cpu.getHeapStatistics()
-      const heapPercent = Math.round((heap.total_heap_size / heap.heap_size_limit) * 100)
-      Logger.log(`Heap Used: ${heapPercent}% (${heap.total_heap_size} / ${heap.heap_size_limit})`, LOG_INFO, 'kernel')
+      if (IVM) {
+        const heap = Game.cpu.getHeapStatistics()
+        const heapPercent = Math.round((heap.total_heap_size / heap.heap_size_limit) * 100)
+        const sizeMB = heap.total_heap_size >> 20
+        const limitMB = heap.heap_size_limit >> 20
+        message += `, H: ${_.padLeft(heapPercent, 2)}% ${_.padLeft(`(${sizeMB}/${limitMB}MB)`, 11)}`
+      }
+      Logger.log(message, LOG_INFO, 'kernel')
+    } else {
+      Logger.log(`Processes Run: ${completedCount}/${processCount}`, LOG_INFO, 'kernel')
+      Logger.log(`Tick Limit: ${Game.cpu.tickLimit}`, LOG_INFO, 'kernel')
+      Logger.log(`Kernel Limit: ${this.getCpuLimit()}`, LOG_INFO, 'kernel')
+      Logger.log(`CPU Used: ${Game.cpu.getUsed()}`, LOG_INFO, 'kernel')
+      Logger.log(`Bucket: ${Game.cpu.bucket}`, LOG_INFO, 'kernel')
+
+      if (IVM) {
+        const heap = Game.cpu.getHeapStatistics()
+        const heapPercent = Math.round((heap.total_heap_size / heap.heap_size_limit) * 100)
+        Logger.log(`Heap Used: ${heapPercent}% (${heap.total_heap_size} / ${heap.heap_size_limit})`, LOG_INFO, 'kernel')
+      }
     }
 
     if (Game.time % 50 === 0) {
