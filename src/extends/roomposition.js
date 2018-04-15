@@ -89,7 +89,7 @@ RoomPosition.prototype.isSteppable = function (includeCreeps = false, includeStr
   return true
 }
 
-RoomPosition.prototype.getLink = function () {
+RoomPosition.prototype.getLink = function (near = false) {
   if (this.__link) {
     return this.__link
   }
@@ -97,8 +97,9 @@ RoomPosition.prototype.getLink = function () {
   if (!room || !room.structures[STRUCTURE_LINK]) {
     return false
   }
-  const pos = this
-  const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= 2)
+    const pos = this
+    // Find the possible link(s) respecting the callers wish to get a link near the given position
+  const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= 2 && (near) ? near.isNearTo(a) : true)
   if (links.length < 1) {
     return false
   }
@@ -106,8 +107,8 @@ RoomPosition.prototype.getLink = function () {
   return this.__link
 }
 
-RoomPosition.prototype.getActiveLink = function () {
-  const link = this.getLink()
+RoomPosition.prototype.getActiveLink = function (near = false) {
+  const link = this.getLink(near)
   if (!link) {
     return false
   }
