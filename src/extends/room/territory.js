@@ -105,7 +105,7 @@ Room.getMineOwner = function (mine) {
   return false
 }
 
-// All scores are normalized to values between 0 and 1 before having the weight applies to them.
+// All scores are normalized to values between 0 and 1 before having the weight applied to them.
 // Weights can be set to negative values to act as a penality.
 const MINE_WEIGHTS_SOURCES = 5
 const MINE_WEIGHTS_SWAMPINESS = -1
@@ -115,7 +115,7 @@ const MINE_MAX_DISTANCE = 2
 
 Room.prototype.selectNextMine = function () {
   const existing = this.getMines()
-  // The first mine should not be more than one room away
+  // The first mine should not be more than one room away.
   const candidates = Room.getRoomsInRange(this.name, existing.length <= 0 ? 1 : 2)
   let candidate
   let currentScore = -Infinity
