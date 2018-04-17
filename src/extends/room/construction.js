@@ -554,23 +554,26 @@ class DefenseMap extends RoomLayout {
             x = position.x
             y = position.y + (exit === TOP ? 2 : -2)
             x1 = x
-            y1 = y - 1
+            y1 = y + (exit === TOP ? -1 : 1)
             x2 = x
-            y2 = y + 1
+            y2 = y + (exit === TOP ? 1 : -1)
           } else {
             x = position.x + (exit === LEFT ? 2 : -2)
             y = position.y
-            x1 = x - 1
+            x1 = x + (exit === LEFT ? -1 : 1)
             y1 = y
-            x2 = x + 1
+            x2 = x + (exit === LEFT ? 1 : -1)
             y2 = y
           }
           // This overrides ramparts with walls if there is a wall blocking it.
           // It doesn't account for diagonal movement, which is probably ok.
           if (Game.map.getTerrainAt(x, y, this.roomname) !== 'wall') {
-            if (Game.map.getTerrainAt(x1, y1, this.roomname) === 'wall' ||
-                Game.map.getTerrainAt(x2, y2, this.roomname) === 'wall') {
+            const outer = Game.map.getTerrainAt(x1, y1, this.roomname) === 'wall'
+            const inner = Game.map.getTerrainAt(x2, y2, this.roomname) === 'wall'
+            if (outer) {
               map.set(x, y, WALL_GATEWAY)
+            } else if (inner && !outer) {
+              map.set(x, y, RAMPART_GATEWAY)
             } else {
               map.set(x, y, type)
             }
