@@ -2,6 +2,9 @@
 
 /**
  * Mine sources in local room, placing energy in storage.
+ *
+ * data.room - The name of the claimed room which is doing the mining.
+ * data.mine - The name of the remote room being mined, or undefined if === data.room.
  */
 
 class CityMine extends kernel.process {
