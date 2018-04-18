@@ -202,4 +202,5 @@ Room.prototype.getNextReaction = function () {
       }
     }
   }
+  return false
 }

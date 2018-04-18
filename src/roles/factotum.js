@@ -111,7 +111,7 @@ class Factotum extends MetaRole {
   fillFeeders (creep) {
     const reaction = creep.room.getActiveReaction()
     const feeders = creep.room.getFeederLabs()
-    if (!feeders || feeders.length < 2) {
+    if (!reaction || !feeders || feeders.length < 2) {
       delete creep.memory.labs
       delete creep.memory.filling
       return
