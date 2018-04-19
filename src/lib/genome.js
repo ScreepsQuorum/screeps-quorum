@@ -1,3 +1,4 @@
+'use strict'
 
 /**
  * The Genome class allows for infinite but replicatable variations on bot behavior.

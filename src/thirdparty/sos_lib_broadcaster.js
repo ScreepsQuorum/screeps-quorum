@@ -1,3 +1,4 @@
+'use strict'
 const MAX_DATA_EMBED = 2000
 const SEGMENT_PREFIX = '__bc_'
 

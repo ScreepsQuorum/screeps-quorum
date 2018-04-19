@@ -1,3 +1,4 @@
+'use strict'
 /**
  * Creep Runner- it takes responsibility for a single creep
  */

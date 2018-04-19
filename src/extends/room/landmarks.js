@@ -1,3 +1,4 @@
+'use strict'
 
 Room.prototype.getSuicideBooth = function () {
   // Make sure there are spawns in the room

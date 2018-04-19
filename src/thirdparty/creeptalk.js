@@ -1,3 +1,4 @@
+'use strict'
 
 var CreepTalk = function (opts) {
   this.registerCreepFunctions(opts)

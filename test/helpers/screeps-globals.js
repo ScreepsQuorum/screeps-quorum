@@ -1,3 +1,4 @@
+'use strict'
 global.Room = global.Room || function () {}
 global.RoomPosition = global.RoomPosition || function () {}
 global.RoomObject = global.RoomObject || function () {}

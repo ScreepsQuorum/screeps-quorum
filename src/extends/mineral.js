@@ -1,3 +1,4 @@
+'use strict'
 
 // Assumes a desired ratio of two hydrogen per one of every other base mineral.
 Mineral.getEmpireRatio = function () {

@@ -1,3 +1,4 @@
+'use strict'
 /**
     @param {PathFinder.CostMatrix} foregroundPixels - object pixels. modified for output
     @param {number} oob - value used for pixels outside image bounds

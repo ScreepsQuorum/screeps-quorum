@@ -1,3 +1,4 @@
+'use strict'
 
 let target = {} // eslint-disable-line no-unused-vars
 

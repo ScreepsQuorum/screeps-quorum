@@ -1,3 +1,4 @@
+'use strict'
 const colors = {
   gray: '#555555',
   light: '#AAAAAA',

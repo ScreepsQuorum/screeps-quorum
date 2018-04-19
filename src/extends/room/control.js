@@ -1,3 +1,4 @@
+'use strict'
 
 // Each key corresponds to the current practical room level and contains a separate objects containing settings enabled
 // at that level. Each higher level inherits the settings from the level below it.
