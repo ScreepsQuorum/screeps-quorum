@@ -1,3 +1,4 @@
+'use strict'
 
 // Send notification when room is claimed
 if (!Creep.prototype.__claimOriginal) {

@@ -1,4 +1,4 @@
-
+'use strict'
 
 var Monitor = function () {
   if(!Memory.sos) {

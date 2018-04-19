@@ -1,3 +1,4 @@
+'use strict'
 
 if(!global.NODEID) {
   global.NODEID = sos.lib.uuid.vs()
