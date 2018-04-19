@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "target": "es6"
+    "target": "es6",
+    "newLine": "lf",
+    "types": ["lodash", "node", "screeps"],
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmitOnError": true
   },
   "include": [
     "src/**/*.js"
