@@ -23,6 +23,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/lodash": "^3.10.1",
+    "@types/node": "^9.6.5",
+    "@types/screeps": "^2.2.1",
     "ava": "^0.22.0",
     "eslint": "^4.19.1",
     "git-rev-sync": "^1.9.1",
