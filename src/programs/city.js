@@ -90,11 +90,15 @@ class City extends kernel.process {
     }
 
     // If the room isn't planned launch the room layout program, otherwise launch construction program
-    if (!this.room.getLayout().isPlanned()) {
+    const layout = this.room.getLayout()
+    if (!layout.isPlanned()) {
       this.launchChildProcess('layout', 'city_layout', {
         'room': this.data.room
       })
     } else {
+      if (Memory.userConfig && Memory.userConfig.visualizeLayout) {
+        layout.visualize()
+      }
       this.launchChildProcess('construct', 'city_construct', {
         'room': this.data.room
       })

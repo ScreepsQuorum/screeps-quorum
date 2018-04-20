@@ -39,6 +39,9 @@ class CityFortify extends kernel.process {
       this.defenses.save()
       return
     }
+    if (Memory.userConfig && Memory.userConfig.visualizeDefenses) {
+      this.defenses.visualize()
+    }
 
     if (!this.rampartLevels) {
       return
