@@ -85,19 +85,19 @@ Room.prototype.constructNextMissingStructure = function () {
       // first mine link
       if (!sources[0].getLink()) {
         const pos = sources[0].getLinkPosition()
-        return this.createConstructionSite(pos, STRUCTURE_LINK)
+        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
       }
 
       // controller link
       if (!this.controller.getLink()) {
         const pos = this.controller.getLinkPosition()
-        return this.createConstructionSite(pos, STRUCTURE_LINK)
+        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
       }
 
       // second mine link
       if (sources[1] && !sources[1].getLink()) {
         const pos = sources[1].getLinkPosition()
-        return this.createConstructionSite(pos, STRUCTURE_LINK)
+        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
       }
     }
 
@@ -111,7 +111,8 @@ Room.prototype.constructNextMissingStructure = function () {
     if (minerals.length <= 0) {
       return false
     }
-    return this.createConstructionSite(minerals[0].pos, STRUCTURE_EXTRACTOR)
+    const pos = minerals[0].pos
+    return [this.createConstructionSite(pos, STRUCTURE_EXTRACTOR), structureType, pos]
   }
 
   // Get room layout, if it exists, and use that to get structure positions.
@@ -145,7 +146,8 @@ Room.prototype.constructNextMissingStructure = function () {
       return a.getManhattanDistance(storagePosition) - b.getManhattanDistance(storagePosition)
     })
   }
-  return this.createConstructionSite(structurePositions[0], structureType)
+  const pos = structurePositions[0]
+  return [this.createConstructionSite(pos, structureType), structureType, pos]
 }
 
 Room.prototype.getNextMissingStructureType = function () {
