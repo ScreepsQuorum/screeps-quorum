@@ -7,6 +7,7 @@ global.LOG_INFO = 2
 global.LOG_DEBUG = 1
 global.LOG_TRACE = 0
 
+const NOTIFY_RATELIMIT = 1500
 const ERROR_COLORS = {
   '5': '#ff0066',
   '4': '#e65c00',
@@ -34,7 +35,7 @@ class Logger {
     }
 
     if (severity >= LOG_ERROR) {
-      qlib.notify.send(message, 500)
+      qlib.notify.send(message, NOTIFY_RATELIMIT)
     }
 
     let loglevel = Memory.loglevel
