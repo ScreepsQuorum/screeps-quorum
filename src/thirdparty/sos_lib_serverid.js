@@ -1,3 +1,4 @@
+'use strict'
 
 function getId () {
   if(!Memory.__sos_serverid) {

@@ -1,3 +1,4 @@
+'use strict'
 import test from 'ava'
 
 import '../../helpers/screeps-globals'

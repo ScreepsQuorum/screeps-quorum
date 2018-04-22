@@ -2,12 +2,15 @@
 
 let fs = require('fs')
 let gulp = require('gulp')
+let ts = require('gulp-typescript')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
 let clean = require('gulp-clean')
 let minimist = require('minimist')
 let git = require('git-rev-sync')
+
+let tsProject = ts.createProject('tsconfig.json')
 
 let args = minimist(process.argv.slice(2))
 let commitdate = git.date()
@@ -16,8 +19,14 @@ gulp.task('clean', () => {
   return gulp.src('dist/', { read: false }).pipe(clean())
 })
 
-gulp.task('copy', ['clean'], () => {
-  return gulp.src('src/**/*.js').pipe(rename((path) => {
+function copy (ts) {
+  let src
+  if (ts) {
+    src = tsProject.src().pipe(tsProject()).js
+  } else {
+    src = gulp.src('src/**/*.js')
+  }
+  return src.pipe(rename((path) => {
     let parts = path.dirname.match(/[^/\\]+/g)
     let name = ''
     for (let i in parts) {
@@ -36,9 +45,17 @@ gulp.task('copy', ['clean'], () => {
     }
     return contents
   })).pipe(gulp.dest('dist/'))
+}
+
+gulp.task('copy', ['clean'], () => {
+  return copy(false)
 })
 
-gulp.task('deploy', ['copy'], () => {
+gulp.task('copyts', ['clean'], () => {
+  return copy(true)
+})
+
+function deploy () {
   let config = require('./.screeps.json')
   let opts = config[args.server || 'main']
   let options = {}
@@ -72,6 +89,14 @@ gulp.task('deploy', ['copy'], () => {
   options.port = opts.port || 443
 
   return gulp.src('dist/*.js').pipe(screeps(options))
+}
+
+gulp.task('deploy', ['copy'], () => {
+  return deploy()
+})
+
+gulp.task('deployts', ['copyts'], () => {
+  return deploy()
 })
 
 gulp.task('ci-config', ['ci-version'], (cb) => {

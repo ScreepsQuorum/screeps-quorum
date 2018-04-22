@@ -1,3 +1,4 @@
+'use strict'
 const MAX_QUEUE_SIZE = 30
 
 var Notify = function (message, limit=false, groups=false) {

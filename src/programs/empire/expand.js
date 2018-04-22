@@ -1,7 +1,13 @@
 'use strict'
 
 /**
- * Scans all currently visible rooms and records useful information about them.
+ * This program handles expanding into new rooms, specifically:
+ *
+ * - Identifies potential rooms to expand to.
+ * - Attempts to claim a room and if it fails, falls back to the next ideal room.
+ * - Builds up a new room to be self sufficient.
+ * - Rebuilds existing rooms which have gotten knocked down.
+ * - Figures out which rooms in the empire are most able to help and utilizes them.
  */
 
 const VERSION = 1.1

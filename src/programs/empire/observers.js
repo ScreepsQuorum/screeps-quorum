@@ -1,3 +1,4 @@
+'use strict'
 
 class EmpireObservers extends kernel.process {
   constructor (...args) {

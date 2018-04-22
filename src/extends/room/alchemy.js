@@ -14,7 +14,7 @@ Room.prototype.getFeederLabs = function () {
     return this.__feeders
   }
   const labs = this.structures[STRUCTURE_LAB]
-  if (labs.length < 3) {
+  if (!labs || labs.length < 3) {
     return false
   }
 
@@ -202,4 +202,5 @@ Room.prototype.getNextReaction = function () {
       }
     }
   }
+  return false
 }

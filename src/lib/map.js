@@ -1,3 +1,4 @@
+'use strict'
 
 module.exports.findRoute = function (fromRoom, toRoom, opts = {}) {
   if (!opts.routeCallback) {

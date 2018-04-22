@@ -1,3 +1,4 @@
+'use strict'
 /* Make the `Notify` object available globally */
 const ScreepsNotify = require('thirdparty_notify')
 

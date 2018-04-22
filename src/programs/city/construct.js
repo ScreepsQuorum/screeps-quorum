@@ -48,9 +48,9 @@ class CityConstruct extends kernel.process {
       }
       let result = this.room.constructNextMissingStructure()
       this.data.lastscan = Game.time
-      if (Number.isInteger(result) && result < 0) {
-        let type = this.room.getNextMissingStructureType()
-        Logger.log(`Unable to build structure (${type}) in ${this.data.room}: ${result}`, LOG_ERROR)
+      if (result !== false && result[0] < 0) {
+        // result is [code, type, position]
+        Logger.log(`Unable to build structure (${result[1]}) in ${this.data.room} at ${result[2]}: ${result[0]}`, LOG_ERROR)
       }
     }
   }

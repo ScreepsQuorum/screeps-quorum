@@ -1,3 +1,4 @@
+'use strict'
 
 const alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTYVWXYZ'
 const numbers = '0123456789'

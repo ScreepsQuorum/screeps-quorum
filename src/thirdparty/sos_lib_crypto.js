@@ -1,3 +1,4 @@
+'use strict'
 /*
 
 Copyright (c) 2017 Robert Hafner <tedivm@tedivm.com>

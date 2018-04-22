@@ -8,6 +8,9 @@
   ],
   "homepage": "http://quorum.tedivm.com",
   "license": "MIT",
+  "files": [
+    "dist/*"
+  ],
   "main": "dist/main.js",
   "repository": "ScreepsQuorum/screeps-quorum",
   "scripts": {
@@ -20,19 +23,23 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/lodash": "^3.10.1",
+    "@types/node": "^9.6.5",
+    "@types/screeps": "^2.2.1",
     "ava": "^0.22.0",
+    "eslint": "^4.19.1",
     "git-rev-sync": "^1.9.1",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-screeps": "^1.0.6",
+    "gulp-typescript": "^4.0.2",
     "minimist": "^1.2.0",
     "standard": "^10.0.3",
-    "typescript": "^2.8.1",
-    "eslint": "^4.19.1",
+    "tap-xunit": "^1.7.0",
     "tslint": "^5.9.1",
-    "tap-xunit": "^1.7.0"
+    "typescript": "^2.8.1"
   },
   "screeps_bot": true,
   "standard": {

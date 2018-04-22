@@ -1,3 +1,4 @@
+'use strict'
 
 Creep.prototype.recharge = function () {
   // Check to see if creep needs to recharge
