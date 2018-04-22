@@ -85,19 +85,25 @@ Room.prototype.constructNextMissingStructure = function () {
       // first mine link
       if (!sources[0].getLink()) {
         const pos = sources[0].getLinkPosition()
-        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        if (pos) {
+          return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        }
       }
 
       // controller link
       if (!this.controller.getLink()) {
         const pos = this.controller.getLinkPosition()
-        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        if (pos) {
+          return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        }
       }
 
       // second mine link
       if (sources[1] && !sources[1].getLink()) {
         const pos = sources[1].getLinkPosition()
-        return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        if (pos) {
+          return [this.createConstructionSite(pos, STRUCTURE_LINK), structureType, pos]
+        }
       }
     }
 
