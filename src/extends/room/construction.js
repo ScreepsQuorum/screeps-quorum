@@ -115,6 +115,7 @@ Room.prototype.constructNextMissingStructure = function () {
       return false
     }
     const pos = minerals[0].pos
+    Logger.log(`extractor: ${minerals[0]} at ${pos}`, LOG_TRACE, 'construction')
     return [this.createConstructionSite(pos, STRUCTURE_EXTRACTOR), structureType, pos]
   }
 
@@ -150,6 +151,7 @@ Room.prototype.constructNextMissingStructure = function () {
     })
   }
   const pos = structurePositions[0]
+  Logger.log(`generic structure: ${structureType} at ${pos}`, LOG_TRACE, 'construction')
   return [this.createConstructionSite(pos, structureType), structureType, pos]
 }
 
