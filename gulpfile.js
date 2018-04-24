@@ -2,15 +2,12 @@
 
 let fs = require('fs')
 let gulp = require('gulp')
-let ts = require('gulp-typescript')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
 let clean = require('gulp-clean')
 let minimist = require('minimist')
 let git = require('git-rev-sync')
-
-let tsProject = ts.createProject('tsconfig.json')
 
 let args = minimist(process.argv.slice(2))
 let commitdate = git.date()
@@ -19,13 +16,9 @@ gulp.task('clean', () => {
   return gulp.src('dist/', { read: false }).pipe(clean())
 })
 
-function copy (ts) {
+gulp.task('copy', ['clean'], () => {
   let src
-  if (ts) {
-    src = tsProject.src().pipe(tsProject()).js
-  } else {
-    src = gulp.src('src/**/*.js')
-  }
+  src = gulp.src('src/**/*.js')
   return src.pipe(rename((path) => {
     let parts = path.dirname.match(/[^/\\]+/g)
     let name = ''
@@ -45,14 +38,6 @@ function copy (ts) {
     }
     return contents
   })).pipe(gulp.dest('dist/'))
-}
-
-gulp.task('copy', ['clean'], () => {
-  return copy(false)
-})
-
-gulp.task('copyts', ['clean'], () => {
-  return copy(true)
 })
 
 function deploy () {
@@ -95,10 +80,6 @@ gulp.task('deploy', ['copy'], () => {
   return deploy()
 })
 
-gulp.task('deployts', ['copyts'], () => {
-  return deploy()
-})
-
 gulp.task('ci-config', ['ci-version'], (cb) => {
   fs.writeFile('.screeps.json', JSON.stringify({
     main: {
@@ -111,6 +92,7 @@ gulp.task('ci-config', ['ci-version'], (cb) => {
     }
   }), cb)
 })
+
 gulp.task('ci-version', (cb) => {
   let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
   let seconds = (commitdate.getHours() * 3600) + (commitdate.getMinutes() * 60) + commitdate.getSeconds()
@@ -120,4 +102,5 @@ gulp.task('ci-version', (cb) => {
   pkg.version = `${year}.${month}.${day}-${seconds}`
   fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
 })
+
 gulp.task('default', ['clean', 'copy', 'deploy'])
