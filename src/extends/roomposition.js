@@ -89,7 +89,7 @@ RoomPosition.prototype.isSteppable = function (includeCreeps = false, includeStr
   return true
 }
 
-RoomPosition.prototype.getLink = function () {
+RoomPosition.prototype.getLink = function (range = 2) {
   if (this.__link) {
     return this.__link
   }
@@ -98,7 +98,7 @@ RoomPosition.prototype.getLink = function () {
     return false
   }
   const pos = this
-  const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= 2)
+  const links = _.filter(room.structures[STRUCTURE_LINK], a => pos.getRangeTo(a) <= range)
   if (links.length < 1) {
     return false
   }
