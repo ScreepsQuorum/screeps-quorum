@@ -120,10 +120,16 @@ class QosKernel {
         }
         this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
       } catch (err) {
-        let message = 'program error occurred\n'
-        message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
-        message += !!err && !!err.stack ? err.stack : err.toString()
-        Logger.log(message, LOG_ERROR)
+        const errorText = !!err && !!err.stack ? err.stack : err.toString()
+        if (errorText.startsWith('RangeError: Array buffer allocation failed')) {
+          let message = 'RangeError: Array buffer allocation failed'
+          Logger.log(message, LOG_ERROR, 'ivm')
+        } else {
+          let message = 'program error occurred\n'
+          message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
+          message += errorText
+          Logger.log(message, LOG_ERROR)
+        }
       }
       Logger.defaultLogGroup = 'default'
     }
