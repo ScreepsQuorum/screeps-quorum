@@ -28,6 +28,11 @@ class Logger {
       group = this.defaultLogGroup
     }
 
+    if (message.startsWith('RangeError: Array buffer allocation failed')) {
+      group = 'ivm'
+      message = 'RangeError: Array buffer allocation failed'
+    }
+
     if (group !== 'default') {
       message = `[${Game.shard.name}] ${group}: ${message}`
     } else {
