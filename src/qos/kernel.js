@@ -121,7 +121,7 @@ class QosKernel {
         this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
       } catch (err) {
         const errorText = !!err && !!err.stack ? err.stack : err.toString()
-        if (errorText.includes('RangeError: Array buffer allocation failed')) {
+        if (errorText.startsWith('RangeError: Array buffer allocation failed')) {
           let message = 'RangeError: Array buffer allocation failed'
           Logger.log(message, LOG_ERROR, 'ivm')
         } else {

@@ -28,7 +28,7 @@ class Logger {
       group = this.defaultLogGroup
     }
 
-    if (message typeof 'string' && message.includes('RangeError: Array buffer allocation failed')) {
+    if (message.startsWith('RangeError: Array buffer allocation failed')) {
       group = 'ivm'
       message = 'RangeError: Array buffer allocation failed'
     }
