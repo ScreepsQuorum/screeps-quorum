@@ -25,14 +25,13 @@
   "devDependencies": {
     "ava": "^0.22.0",
     "git-rev-sync": "^1.9.1",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
+    "gulp": "^4.0.0",
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^1.2.2",
     "gulp-screeps": "^1.0.6",
     "minimist": "^1.2.0",
     "standard": "^10.0.3",
-    "tap-xunit": "^1.7.0"
+    "tap-xunit": "^2.3.0"
   },
   "screeps_bot": true,
   "standard": {
