@@ -43,6 +43,7 @@
       "Empire",
       "kernel",
       "Logger",
+      "QosStats",
       "PathCache",
       "AGGRESSION_SCORES",
       "AGGRESSION_ATTACK",
