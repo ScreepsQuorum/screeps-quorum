@@ -509,7 +509,7 @@ class DefenseMap extends RoomLayout {
     // plan walls around each exit, hugging them directly.
     // This *has* to be done after edge calculatons
     const exits = this.roomname === 'sim' ? ['1', '3', '5', '7']
-                                          : Object.keys(Game.map.describeExits(this.roomname))
+      : Object.keys(Game.map.describeExits(this.roomname))
     for (let exit of exits) {
       exit = parseInt(exit)
       const pieces = this._getExitPieces(exit)
