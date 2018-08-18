@@ -19,7 +19,7 @@ const RECURRING_BURST_FREQUENCY = 25
 const MIN_TICKS_BETWEEN_GC = 20
 const GC_HEAP_TRIGGER = 0.85
 const GLOBAL_LAST_RESET = Game.time
-const IVM = typeof Game.cpu.getHeapStatistics === 'function'
+const IVM = typeof Game.cpu.getHeapStatistics === 'function' && Game.cpu.getHeapStatistics()
 
 class QosKernel {
   constructor () {
