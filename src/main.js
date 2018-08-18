@@ -14,6 +14,10 @@ require('constants')
 const QosLogger = require('qos_logger')
 global.Logger = new QosLogger()
 
+/* Enable Stats */
+const QosStats = require('qos_stats')
+global.QosStats = new QosStats()
+
 /* Add "sos library" - https://github.com/ScreepsOS/sos-library */
 global.SOS_LIB_PREFIX = 'thirdparty_'
 global.sos_lib = require('thirdparty_sos_lib')

@@ -229,6 +229,17 @@ class QosKernel {
     const processCount = this.scheduler.getProcessCount()
     const completedCount = this.scheduler.memory.processes.completed.length
 
+    QosStats.gameStat('processes_completed', completedCount)
+    QosStats.gameStat('processes_count', processCount)
+    QosStats.gameStat('tick_limit', Game.cpu.tickLimit)
+    QosStats.gameStat('cpu_used', Game.cpu.getUsed())
+    QosStats.gameStat('bucket', Game.cpu.bucket)
+    if (IVM) {
+      const heap = Game.cpu.getHeapStatistics()
+      QosStats.gameStat('total_heap_size', heap.total_heap_size)
+      QosStats.gameStat('heap_size_limit', heap.heap_size_limit)
+    }
+
     if (Memory.userConfig && Memory.userConfig.terseConsole) {
       let message = ''
       message += `PS: ${_.padLeft(`${completedCount}/${processCount}`, 7)}`
