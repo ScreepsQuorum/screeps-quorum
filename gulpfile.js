@@ -2,10 +2,10 @@
 
 let fs = require('fs')
 let gulp = require('gulp')
+let del = require('del')
 let screeps = require('gulp-screeps')
 let rename = require('gulp-rename')
 let insert = require('gulp-insert')
-let clean = require('gulp-clean')
 let minimist = require('minimist')
 let git = require('git-rev-sync')
 
@@ -13,10 +13,9 @@ let args = minimist(process.argv.slice(2))
 let commitdate = git.date()
 
 gulp.task('clean', () => {
-  return gulp.src('dist/', { read: false }).pipe(clean())
+  return del(['dist/'])
 })
-
-gulp.task('copy', ['clean'], () => {
+gulp.task('copy', gulp.series('clean', () => {
   let src
   src = gulp.src('src/**/*.js')
   return src.pipe(rename((path) => {
@@ -38,7 +37,7 @@ gulp.task('copy', ['clean'], () => {
     }
     return contents
   })).pipe(gulp.dest('dist/'))
-})
+}))
 
 function deploy () {
   let config = require('./.screeps.json')
@@ -76,22 +75,9 @@ function deploy () {
   return gulp.src('dist/*.js').pipe(screeps(options))
 }
 
-gulp.task('deploy', ['copy'], () => {
+gulp.task('deploy', gulp.series('copy', () => {
   return deploy()
-})
-
-gulp.task('ci-config', ['ci-version'], (cb) => {
-  fs.writeFile('.screeps.json', JSON.stringify({
-    main: {
-      ptr: !!process.env.SCREEPS_PTR,
-      branch: process.env.SCREEPS_BRANCH,
-      token: process.env.SCREEPS_TOKEN,
-      host: process.env.SCREEPS_HOST,
-      ssl: !!process.env.SCREEPS_SSL,
-      port: process.env.SCREEPS_PORT
-    }
-  }), cb)
-})
+}))
 
 gulp.task('ci-version', (cb) => {
   let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
@@ -103,4 +89,17 @@ gulp.task('ci-version', (cb) => {
   fs.writeFile('package.json', JSON.stringify(pkg, null, 2), cb)
 })
 
-gulp.task('default', ['clean', 'copy', 'deploy'])
+gulp.task('ci-config', gulp.series('ci-version', (cb) => {
+  fs.writeFile('.screeps.json', JSON.stringify({
+    main: {
+      ptr: !!process.env.SCREEPS_PTR,
+      branch: process.env.SCREEPS_BRANCH,
+      token: process.env.SCREEPS_TOKEN,
+      host: process.env.SCREEPS_HOST,
+      ssl: !!process.env.SCREEPS_SSL,
+      port: process.env.SCREEPS_PORT
+    }
+  }), cb)
+}))
+
+gulp.task('default', gulp.series('clean', 'copy', 'deploy'))
