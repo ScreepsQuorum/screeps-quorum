@@ -10,7 +10,7 @@ Source.prototype.getLinkPosition = function () {
 
 Source.prototype.getLink = function () {
   if (!this.__link) {
-    this.__link = this.pos.getLink()
+    this.__link = this.getMiningPosition().getLink(1)
   }
   return this.__link
 }

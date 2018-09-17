@@ -19,7 +19,7 @@ const RECURRING_BURST_FREQUENCY = 25
 const MIN_TICKS_BETWEEN_GC = 20
 const GC_HEAP_TRIGGER = 0.85
 const GLOBAL_LAST_RESET = Game.time
-const IVM = typeof Game.cpu.getHeapStatistics === 'function'
+const IVM = typeof Game.cpu.getHeapStatistics === 'function' && Game.cpu.getHeapStatistics()
 
 class QosKernel {
   constructor () {
@@ -120,10 +120,16 @@ class QosKernel {
         }
         this.performance.addProgramStats(performanceName, Game.cpu.getUsed() - startCpu)
       } catch (err) {
-        let message = 'program error occurred\n'
-        message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
-        message += !!err && !!err.stack ? err.stack : err.toString()
-        Logger.log(message, LOG_ERROR)
+        const errorText = !!err && !!err.stack ? err.stack : err.toString()
+        if (errorText.includes('RangeError: Array buffer allocation failed')) {
+          let message = 'RangeError: Array buffer allocation failed'
+          Logger.log(message, LOG_ERROR, 'ivm')
+        } else {
+          let message = 'program error occurred\n'
+          message += `process ${runningProcess.pid}: ${runningProcess.name}\n`
+          message += errorText
+          Logger.log(message, LOG_ERROR)
+        }
       }
       Logger.defaultLogGroup = 'default'
     }
