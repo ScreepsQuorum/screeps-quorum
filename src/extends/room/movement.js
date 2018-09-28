@@ -132,17 +132,19 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
 
   // Penalize exit squares to prevent accidental room changes
   if (!opts.ignoreExits) {
+    const TERRAIN_MASK_PLAIN = 0 // Room.Terrain returns integers
+    const terrain = Game.map.getRoomTerrain(roomname)
     for (let n = 0; n <= 49; n++) {
-      if (Game.map.getTerrainAt(0, n) === 'plain') {
+      if (terrain.get(0, n) === TERRAIN_MASK_PLAIN) {
         cm.set(0, n, 15)
       }
-      if (Game.map.getTerrainAt(49, n) === 'plain') {
+      if (terrain.get(49, n) === TERRAIN_MASK_PLAIN) {
         cm.set(49, n, 15)
       }
-      if (Game.map.getTerrainAt(n, 0) === 'plain') {
+      if (terrain.get(n, 0) === TERRAIN_MASK_PLAIN) {
         cm.set(n, 0, 15)
       }
-      if (Game.map.getTerrainAt(n, 49) === 'plain') {
+      if (terrain.get(n, 49) === TERRAIN_MASK_PLAIN) {
         cm.set(n, 49, 15)
       }
     }

@@ -353,22 +353,24 @@ function getDefensibilityScore (room) {
     }
   }
 
+  const TERRAIN_MASK_PLAIN = 0 // Room.Terrain returns integer
+  const terrain = Game.mapp.getRoomTerrain(room)
   for (let i = 1; i < 49; i++) {
     // Top
     if (exits['1']) {
-      score += Game.map.getTerrainAt(i, 0, room) === 'plain' ? 1 : 0
+      score += terrain.get(i, 0) === TERRAIN_MASK_PLAIN ? 1 : 0
     }
     // Right
     if (exits['3']) {
-      score += Game.map.getTerrainAt(49, i, room) === 'plain' ? 1 : 0
+      score += terrain.get(49, i) === TERRAIN_MASK_PLAIN ? 1 : 0
     }
     // Bottom
     if (exits['5']) {
-      score += Game.map.getTerrainAt(i, 49, room) === 'plain' ? 1 : 0
+      score += terrain.get(i, 49) === TERRAIN_MASK_PLAIN ? 1 : 0
     }
     // Left
     if (exits['7']) {
-      score += Game.map.getTerrainAt(0, i, room) === 'plain' ? 1 : 0
+      score += terrain.get(0, i) === TERRAIN_MASK_PLAIN ? 1 : 0
     }
   }
   if (score === totalEdge) {
