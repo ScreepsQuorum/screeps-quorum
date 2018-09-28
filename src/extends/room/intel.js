@@ -128,7 +128,6 @@ Room.prototype.saveIntel = function (refresh = false) {
 
   // Record terrain details for scoring algorithms
   if (!roominfo[INTEL_SWAMPINESS] || !roominfo[INTEL_WALKABILITY]) {
-    const TERRAIN_MASK_PLAIN = 0
     let walkable = 0
     let swamps = 0
     let x
@@ -136,7 +135,7 @@ Room.prototype.saveIntel = function (refresh = false) {
     for (x = 0; x < 50; x++) {
       for (y = 0; y < 50; y++) {
         const terrain = Game.map.getRoomTerrain(this.name).get(x, y)
-        if (terrain === TERRAIN_MASK_SWAMP || terrain === TERRAIN_MASK_PLAIN) {
+        if ((terrain !== TERRAIN_MASK_WALL) && (terrain !== TERRAIN_MASK_LAVA)) {
           walkable++
         }
         if (terrain === TERRAIN_MASK_SWAMP) {
