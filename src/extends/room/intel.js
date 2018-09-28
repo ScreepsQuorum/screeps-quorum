@@ -135,7 +135,7 @@ Room.prototype.saveIntel = function (refresh = false) {
     for (x = 0; x < 50; x++) {
       for (y = 0; y < 50; y++) {
         const terrain = Game.map.getRoomTerrain(this.name).get(x, y)
-        if ((terrain !== TERRAIN_MASK_WALL) && (terrain !== TERRAIN_MASK_LAVA)) {
+        if (!(terrain & TERRAIN_MASK_WALL)) {
           walkable++
         }
         if (terrain === TERRAIN_MASK_SWAMP) {
