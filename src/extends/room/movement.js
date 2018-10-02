@@ -134,16 +134,16 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   if (!opts.ignoreExits) {
     const terrain = Game.map.getRoomTerrain(roomname)
     for (let n = 0; n <= 49; n++) {
-      if (!(terrain.get(0, n) & TERRAIN_MASK_WALL)) {
+      if (terrain.isWalkable(0, n)) {
         cm.set(0, n, 15)
       }
-      if (!(terrain.get(49, n) & TERRAIN_MASK_WALL)) {
+      if (terrain.isWalkable(49, n)) {
         cm.set(49, n, 15)
       }
-      if (!(terrain.get(n, 0) & TERRAIN_MASK_WALL)) {
+      if (terrain.isWalkable(n, 0)) {
         cm.set(n, 0, 15)
       }
-      if (!(terrain.get(n, 49) & TERRAIN_MASK_WALL)) {
+      if (terrain.isWalkable(n, 49)) {
         cm.set(n, 49, 15)
       }
     }

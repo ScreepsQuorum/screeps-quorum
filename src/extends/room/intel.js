@@ -17,6 +17,14 @@ global.INTEL_WALKABILITY = 'w'
 global.INTEL_SWAMPINESS = 'a'
 global.INTEL_BLOCKED_EXITS = 'b'
 
+Room.Terrain.prototype.isWalkable = function (x, y) {
+  return !(this.get(x, y) & TERRAIN_MASK_WALL)
+}
+
+Room.Terrain.prototype.isSwamp = function (x, y) {
+  return (this.get(x, y) === TERRAIN_MASK_SWAMP)
+}
+
 Room.prototype.saveIntel = function (refresh = false) {
   if (!Memory.intel) {
     Memory.intel = {
@@ -132,13 +140,13 @@ Room.prototype.saveIntel = function (refresh = false) {
     let swamps = 0
     let x
     let y
+    const terrain = Game.map.getRoomTerrain(this.name)
     for (x = 0; x < 50; x++) {
       for (y = 0; y < 50; y++) {
-        const terrain = Game.map.getRoomTerrain(this.name).get(x, y)
-        if (!(terrain & TERRAIN_MASK_WALL)) {
+        if (terrain.isWalkable(x, y)) {
           walkable++
         }
-        if (terrain === TERRAIN_MASK_SWAMP) {
+        if (terrain.isSwamp(x, y)) {
           swamps++
         }
       }

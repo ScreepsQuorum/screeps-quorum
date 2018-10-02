@@ -357,19 +357,19 @@ function getDefensibilityScore (room) {
   for (let i = 1; i < 49; i++) {
     // Top
     if (exits['1']) {
-      score += !(terrain.get(i, 0) & TERRAIN_MASK_WALL) ? 1 : 0
+      score += terrain.isWalkable(i, 0) ? 1 : 0
     }
     // Right
     if (exits['3']) {
-      score += !(terrain.get(49, i) & TERRAIN_MASK_WALL) ? 1 : 0
+      score += terrain.isWalkable(49, i) ? 1 : 0
     }
     // Bottom
     if (exits['5']) {
-      score += !(terrain.get(i, 49) & TERRAIN_MASK_WALL) ? 1 : 0
+      score += terrain.isWalkable(i, 49) ? 1 : 0
     }
     // Left
     if (exits['7']) {
-      score += !(terrain.get(0, i) & TERRAIN_MASK_WALL) ? 1 : 0
+      score += terrain.isWalkable(0, i) ? 1 : 0
     }
   }
   if (score === totalEdge) {
