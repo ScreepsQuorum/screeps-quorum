@@ -53,10 +53,11 @@ function distanceTransform(foregroundPixels, oob = 255) {
     @return {PathFinder.CostMatrix}
 */
 function walkablePixelsForRoom(roomName) {
+    const terrain = Game.map.getRoomTerrain(roomName)
     var costMatrix = new PathFinder.CostMatrix();
     for (var y = 0; y < 50; ++y) {
         for (var x = 0; x < 50; ++x) {
-            if (Game.map.getTerrainAt(x, y, roomName) != 'wall') {
+            if (terrain.get(x, y) != TERRAIN_MASK_WALL) {
                 costMatrix.set(x, y, 1);
             }
         }
@@ -65,25 +66,26 @@ function walkablePixelsForRoom(roomName) {
 }
 
 function wallOrAdjacentToExit(x, y, roomName) {
-    if (1 < x && x < 48 && 1 < y && y < 48) return Game.map.getTerrainAt(x, y, roomName) == 'wall';
+    const terrain = Game.map.getRoomTerrain(roomName)
+    if (1 < x && x < 48 && 1 < y && y < 48) return terrain.get(x,y) == TERRAIN_MASK_WALL;
     if (0 == x || 0 == y || 49 == x || 49 == y) return true;
 
-    if (Game.map.getTerrainAt(x, y, roomName) == 'wall') return true;
+    if (terrain.get(x, y) == TERRAIN_MASK_WALL) return true;
 
     var A, B, C;
     if (x == 1) {
-        A = Game.map.getTerrainAt(0, y-1, roomName); B = Game.map.getTerrainAt(0, y, roomName); C = Game.map.getTerrainAt(0, y+1, roomName);
+        A = terrain.get(0, y-1); B = terrain.get(0, y); C = terrain.get(0, y+1);
     }
     if (x == 48) {
-        A = Game.map.getTerrainAt(49, y-1, roomName); B = Game.map.getTerrainAt(49, y, roomName); C = Game.map.getTerrainAt(49, y+1, roomName);
+        A = terrain.get(49, y-1); B = terrain.get(49, y); C = terrain.get(49, y+1);
     }
     if (y == 1) {
-        A = Game.map.getTerrainAt(x-1, 0, roomName); B = Game.map.getTerrainAt(x, 0, roomName); C = Game.map.getTerrainAt(x+1, 0, roomName);
+        A = terrain.get(x-1, 0); B = terrain.get(x, 0); C = terrain.get(x+1, 0);
     }
     if (y == 48) {
-        A = Game.map.getTerrainAt(x-1, 49, roomName); B = Game.map.getTerrainAt(x, 49, roomName); C = Game.map.getTerrainAt(x+1, 49, roomName);
+        A = terrain.get(x-1, 49); B = terrain.get(x, 49); C = terrain.get(x+1, 49);
     }
-    return !(A == 'wall' && B == 'wall' && C == 'wall');
+    return !(A == TERRAIN_MASK_WALL && B == TERRAIN_MASK_WALL && C == TERRAIN_MASK_WALL);
 }
 
 /**
