@@ -286,6 +286,7 @@ class RoomLayout {
   constructor (roomname) {
     this.roomname = roomname
     this.allStructures = false
+    this.terrain = Game.map.getRoomTerrain(roomname)
   }
 
   planStructureAt (structureType, x, y, overrideRoads = false) {
@@ -521,13 +522,13 @@ class DefenseMap extends RoomLayout {
           let y = piece[0].y
           let left1 = new RoomPosition(piece[0].x - 1, y, this.roomname)
           let left2 = new RoomPosition(piece[0].x - 2, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[0].x - 2, y + endpointOffset, this.roomname) !== 'wall') {
+          if (this.terrain.get(piece[0].x - 2, y + endpointOffset) !== TERRAIN_MASK_WALL) {
             map.set(piece[0].x - 2, y + endpointOffset, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
           let right1 = new RoomPosition(piece[lastPiece].x + 1, y, this.roomname)
           let right2 = new RoomPosition(piece[lastPiece].x + 2, y, this.roomname)
-          if (Game.map.getTerrainAt(piece[lastPiece].x + 2, y + endpointOffset, this.roomname) !== 'wall') {
+          if (this.terrain.get(piece[lastPiece].x + 2, y + endpointOffset) !== TERRAIN_MASK_WALL) {
             map.set(piece[lastPiece].x + 2, y + endpointOffset, WALL_GATEWAY)
           }
           piece.unshift(left1)
@@ -539,13 +540,13 @@ class DefenseMap extends RoomLayout {
           let x = piece[0].x
           let top1 = new RoomPosition(x, piece[0].y - 1, this.roomname)
           let top2 = new RoomPosition(x, piece[0].y - 2, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[0].y - 2, this.roomname) !== 'wall') {
+          if (this.terrain.get(x + endpointOffset, piece[0].y - 2) !== TERRAIN_MASK_WALL) {
             map.set(x + endpointOffset, piece[0].y - 2, WALL_GATEWAY)
           }
           let lastPiece = piece.length - 1
           let bottom1 = new RoomPosition(x, piece[lastPiece].y + 1, this.roomname)
           let bottom2 = new RoomPosition(x, piece[lastPiece].y + 2, this.roomname)
-          if (Game.map.getTerrainAt(x + endpointOffset, piece[lastPiece].y + 2, this.roomname) !== 'wall') {
+          if (this.terrain.get(x + endpointOffset, piece[lastPiece].y + 2) !== TERRAIN_MASK_WALL) {
             map.set(x + endpointOffset, piece[lastPiece].y + 2, WALL_GATEWAY)
           }
           piece.unshift(top1)
@@ -574,9 +575,9 @@ class DefenseMap extends RoomLayout {
           }
           // This overrides ramparts with walls if there is a wall blocking it.
           // It doesn't account for diagonal movement, which is probably ok.
-          if (Game.map.getTerrainAt(x, y, this.roomname) !== 'wall') {
-            const outer = Game.map.getTerrainAt(x1, y1, this.roomname) === 'wall'
-            const inner = Game.map.getTerrainAt(x2, y2, this.roomname) === 'wall'
+          if (this.terrain.get(x, y) !== TERRAIN_MASK_WALL) {
+            const outer = this.terrain.get(x1, y1) === TERRAIN_MASK_WALL
+            const inner = this.terrain.get(x2, y2) === TERRAIN_MASK_WALL
             if (outer) {
               map.set(x, y, WALL_GATEWAY)
             } else if (inner && !outer) {
@@ -616,7 +617,7 @@ class DefenseMap extends RoomLayout {
     for (var i = 0; i <= 49; i++) {
       const x = vertical ? stationary : i
       const y = vertical ? i : stationary
-      const isExit = Game.map.getTerrainAt(x, y, this.roomname) !== 'wall'
+      const isExit = this.terrain.get(x, y) !== TERRAIN_MASK_WALL
       if (isExit) {
         currentPiece.push(new RoomPosition(x, y, this.roomname))
       } else if (currentPiece.length > 0) {

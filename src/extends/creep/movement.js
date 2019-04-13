@@ -36,7 +36,7 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
 
   if (!moveToOpts.scores && !moveToOpts.avoidHostileRooms) {
     moveToOpts.scores = {}
-    if (moveToOpts.ignoreHostileCities && moveToOpts.ignoreHostileCities) {
+    if (moveToOpts.ignoreHostileCities && moveToOpts.ignoreHostileReservations) {
       moveToOpts.avoidHostileRooms = true
     } else {
       if (moveToOpts.ignoreHostileCities) {

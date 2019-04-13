@@ -148,7 +148,7 @@ RoomPosition.prototype.isEdge = function () {
 }
 
 RoomPosition.prototype.isExit = function () {
-  return this.isEdge() && Game.map.getTerrainAt(this) !== 'wall'
+  return this.isEdge() && this.getTerrainAt() !== 'wall'
 }
 
 RoomPosition.prototype.inFrontOfExit = function () {
@@ -166,7 +166,14 @@ RoomPosition.prototype.inFrontOfExit = function () {
 }
 
 RoomPosition.prototype.getTerrainAt = function () {
-  return Game.map.getTerrainAt(this)
+  switch (Game.map.getRoomTerrain(this.roomName).get(this.x, this.y)) {
+    case 0:
+      return 'plain'
+    case 1:
+      return 'wall'
+    case 2:
+      return 'swamp'
+  }
 }
 
 RoomPosition.prototype.getManhattanDistance = function (pos) {
