@@ -44,10 +44,6 @@ class Spook extends MetaRole {
         if (this.stompConstruction(creep)) {
           return
         }
-        // Tag the controller
-        if (this.signController(creep)) {
-          return
-        }
       }
     }
 
@@ -75,21 +71,6 @@ class Spook extends MetaRole {
     }
     creep.memory.stomp = construction.id
     creep.travelTo(construction)
-    return true
-  }
-
-  signController (creep) {
-    if (!creep.room.controller) {
-      return false
-    }
-    if (creep.room.controller.sign && creep.room.controller.sign.username === USERNAME) {
-      return false
-    }
-    if (creep.pos.isNearTo(creep.room.controller)) {
-      creep.signController(creep.room.controller, CONTROLLER_MESSAGE)
-    } else {
-      creep.travelTo(creep.room.controller)
-    }
     return true
   }
 
