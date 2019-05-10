@@ -72,6 +72,15 @@ class Factotum extends MetaRole {
         } else {
           this.goHome(creep)
         }
+      } else {
+        const tombstones = suicideBooth.lookFor(LOOK_TOMBSTONES)
+        if (tombstones.length > 0) {
+          if (creep.pos.isNearTo(suicideBooth)) {
+            creep.withdraw(tombstones[0])
+          } else {
+            this.goHome(creep)
+          }
+        }
       }
     }
 
