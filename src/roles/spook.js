@@ -79,10 +79,24 @@ class Spook extends MetaRole {
   }
 
   signController (creep) {
+    // Cannot sign SK or highway rooms
     if (!creep.room.controller) {
       return false
     }
+    // Already Signed
     if (creep.room.controller.sign && creep.room.controller.sign.username === USERNAME) {
+      return false
+    }
+    // Not ours (reserved)
+    if (creep.room.controller.reservation && creep.room.controller.reservation.username !== USERNAME) {
+      return false
+    }
+    // Not ours (owned)
+    if (creep.room.controller.owner && creep.room.controller.owner.username !== USERNAME) {
+      return false
+    }
+    // Signed too recently
+    if (creep.room.controller.sign && Game.time - creep.room.controller.sign.time > CONTROLLER_RESIGN_COOLDOWN) {
       return false
     }
     if (creep.pos.isNearTo(creep.room.controller)) {

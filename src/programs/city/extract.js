@@ -33,7 +33,6 @@ class CityExtract extends kernel.process {
     haulerCluster.sizeCluster('hauler', canExtract > 0 ? 2 : 0)
 
     frackerCluster.forEach(function (fracker) {
-      const carrying = fracker.getCarryPercentage()
       if (!canExtract) {
         fracker.recycle()
         return
@@ -43,7 +42,7 @@ class CityExtract extends kernel.process {
         return
       }
       // Minimize dropped minerals
-      if (carrying >= 1) {
+      if (_.sum(fracker.carry) + fracker.getActiveBodyparts(WORK) * HARVEST_MINERAL_POWER > fracker.carryCapacity) {
         return
       }
       if (!extractor.cooldown) {

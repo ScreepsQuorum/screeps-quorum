@@ -17,7 +17,7 @@ All Pull Requests are done by volunteers, and the entire project is [open source
 
 ## How does it work?
 
-* Anyone can make a pull request. Developers can then vote on the pull requests using reactions (:+1:, :-1:, or :confused:). Pull requests which meet the [consensus rules](https://github.com/ScreepsQuorum/screeps-quorum/blob/master/.gitconsensus.yaml) and pass all tests will be merged using [gitconsensus](https://pypi.python.org/pypi/gitconsensus).
+* Anyone can make a pull request. Developers can then vote on the pull requests using reactions (:+1:, :-1:, or :confused:). Pull requests which meet the [consensus rules](https://github.com/ScreepsQuorum/screeps-quorum/blob/master/.gitconsensus.yaml) and pass all tests will be merged using [Gitconsensus](https://www.gitconsensus.com/).
 
 * Any code that gets merged into master will automatically be uploaded to the Screeps main world under the user [Quorum](https://screeps.com/a/#!/profile/Quorum). Code is also deployed automatically once a day.
 

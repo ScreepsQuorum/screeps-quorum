@@ -13,6 +13,9 @@ global.TICKS_BETWEEN_ALERTS = 3000
 
 global.MAX_INTEL_TARGETS = 50
 
+// How many ticks after a unowned room was signed to sign it again in ticks
+global.CONTROLLER_RESIGN_COOLDOWN = 100000
+
 global.PRIORITIES_DEFAULT = 6
 
 global.PRIORITIES_CREEP_DEFAULT = 4
