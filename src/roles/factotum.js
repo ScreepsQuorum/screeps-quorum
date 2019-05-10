@@ -62,7 +62,7 @@ class Factotum extends MetaRole {
       return
     }
 
-    // pick up dropped resources and creep renewal energy
+    // pick up dropped resources and creep renewal energy and empty tombstones
     const suicideBooth = creep.room.getSuicideBooth()
     if (suicideBooth) {
       const resources = suicideBooth.lookFor(LOOK_RESOURCES)
