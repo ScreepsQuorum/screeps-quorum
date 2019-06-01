@@ -74,7 +74,7 @@ class Factotum extends MetaRole {
         }
         return
       } else {
-        const tombstones = suicideBooth.lookFor(LOOK_TOMBSTONES)
+        const tombstones = suicideBooth.lookFor(LOOK_TOMBSTONES).filter((t) => _.sum(t.store) > 0)
         if (tombstones.length > 0) {
           if (creep.pos.isNearTo(suicideBooth)) {
             creep.withdraw(tombstones[0], Object.keys(tombstones[0].store)[0])
