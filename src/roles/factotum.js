@@ -62,7 +62,7 @@ class Factotum extends MetaRole {
       return
     }
 
-    // pick up dropped resources and creep renewal energy
+    // pick up dropped resources and creep renewal energy and empty tombstones
     const suicideBooth = creep.room.getSuicideBooth()
     if (suicideBooth) {
       const resources = suicideBooth.lookFor(LOOK_RESOURCES)
@@ -71,6 +71,17 @@ class Factotum extends MetaRole {
           creep.pickup(resources[0])
         } else {
           this.goHome(creep)
+        }
+        return
+      } else {
+        const tombstones = suicideBooth.lookFor(LOOK_TOMBSTONES).filter((t) => _.sum(t.store) > 0)
+        if (tombstones.length > 0) {
+          if (creep.pos.isNearTo(suicideBooth)) {
+            creep.withdraw(tombstones[0], Object.keys(tombstones[0].store)[0])
+          } else {
+            this.goHome(creep)
+          }
+          return
         }
       }
     }
