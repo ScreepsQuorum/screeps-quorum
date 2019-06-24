@@ -48,6 +48,7 @@ class EmpireExpand extends kernel.process {
         this.data.colony = candidate
         this.data.attemptedClaim = 0
         this.data.lastClaimAttempt = false
+        delete this.data.deathwatch
       }
       return
     }
