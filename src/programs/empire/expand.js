@@ -10,7 +10,7 @@
  * - Figures out which rooms in the empire are most able to help and utilizes them.
  */
 
-const VERSION = 1.1
+const VERSION = 1.2
 
 class EmpireExpand extends kernel.process {
   constructor (...args) {
@@ -28,11 +28,15 @@ class EmpireExpand extends kernel.process {
   main () {
     Logger.log(`expansion: ${this.getDescriptor()}`)
 
-    // Resart program (if it hasn't gone to far) so that the best candidate gets picked.
+    // Restart program (if it hasn't gone to far) so that the best candidate gets picked.
     if (!this.data.version || this.data.version !== VERSION) {
       if (this.data.colony || this.data.candidates || this.data.candidateList) {
         if (!Game.rooms[this.data.colony] || !Game.rooms[this.data.colony].controller.my) {
           this.suicide()
+        } else {
+          // Reset some variables but don't restart the program.
+          this.data.claimedAt = Game.time
+          this.data.hascleared = false
         }
       }
     }
@@ -44,6 +48,7 @@ class EmpireExpand extends kernel.process {
         this.data.colony = candidate
         this.data.attemptedClaim = 0
         this.data.lastClaimAttempt = false
+        delete this.data.deathwatch
       }
       return
     }
@@ -103,6 +108,7 @@ class EmpireExpand extends kernel.process {
     // Destroy all neutral and hostile structures immediately
     if (!this.data.recover && !this.data.hascleared) {
       const structures = this.colony.find(FIND_STRUCTURES)
+      this.data.hascleared = true
       for (let structure of structures) {
         if (structure.structureType === STRUCTURE_CONTROLLER) {
           continue
@@ -110,13 +116,14 @@ class EmpireExpand extends kernel.process {
         if (structure.my) {
           continue
         }
-        structure.destroy()
+        this.data.hascleared = false
+        Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
       }
       const sites = this.colony.find(FIND_HOSTILE_CONSTRUCTION_SITES)
       for (let site of sites) {
+        this.data.hascleared = false
         site.remove()
       }
-      this.data.hascleared = true
       return
     }
 
