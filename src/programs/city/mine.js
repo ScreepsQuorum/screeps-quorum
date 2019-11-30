@@ -39,7 +39,7 @@ class CityMine extends kernel.process {
       if (Game.rooms[this.data.mine] && Game.rooms[this.data.mine].controller.my) {
         return this.suicide()
       }
-      
+
       // If main room can not support mines kill this program.
       const desiredMines = this.room.getRoomSetting('REMOTE_MINES')
       // mineId starts at 0 for the first mine.
