@@ -12,7 +12,7 @@ class Empire {
     if (!this._terminals) {
       this._terminals = []
       for (const city of this.cities) {
-        if (Game.rooms[city] && Game.rooms[city].terminal) {
+        if (Game.rooms[city] && Game.rooms[city].terminal && Game.rooms[city].terminal.my) {
           this._terminals.push(Game.rooms[city].terminal)
         }
       }
