@@ -806,7 +806,7 @@ camelcase@^4.0.0:
 
 capture-stack-trace@^1.0.0:
   version "1.0.0"
-  resolved "http://registry.npmjs.org/capture-stack-trace/-/capture-stack-trace-1.0.0.tgz#4a6fa07399c26bba47f0b2496b4d0fb408c5550d"
+  resolved "https://registry.npmjs.org/capture-stack-trace/-/capture-stack-trace-1.0.0.tgz#4a6fa07399c26bba47f0b2496b4d0fb408c5550d"
 
 caseless@~0.12.0:
   version "0.12.0"
@@ -934,7 +934,7 @@ clone@^1.0.0, clone@^1.0.2:
 
 co-with-promise@^4.6.0:
   version "4.6.0"
-  resolved "http://registry.npmjs.org/co-with-promise/-/co-with-promise-4.6.0.tgz#413e7db6f5893a60b942cf492c4bec93db415ab7"
+  resolved "https://registry.npmjs.org/co-with-promise/-/co-with-promise-4.6.0.tgz#413e7db6f5893a60b942cf492c4bec93db415ab7"
   dependencies:
     pinkie-promise "^1.0.0"
 
@@ -1067,7 +1067,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
 
 create-error-class@^3.0.0:
   version "3.0.2"
-  resolved "http://registry.npmjs.org/create-error-class/-/create-error-class-3.0.2.tgz#06be7abef947a3f14a30fd610671d401bca8b7b6"
+  resolved "https://registry.npmjs.org/create-error-class/-/create-error-class-3.0.2.tgz#06be7abef947a3f14a30fd610671d401bca8b7b6"
   dependencies:
     capture-stack-trace "^1.0.0"
 
@@ -1609,8 +1609,8 @@ extend-shallow@^3.0.0:
     is-extendable "^1.0.1"
 
 extend@^3.0.0, extend@~3.0.0:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.1.tgz#a755ea7bc1adfcc5a31ce7e762dbaadc5e636444"
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/extend/-/extend-3.0.2.tgz#f8b1136b4071fbd8eb140aff858b1019ec2915fa"
 
 extglob@^0.3.1:
   version "0.3.2"
