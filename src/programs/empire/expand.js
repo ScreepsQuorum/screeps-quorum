@@ -36,7 +36,6 @@ class EmpireExpand extends kernel.process {
         } else {
           // Reset some variables but don't restart the program.
           this.data.claimedAt = Game.time
-          this.data.hascleared = false
         }
       }
     }
@@ -103,28 +102,6 @@ class EmpireExpand extends kernel.process {
     const sources = this.colony.find(FIND_SOURCES)
     for (let source of sources) {
       this.mine(source)
-    }
-
-    // Destroy all neutral and hostile structures immediately
-    if (!this.data.recover && !this.data.hascleared) {
-      const structures = this.colony.find(FIND_STRUCTURES)
-      this.data.hascleared = true
-      for (let structure of structures) {
-        if (structure.structureType === STRUCTURE_CONTROLLER) {
-          continue
-        }
-        if (structure.my) {
-          continue
-        }
-        this.data.hascleared = false
-        Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
-      }
-      const sites = this.colony.find(FIND_HOSTILE_CONSTRUCTION_SITES)
-      for (let site of sites) {
-        this.data.hascleared = false
-        site.remove()
-      }
-      return
     }
 
     this.hostileSpawns = this.colony.find(FIND_HOSTILE_SPAWNS)

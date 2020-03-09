@@ -30,9 +30,44 @@ class CityConstruct extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (structure) {
-      return !ignoreConstructionSites.includes(structure)
-    }})
+    // Destroy all neutral and hostile structures immediately
+    if (!this.data.hascleared) {
+      const layout = this.room.getLayout()
+      const structures = this.room.find(FIND_STRUCTURES)
+      const miningPositions = this.room.find(FIND_SOURCES).map(s => s.getMiningPosition())
+      this.data.hascleared = true
+      for (let structure of structures) {
+        if (structure.structureType === STRUCTURE_CONTROLLER) {
+          continue
+        }
+        if (structure.my) {
+          continue
+        }
+        const plannedStructure = layout.getStructureAt(structure.pos.x, structure.pos.y) // If we need a road or a container at this position anyway we just leave it there
+        if ((plannedStructure === STRUCTURE_CONTAINER || _.any(miningPositions, p => p.isEqualTo(structure.pos))) && // Is a container planned here?
+          (structure.structureType === STRUCTURE_CONTAINER || structure.structureType === STRUCTURE_ROAD)) { // Roads are built under every container, so we keep them
+          continue
+        }
+        if (plannedStructure === STRUCTURE_ROAD && structure.structureType === STRUCTURE_ROAD) { // We need a road, there is a road... Hmmm... Why don't we use it? ;)
+          continue
+        }
+
+        this.data.hascleared = false
+        Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
+      }
+      const sites = this.room.find(FIND_HOSTILE_CONSTRUCTION_SITES)
+      for (let site of sites) {
+        this.data.hascleared = false
+        site.remove()
+      }
+      return
+    }
+
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      'filter': function (structure) {
+        return !ignoreConstructionSites.includes(structure)
+      }
+    })
 
     if (sites.length > 0) {
       this.data.lastactive = Game.time
