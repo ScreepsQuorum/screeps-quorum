@@ -28,13 +28,13 @@ This is an extremely collaborative project. The larger a feature is the more pot
 
 **Any pull request that gets accepted will be deployed to the screeps server within moments of being merged.**
 
-**Do not submit pull requests are are not ready to deploy.**
+**Do not submit pull requests that are not ready to deploy.**
 
 Please make sure you test all of your changes. This can be done with the in game simulator, a private server, or one of the many public servers available. If you need help please join us in slack for help.
 
-Pull requests are accepted by votes, which depend on the [conensus rules](https://github.com/ScreepsQuorum/ScreepsAutoSpawner/blob/master/.gitconsensus.yaml) of the project. You are allowed to vote for your own pull requests.
+Pull requests are accepted by votes, which depend on the [consensus rules](https://github.com/ScreepsQuorum/ScreepsAutoSpawner/blob/master/.gitconsensus.yaml) of the project. You are allowed to vote for your own pull requests.
 
-This project follows the [standardjs](https://standardjs.com/) code style. This is tested for by the Quorum continious integration system (currently CircleCI) and any pull requests which do not follow this standard will not be merged regardless of votes.
+This project follows the [standardjs](https://standardjs.com/) code style. This is tested for by the Quorum continuous integration system (currently CircleCI) and any pull requests which do not follow this standard will not be merged regardless of votes.
 
 
 ### Third Party Services
