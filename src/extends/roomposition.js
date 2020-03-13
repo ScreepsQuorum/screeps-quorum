@@ -166,7 +166,7 @@ RoomPosition.prototype.inFrontOfExit = function () {
 }
 
 RoomPosition.prototype.getTerrainAt = function () {
-  switch (Game.map.getRoomTerrain(this.roomName).get(this.x, this.y)) {
+  switch (Game.rooms[this.roomName].getTerrain().get(this.x, this.y)) {
     case 0:
       return 'plain'
     case 1:
