@@ -14,25 +14,25 @@
   "main": "dist/main.js",
   "repository": "ScreepsQuorum/screeps-quorum",
   "scripts": {
-    "test": "standard && ava test",
-    "testci": "standard && ava test --tap | tap-xunit > test-results.xml",
-    "watch": "ava test --watch",
+    "test": "standard && npx ava",
+    "testci": "standard && npx ava --tap | tap-xunit > test-results.xml",
+    "watch": "npx ava --watch",
     "deploy": "gulp",
     "ci-config": "gulp ci-config",
     "2npm": "npm publish"
   },
   "dependencies": {},
   "devDependencies": {
-    "ava": "^0.22.0",
-    "git-rev-sync": "^1.9.1",
-    "gulp": "^3.9.1",
-    "gulp-clean": "^0.3.2",
+    "ava": "^3.5.0",
+    "del": "^5.1.0",
+    "git-rev-sync": "^2.0.0",
+    "gulp": "^4.0.2",
     "gulp-insert": "^0.5.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-screeps": "^1.0.6",
-    "minimist": "^1.2.0",
-    "standard": "^10.0.3",
-    "tap-xunit": "^1.7.0"
+    "gulp-rename": "^2.0.0",
+    "gulp-screeps": "^1.0.8",
+    "minimist": "^1.2.5",
+    "standard": "^14.3.2",
+    "tap-xunit": "^2.4.1"
   },
   "screeps_bot": true,
   "standard": {

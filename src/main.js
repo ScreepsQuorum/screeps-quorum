@@ -8,7 +8,7 @@ if (Game.cpu.bucket < 500) {
 
 /* Get Upload Version */
 require('version')
-require('constants')
+require('./constants')
 
 /* Enable QOS Logger */
 const QosLogger = require('qos_logger')
