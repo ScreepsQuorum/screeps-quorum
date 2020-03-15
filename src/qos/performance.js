@@ -4,8 +4,8 @@ class Performance {
   constructor () {
     if (!Memory.qos.performance) {
       Memory.qos.performance = {
-        'start': Game.time,
-        'programs': {}
+        start: Game.time,
+        programs: {}
       }
     }
   }
@@ -31,11 +31,11 @@ class Performance {
     const programs = Object.keys(Memory.qos.performance.programs)
     programs.sort((a, b) => Memory.qos.performance.programs[b].cpu - Memory.qos.performance.programs[a].cpu)
     let report = 'Program\tAverage\tMax Cpu\t Total Cpu \t Ticks Run\n'
-    for (let program of programs) {
-      let max = Memory.qos.performance.programs[program].max
-      let cpu = Memory.qos.performance.programs[program].cpu
-      let count = Memory.qos.performance.programs[program].count
-      let average = cpu / count
+    for (const program of programs) {
+      const max = Memory.qos.performance.programs[program].max
+      const cpu = Memory.qos.performance.programs[program].cpu
+      const count = Memory.qos.performance.programs[program].count
+      const average = cpu / count
       report += `${program}\t ${average.toFixed(3)}\t${max.toFixed(3)}\t${cpu.toFixed(3)}\t${count}\n`
     }
     Logger.log(report, LOG_WARN, 'performance')
@@ -57,14 +57,14 @@ class Performance {
     report += '<td>3000 Ticks</td>'
     report += '</tr>'
 
-    for (let priority of monitoriedPriorities) {
+    for (const priority of monitoriedPriorities) {
       const stats = sos.lib.monitor.getPriorityRunStats(priority)
       if (stats) {
         report += '<tr>'
         report += `<td>${priority}</td>`
-        report += `<td>${stats['short'].toFixed(3)}</td>`
-        report += `<td>${stats['medium'].toFixed(3)}</td>`
-        report += `<td>${stats['long'].toFixed(3)}</td>`
+        report += `<td>${stats.short.toFixed(3)}</td>`
+        report += `<td>${stats.medium.toFixed(3)}</td>`
+        report += `<td>${stats.long.toFixed(3)}</td>`
         report += '</tr>'
       }
     }
@@ -81,11 +81,11 @@ class Performance {
     report += '<td>Total CPU</td>'
     report += '<td>Ticks Run</td>'
     report += '</tr>'
-    for (let program of programs) {
-      let max = Memory.qos.performance.programs[program].max
-      let cpu = Memory.qos.performance.programs[program].cpu
-      let count = Memory.qos.performance.programs[program].count
-      let average = cpu / count
+    for (const program of programs) {
+      const max = Memory.qos.performance.programs[program].max
+      const cpu = Memory.qos.performance.programs[program].cpu
+      const count = Memory.qos.performance.programs[program].count
+      const average = cpu / count
       report += '<tr>'
       report += `<td>${program}</td>`
       report += `<td>${average.toFixed(3)}</td>`
@@ -100,8 +100,8 @@ class Performance {
 
   clear () {
     Memory.qos.performance = {
-      'start': Game.time,
-      'programs': {}
+      start: Game.time,
+      programs: {}
     }
   }
 }

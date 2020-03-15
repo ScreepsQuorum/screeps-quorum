@@ -6,7 +6,7 @@ Room.getCities = function () {
   // When respawning the first room has to be autodetected, after which new cities will need to added.
   if (!Memory.territory || Object.keys(Memory.territory).length <= 0) {
     Memory.territory = {}
-    for (let roomName of Object.keys(Game.rooms)) {
+    for (const roomName of Object.keys(Game.rooms)) {
       const room = Game.rooms[roomName]
       if (room.controller && room.controller.my) {
         Memory.territory[roomName] = {}
@@ -127,7 +127,7 @@ Room.prototype.selectNextMine = function () {
     if (existing.indexOf(candidate) >= 0) {
       continue
     }
-    let testScore = this.getMineScore(candidate)
+    const testScore = this.getMineScore(candidate)
     if (testScore === false) {
       continue
     }
@@ -144,7 +144,7 @@ Room.prototype.getMineScore = function (roomName) {
   if (Room.isSourcekeeper(roomName)) {
     return false
   }
-  const route = qlib.map.findRoute(this.name, roomName, {'avoidHostileRooms': true})
+  const route = qlib.map.findRoute(this.name, roomName, { avoidHostileRooms: true })
   if (route === ERR_NO_PATH) {
     return false
   }
@@ -342,11 +342,11 @@ function getMineralEmpireNeedsScore (mineral) {
 
 function getDefensibilityScore (room) {
   let score = 0
-  let totalEdge = 48 * 4
-  let exits = Game.map.describeExits(room)
-  let exitIds = Object.keys(exits)
+  const totalEdge = 48 * 4
+  const exits = Game.map.describeExits(room)
+  const exitIds = Object.keys(exits)
 
-  for (let exitId of exitIds) {
+  for (const exitId of exitIds) {
     const exitRoom = exits[exitId]
     if (Room.isCuldesac(exitRoom)) {
       delete exits[exitId]
@@ -417,7 +417,7 @@ function getRegionResourcesScore (centerRoomName, range) {
   const regionRoomCount = Math.pow((range * 2) + 1, 2) - 1
   const rooms = Room.getRoomsInRange(centerRoomName, range)
   let sourceCount = 0
-  for (let roomName of rooms) {
+  for (const roomName of rooms) {
     const intel = Room.getIntel(roomName)
     if (!intel || !intel[INTEL_SOURCES]) {
       continue
@@ -439,7 +439,7 @@ function getRegionResourcesScore (centerRoomName, range) {
 function getNeighborSourcesScore (room) {
   const neighbors = _.values(Game.map.describeExits(room))
   let twoSource = 0
-  for (let neighbor of neighbors) {
+  for (const neighbor of neighbors) {
     const neighborIntel = Room.getIntel(neighbor)
     if (neighborIntel[INTEL_SOURCES] >= 2) {
       twoSource++
@@ -453,7 +453,7 @@ function getEmpireClutterScore (room) {
   const cities = Room.getCities()
   const maxInRange = 5
   let inRange = 0
-  for (let city of cities) {
+  for (const city of cities) {
     if (Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE) {
       inRange++
     }
@@ -472,7 +472,7 @@ function getEmpireDefenseScore (room) {
   const cities = Room.getCities()
   const target = cities.length < 4 ? cities.length : 4
   let closeCount = 0
-  for (let city of cities) {
+  for (const city of cities) {
     if (Room.getManhattanDistance(room, city) <= CITY_MAX_REACHABILITY_DISTANCE) {
       closeCount++
       if (closeCount >= target) {
@@ -487,7 +487,7 @@ function getRegionDensityScore (room, range) {
   const regionRoomCount = Math.pow((range * 2) + 1, 2) - 1
   const rooms = Room.getRoomsInRange(room, range)
   let owned = 0
-  for (let room of rooms) {
+  for (const room of rooms) {
     const intel = Room.getIntel(room)
     if (intel[INTEL_OWNER]) {
       owned++
@@ -501,9 +501,9 @@ function getRegionDensityScore (room, range) {
 
 function getCityDistanceScore (room) {
   const cities = Room.getCities()
-  let max = CITY_MAX_REACHABILITY_DISTANCE - 2
+  const max = CITY_MAX_REACHABILITY_DISTANCE - 2
   let min = Infinity
-  for (let city of cities) {
+  for (const city of cities) {
     const distance = Room.getManhattanDistance(room, city)
     if (distance < min) {
       min = distance

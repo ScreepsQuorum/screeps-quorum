@@ -9,9 +9,11 @@ class MetaMonitor extends kernel.process {
   getPriority () {
     return this.data.priority
   }
+
   getDescriptor () {
     return this.data.priority
   }
+
   main () {
     sos.lib.monitor.markRun(this.data.priority)
   }

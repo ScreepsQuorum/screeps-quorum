@@ -14,7 +14,7 @@ class Factotum extends MetaRole {
 
   getBuild (room, options) {
     this.setBuildDefaults(room, options)
-    let build = [MOVE, CARRY, CARRY, CARRY, CARRY]
+    const build = [MOVE, CARRY, CARRY, CARRY, CARRY]
     return Creep.buildFromTemplate(build, options.energy)
   }
 
@@ -187,13 +187,13 @@ class Factotum extends MetaRole {
         if (creep.pos.isNearTo(feeders[0])) {
           creep.transfer(feeders[0], reaction[0])
         } else {
-          creep.travelTo(feeders[0], {'ignoreCore': true})
+          creep.travelTo(feeders[0], { ignoreCore: true })
         }
       } else if (creep.carry[reaction[1]] && feeders[1].canFill()) {
         if (creep.pos.isNearTo(feeders[1])) {
           creep.transfer(feeders[1], reaction[1])
         } else {
-          creep.travelTo(feeders[1], {'ignoreCore': true})
+          creep.travelTo(feeders[1], { ignoreCore: true })
         }
       } else {
         delete creep.memory.filling
@@ -235,7 +235,7 @@ class Factotum extends MetaRole {
     if (creep.pos.isNearTo(lab)) {
       creep.withdraw(lab, lab.mineralType)
     } else {
-      creep.travelTo(lab, {'ignoreCore': true})
+      creep.travelTo(lab, { ignoreCore: true })
     }
   }
 
@@ -324,7 +324,7 @@ class Factotum extends MetaRole {
     if (creep.pos.isNearTo(structure)) {
       creep.transfer(structure, RESOURCE_ENERGY)
     } else {
-      creep.travelTo(structure, {'ignoreCore': true})
+      creep.travelTo(structure, { ignoreCore: true })
     }
   }
 
@@ -370,7 +370,7 @@ class Factotum extends MetaRole {
   }
 
   goHome (creep) {
-    return creep.travelTo(creep.room.getFactotumHome(), {'ignoreCore': true})
+    return creep.travelTo(creep.room.getFactotumHome(), { ignoreCore: true })
   }
 }
 

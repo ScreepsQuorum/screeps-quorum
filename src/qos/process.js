@@ -115,7 +115,7 @@ class Process {
       }
       const creepName = room.queueCreep(role, options)
       this.launchChildProcess(specificLabel, 'creep', {
-        'creep': creepName
+        creep: creepName
       })
     }
   }

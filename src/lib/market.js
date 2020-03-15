@@ -14,14 +14,14 @@ module.exports.getAveragePrice = function (resource, orderType) {
 module.exports.getOrdersByType = function (resource, orderType) {
   // Temporary wrapper to deal with broken data in game engine (bug reported to devs)
   try {
-    return Game.market.getAllOrders({type: orderType, resourceType: resource})
+    return Game.market.getAllOrders({ type: orderType, resourceType: resource })
   } catch (err) {
     return []
   }
 }
 
 module.exports.getCurrentPrice = function (resource, orderType) {
-  let orders = module.exports.getOrdersByType(resource, orderType)
+  const orders = module.exports.getOrdersByType(resource, orderType)
   if (orderType === ORDER_BUY) {
     orders.sort((a, b) => a.price - b.price)
   } else {
@@ -36,7 +36,7 @@ module.exports.getCurrentPrice = function (resource, orderType) {
 
   // Filter out the first few orders (by quantity) to prevent manipulation or confusion over phantom orders.
   let amount = 0
-  for (let order of orders) {
+  for (const order of orders) {
     // Skip all new orders - manipulation orders tend to get bought out really quick.
     if (Game.time - order.created < 20) {
       continue
@@ -72,13 +72,13 @@ module.exports.transactImmediately = function (resource, room, quantity, orderTy
   if (room.terminal.cooldown) {
     return ERR_BUSY
   }
-  let orders = module.exports.getOrdersByType(resource, orderType)
+  const orders = module.exports.getOrdersByType(resource, orderType)
   if (orderType === ORDER_SELL) {
     orders.sort((a, b) => a.price - b.price)
   } else {
     orders.sort((a, b) => b.price - a.price)
   }
-  for (let order of orders) {
+  for (const order of orders) {
     if (order.amount > TERMINAL_MIN_SEND) {
       if (order.amount < quantity) {
         quantity = order.amount

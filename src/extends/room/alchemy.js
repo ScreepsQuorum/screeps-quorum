@@ -42,7 +42,7 @@ Room.prototype.getVatLabs = function () {
     return false
   }
 
-  let vats = []
+  const vats = []
   for (const lab of labs) {
     if (feeders[0].id === lab.id || feeders[1].id === lab.id) {
       continue
@@ -77,10 +77,10 @@ Room.prototype.getNextReaction = function () {
 
   // Has Catalyst
   if (this.storage.store[RESOURCE_CATALYST] && this.storage.store[RESOURCE_CATALYST] > 1000) {
-    if (storageByType['tier2'] && storageByType['tier2'].length > 0) {
+    if (storageByType.tier2 && storageByType.tier2.length > 0) {
       let need = 0
       let resource = false
-      for (const option of storageByType['tier2']) {
+      for (const option of storageByType.tier2) {
         if (this.storage.store[option] < 1000) {
           continue
         }
@@ -99,10 +99,10 @@ Room.prototype.getNextReaction = function () {
 
   // Has OH
   if (this.storage.store[RESOURCE_HYDROXIDE] && this.storage.store[RESOURCE_HYDROXIDE] > 1000) {
-    if (storageByType['tier1'] && storageByType['tier1'].length > 0) {
+    if (storageByType.tier1 && storageByType.tier1.length > 0) {
       let need = 0
       let resource = false
-      for (const option of storageByType['tier1']) {
+      for (const option of storageByType.tier1) {
         if (this.storage.store[option] < 1000) {
           continue
         }

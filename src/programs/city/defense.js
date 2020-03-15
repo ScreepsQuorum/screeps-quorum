@@ -66,7 +66,7 @@ class CityDefense extends kernel.process {
 
   fireTowers (towers, hostiles) {
     const attackFunc = (attackTarget) => {
-      for (let tower of towers) {
+      for (const tower of towers) {
         if (tower.energy < TOWER_ENERGY_COST) {
           continue
         }
@@ -78,7 +78,7 @@ class CityDefense extends kernel.process {
     const healFunc = (healTarget) => {
       let damage = healTarget.hitsMax - healTarget.hits
 
-      for (let tower of towers) {
+      for (const tower of towers) {
         if (damage <= 0) {
           break
         }
@@ -132,7 +132,7 @@ class CityDefense extends kernel.process {
       return false
     }
 
-    let safeStructures = room.find(FIND_MY_SPAWNS)
+    const safeStructures = room.find(FIND_MY_SPAWNS)
 
     // If there are no spawns this room isn't worth protecting with a safemode.
     if (safeStructures.length <= 0) {
@@ -143,18 +143,18 @@ class CityDefense extends kernel.process {
     if (!room.getRoomSetting('ALWAYS_SAFEMODE')) {
       const cities = Room.getCities()
       let highestLevel = 0
-      for (let cityName of cities) {
+      for (const cityName of cities) {
         if (!Game.rooms[cityName]) {
           continue
         }
-        let city = Game.rooms[cityName]
+        const city = Game.rooms[cityName]
         if (!city.controller.canSafemode()) {
           continue
         }
         if (city.getRoomSetting('ALWAYS_SAFEMODE')) {
           return false
         }
-        let level = city.getPracticalRoomLevel()
+        const level = city.getPracticalRoomLevel()
         if (highestLevel < level) {
           highestLevel = level
         }

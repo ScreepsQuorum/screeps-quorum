@@ -9,13 +9,13 @@ global.LOG_TRACE = 0
 
 const NOTIFY_RATELIMIT = 1500
 const ERROR_COLORS = {
-  '5': '#ff0066',
-  '4': '#e65c00',
-  '3': '#809fff',
-  '2': '#999999',
-  '1': '#737373',
-  '0': '#666666',
-  'highlight': '#ffff00'
+  5: '#ff0066',
+  4: '#e65c00',
+  3: '#809fff',
+  2: '#999999',
+  1: '#737373',
+  0: '#666666',
+  highlight: '#ffff00'
 }
 
 class Logger {
@@ -75,7 +75,7 @@ class Logger {
 
   highlight (message) {
     return this.log(message, 'highlight', false, {
-      'type': 'highlight'
+      type: 'highlight'
     })
   }
 

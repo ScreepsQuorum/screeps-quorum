@@ -389,7 +389,7 @@ class CityLayout extends kernel.process {
    */
   planRoads (layout, corePos, flower1Pos, flower2Pos) {
     Logger.log(`Planning roads for room: ${this.data.room}`, LOG_INFO, 'layout')
-    let matrix = this.getConstructionMatrix(layout)
+    const matrix = this.getConstructionMatrix(layout)
     this.planRoad(layout, corePos, flower1Pos, matrix)
     this.planRoad(layout, corePos, flower2Pos, matrix)
     if (this.room.controller) {

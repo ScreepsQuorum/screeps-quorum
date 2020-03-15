@@ -5,12 +5,12 @@ const defaultMaxOpsPerRoom = 1500
 const struckThreshold = 2
 const struckRerouteThreshold = 4
 const travelToDefaults = {
-  'reusePath': 1500,
-  'moveToOverride': true,
-  'ignoreStuck': false,
-  'ignoreHostileCities': true,
-  'ignoreHostileReservations': false,
-  'avoidHostileRooms': false
+  reusePath: 1500,
+  moveToOverride: true,
+  ignoreStuck: false,
+  ignoreHostileCities: true,
+  ignoreHostileReservations: false,
+  avoidHostileRooms: false
 }
 
 Creep.prototype.travelTo = function (pos, opts = {}) {
@@ -40,10 +40,10 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
       moveToOpts.avoidHostileRooms = true
     } else {
       if (moveToOpts.ignoreHostileCities) {
-        moveToOpts.scores['WEIGHT_HOSTILE'] = Infinity
+        moveToOpts.scores.WEIGHT_HOSTILE = Infinity
       }
       if (moveToOpts.ignoreHostileReservations) {
-        moveToOpts.scores['WEIGHT_HOSTILE_RESERVATION'] = Infinity
+        moveToOpts.scores.WEIGHT_HOSTILE_RESERVATION = Infinity
       }
     }
   }
@@ -106,9 +106,9 @@ Creep.prototype.travelTo = function (pos, opts = {}) {
     if (Number.isInteger(worldRoute)) {
       return worldRoute
     }
-    for (let pathPiece of worldRoute) {
-      if (moveToOpts.allowedRooms.indexOf(pathPiece['room']) < 0) {
-        moveToOpts.allowedRooms.push(pathPiece['room'])
+    for (const pathPiece of worldRoute) {
+      if (moveToOpts.allowedRooms.indexOf(pathPiece.room) < 0) {
+        moveToOpts.allowedRooms.push(pathPiece.room)
       }
     }
   }

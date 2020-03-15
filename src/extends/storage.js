@@ -8,13 +8,13 @@ StructureStorage.prototype.getLink = function () {
 }
 
 const needs = {
-  'base': 10000, // 8 = 80000
-  'tier1': 3000, // 10 = 30000
-  'tier2': 3000, // 10 = 30000
-  'tier3': 20000, // 10 = 200000
-  'OH': 10000, // 1 = 10000
-  'comp': 10000, // 2 = 20000
-  'G': 5000 // 1 = 5000
+  base: 10000, // 8 = 80000
+  tier1: 3000, // 10 = 30000
+  tier2: 3000, // 10 = 30000
+  tier3: 20000, // 10 = 200000
+  OH: 10000, // 1 = 10000
+  comp: 10000, // 2 = 20000
+  G: 5000 // 1 = 5000
 }
 // max resource storage = 375,000
 // amount for energy and overflow = 625,000

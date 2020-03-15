@@ -56,7 +56,7 @@ class CityFortify extends kernel.process {
       return
     }
 
-    let structureType = this.defenses.getStructureAt(target.pos.x, target.pos.y)
+    const structureType = this.defenses.getStructureAt(target.pos.x, target.pos.y)
     const desiredHitpoints = this.rampartLevels[structureType]
     const builderCluster = this.getCluster('builders', this.room)
 
@@ -71,7 +71,7 @@ class CityFortify extends kernel.process {
     }
 
     builderCluster.sizeCluster('builder', quantity, {
-      'priority': 5
+      priority: 5
     })
 
     builderCluster.forEach(function (builder) {
@@ -99,37 +99,39 @@ class CityFortify extends kernel.process {
       * Structure with the lowest percentage of hit points compared to desired amount.
   */
   getTarget () {
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (site) {
-      return site.structureType === STRUCTURE_RAMPART || site.structureType === STRUCTURE_WALL
-    }})
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: function (site) {
+        return site.structureType === STRUCTURE_RAMPART || site.structureType === STRUCTURE_WALL
+      }
+    })
     if (sites.length > 0) {
       return sites[0]
     }
 
-    let targetId = sos.lib.cache.get([this.data.room, 'rampartTarget'], {
+    const targetId = sos.lib.cache.get([this.data.room, 'rampartTarget'], {
       ttl: 50
     })
 
     if (targetId) {
-      let target = Game.getObjectById(targetId)
+      const target = Game.getObjectById(targetId)
       if (target) {
         return target
       }
     }
 
-    let structures = this.defenses.getAllStructures()
-    let types = Object.keys(structures)
+    const structures = this.defenses.getAllStructures()
+    const types = Object.keys(structures)
     // Prioritize missing sites based off of type.
     types.sort((a, b) => b - a)
 
-    let missing = []
-    let structureMap = {}
-    let decaying = []
-    for (let type of types) {
+    const missing = []
+    const structureMap = {}
+    const decaying = []
+    for (const type of types) {
       if (!this.rampartLevels[type]) {
         continue
       }
-      for (let position of structures[type]) {
+      for (const position of structures[type]) {
         // Don't build structure ramparts unless there's a structure.
         if (type === RAMPART_PRIMARY_STRUCTURES || type === RAMPART_SECONDARY_STRUCTURES) {
           if (position.lookFor(LOOK_STRUCTURES).length <= 0) {

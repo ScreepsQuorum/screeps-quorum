@@ -6,6 +6,7 @@ class MetaMaintenance extends kernel.process {
   getPriority () {
     return PRIORITIES_MAINTENANCE
   }
+
   main () {
     if (!Memory.construction) {
       Memory.construction = {}

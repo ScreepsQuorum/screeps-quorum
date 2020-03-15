@@ -61,7 +61,7 @@ class Genome {
   }
 
   random (label) {
-    let seed = (this._getNumberFromString(label) + this.seed) % this.max
+    const seed = (this._getNumberFromString(label) + this.seed) % this.max
     return this._getNumberFromSeed(seed) / (this.max - 1)
   }
 
@@ -104,11 +104,11 @@ if (typeof module !== 'undefined' && !module.parent) {
   const modifier = Math.floor(Math.random() * (100 + 1))
   const seed = 'Quorum' + modifier
   console.log(`Testing distribution with seed ${seed} over ${iterations} iterations with max value ${max}.`)
-  let genome = new Genome(seed)
+  const genome = new Genome(seed)
 
-  let count = {}
+  const count = {}
   for (let i = 0; i < iterations; i++) {
-    let ret = genome.randomInt('apples' + i, 1, max)
+    const ret = genome.randomInt('apples' + i, 1, max)
     if (!count[ret]) {
       count[ret] = 1
     } else {
@@ -116,9 +116,9 @@ if (typeof module !== 'undefined' && !module.parent) {
     }
   }
 
-  let trait = {}
+  const trait = {}
   for (let i = 0; i < iterations; i++) {
-    let ret = genome.trait('apples' + i, 50, {
+    const ret = genome.trait('apples' + i, 50, {
       max: max,
       min: 1
     })
@@ -129,12 +129,12 @@ if (typeof module !== 'undefined' && !module.parent) {
     }
   }
 
-  let weights = [1, 2, 3, 5, 10, 50]
-  let weightedResults = {}
-  for (let weight of weights) {
+  const weights = [1, 2, 3, 5, 10, 50]
+  const weightedResults = {}
+  for (const weight of weights) {
     weightedResults[weight] = {}
     for (let i = 0; i < iterations; i++) {
-      let ret = genome.randomCenterWeightedInt('apples' + i, 1, max, weight)
+      const ret = genome.randomCenterWeightedInt('apples' + i, 1, max, weight)
       if (!weightedResults[weight][ret]) {
         weightedResults[weight][ret] = 1
       } else {
@@ -154,7 +154,7 @@ if (typeof module !== 'undefined' && !module.parent) {
   header += '\tUnweighted'
   header += '\tTrait'
 
-  for (let weight of weights) {
+  for (const weight of weights) {
     header += `\t\t${weight}`
   }
   console.log(header)
@@ -164,7 +164,7 @@ if (typeof module !== 'undefined' && !module.parent) {
     message += `\t${normalizeCount(count[i])}`
     message += `\t\t${normalizeCount(trait[i])}`
 
-    for (let weight of weights) {
+    for (const weight of weights) {
       message += `\t\t${normalizeCount(weightedResults[weight][i])}`
     }
 
@@ -172,6 +172,6 @@ if (typeof module !== 'undefined' && !module.parent) {
   }
 } else {
   // Use the botname as the seed.
-  let botname = global.USERNAME ? global.USERNAME : 'Quorum'
+  const botname = global.USERNAME ? global.USERNAME : 'Quorum'
   module.exports = new Genome(botname, PUBLIC_ACCOUNT)
 }

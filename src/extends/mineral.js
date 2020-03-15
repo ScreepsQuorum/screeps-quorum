@@ -6,9 +6,9 @@ Mineral.getEmpireRatio = function () {
     return this.mineralRatio
   }
   const rooms = Room.getCities()
-  let resources = {}
+  const resources = {}
   let max = 0
-  for (let room of rooms) {
+  for (const room of rooms) {
     const roomIntel = Room.getIntel(room)
     if (!roomIntel[INTEL_MINERAL]) {
       continue
@@ -26,8 +26,8 @@ Mineral.getEmpireRatio = function () {
       max = resources[resourceType]
     }
   }
-  let ratio = {}
-  for (let resourceType of MINERALS_EXTRACTABLE) {
+  const ratio = {}
+  for (const resourceType of MINERALS_EXTRACTABLE) {
     if (!resources[resourceType]) {
       ratio[resourceType] = 0
     } else {

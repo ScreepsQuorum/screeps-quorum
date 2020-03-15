@@ -36,7 +36,7 @@ class CityConstruct extends kernel.process {
       const structures = this.room.find(FIND_STRUCTURES)
       const miningPositions = this.room.find(FIND_SOURCES).map(s => s.getMiningPosition())
       this.data.hascleared = true
-      for (let structure of structures) {
+      for (const structure of structures) {
         if (structure.structureType === STRUCTURE_CONTROLLER) {
           continue
         }
@@ -56,7 +56,7 @@ class CityConstruct extends kernel.process {
         Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
       }
       const sites = this.room.find(FIND_HOSTILE_CONSTRUCTION_SITES)
-      for (let site of sites) {
+      for (const site of sites) {
         this.data.hascleared = false
         site.remove()
       }
@@ -64,7 +64,7 @@ class CityConstruct extends kernel.process {
     }
 
     const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
-      'filter': function (structure) {
+      filter: function (structure) {
         return !ignoreConstructionSites.includes(structure)
       }
     })
@@ -81,7 +81,7 @@ class CityConstruct extends kernel.process {
           return
         }
       }
-      let result = this.room.constructNextMissingStructure()
+      const result = this.room.constructNextMissingStructure()
       this.data.lastscan = Game.time
       if (result !== false && result[0] < 0) {
         // result is [code, type, position]

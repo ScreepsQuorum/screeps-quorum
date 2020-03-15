@@ -46,7 +46,7 @@ RoomPosition.prototype.getSteppableAdjacent = function (includeCreeps = false, i
 
 RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
-  let positions = []
+  const positions = []
   for (let x = bounds.left; x <= bounds.right; x++) {
     for (let y = bounds.top; y <= bounds.bottom; y++) {
       positions.push(new RoomPosition(x, y, this.roomName))
@@ -57,7 +57,7 @@ RoomPosition.prototype.getAdjacentInRange = function (range = 1) {
 
 RoomPosition.prototype.getSteppableAdjacentInRange = function (range = 1) {
   const bounds = createBoundingBoxForRange(this.x, this.y, range)
-  let positions = []
+  const positions = []
   let position
   for (let x = bounds.left; x <= bounds.right; x++) {
     for (let y = bounds.top; y <= bounds.bottom; y++) {
@@ -211,8 +211,8 @@ RoomPosition.prototype.lookAround = function (range = 1) {
 }
 
 RoomPosition.prototype.getStructureByType = function (structureType) {
-  let structures = this.lookFor(LOOK_STRUCTURES)
-  let filteredStructures = _.filter(structures, function (structure) {
+  const structures = this.lookFor(LOOK_STRUCTURES)
+  const filteredStructures = _.filter(structures, function (structure) {
     return structure.structureType === structureType
   })
   return filteredStructures.length > 0 ? filteredStructures[0] : false
@@ -235,7 +235,7 @@ function createBoundingBoxForRange (x, y, range) {
   const right = Math.max(Math.min(x + absRange, 49), 0)
   const top = Math.min(Math.max(y - absRange, 0), 49)
   const bottom = Math.max(Math.min(y + absRange, 49), 0)
-  return {left, right, top, bottom}
+  return { left, right, top, bottom }
 }
 
 module.exports = {
