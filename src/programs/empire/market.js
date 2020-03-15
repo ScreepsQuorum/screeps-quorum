@@ -98,6 +98,9 @@ class EmpireMarket extends kernel.process {
   getResourceTarget (resource) {
     const terminals = _.shuffle(this.terminals)
     for (const terminal of terminals) {
+      if (!terminal.canReceive(resource)) {
+        continue
+      }
       const room = terminal.room
       if (!terminal.store[resource] || terminal.store[resource] < RESERVE_AMOUNT) {
         if (room.storage.getResourceNeed(resource)) {
