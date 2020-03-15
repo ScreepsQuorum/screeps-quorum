@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/quorum
     docker:
-      - image: circleci/node:13.10.1
+      - image: circleci/node:12
     steps:
       - checkout
       - restore_cache:
