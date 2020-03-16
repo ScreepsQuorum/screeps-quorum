@@ -29,7 +29,7 @@ if (!StructureTerminal.prototype.__send) {
       }
       Logger.log(log, LOG_INFO)
     } else {
-      let log = `Terminal in ${this.room.name} failed to send ${amount} ${resourceType} to ${destination} due to error ${ret}`
+      const log = `Terminal in ${this.room.name} failed to send ${amount} ${resourceType} to ${destination} due to error ${ret}`
       Logger.log(log, LOG_ERROR)
     }
     return ret

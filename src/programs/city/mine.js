@@ -57,7 +57,7 @@ class CityMine extends kernel.process {
 
       // If the mine is not reachable remove it.
       if (!Game.rooms[this.data.mine]) {
-        const route = qlib.map.findRoute(this.data.room, this.data.mine, {'avoidHostileRooms': true})
+        const route = qlib.map.findRoute(this.data.room, this.data.mine, { avoidHostileRooms: true })
         if (route === ERR_NO_PATH) {
           this.room.removeMine(this.data.mine)
           return this.suicide()
@@ -130,14 +130,14 @@ class CityMine extends kernel.process {
       minerQuantity = 0
     }
 
-    miners.sizeCluster('miner', minerQuantity, {'priority': 2, 'remote': this.remote})
+    miners.sizeCluster('miner', minerQuantity, { priority: 2, remote: this.remote })
     miners.forEach(function (miner) {
       if (miner.pos.getRangeTo(minerPos) !== 0) {
         miner.travelTo(minerPos)
         return
       }
 
-      let needsRepairs = container && container.hits < container.hitsMax
+      const needsRepairs = container && container.hits < container.hitsMax
 
       if (construction && miner.carry[RESOURCE_ENERGY]) {
         miner.build(construction)
@@ -200,7 +200,7 @@ class CityMine extends kernel.process {
     }
     const distance = this.data.ssp[source.id] ? this.data.ssp[source.id] : 80
     if (!this.underAttack && !this.strictSpawning) {
-      const carryCost = BODYPART_COST['move'] + BODYPART_COST['carry']
+      const carryCost = BODYPART_COST.move + BODYPART_COST.carry
       const multiplier = this.remote ? 1.8 : 1.3
       const carryAmount = Math.ceil(((distance * multiplier) * 20) / carryCost) * carryCost
       const maxEnergy = Math.min(carryCost * (MAX_CREEP_SIZE / 2), this.room.energyCapacityAvailable)
@@ -213,7 +213,7 @@ class CityMine extends kernel.process {
 
       const respawnTime = ((energy / carryCost) * 2) * CREEP_SPAWN_TIME
       const respawnAge = respawnTime + (distance * 1.2)
-      haulers.sizeCluster('hauler', quantity, {'energy': energy, 'respawnAge': respawnAge})
+      haulers.sizeCluster('hauler', quantity, { energy: energy, respawnAge: respawnAge })
     }
 
     haulers.forEach(function (hauler) {
@@ -247,7 +247,7 @@ class CityMine extends kernel.process {
   scout () {
     const center = new RoomPosition(25, 25, this.data.mine)
     const quantity = Game.rooms[this.data.mine] ? 0 : 1
-    const scouts = this.getCluster(`scout`, this.room)
+    const scouts = this.getCluster('scout', this.room)
     scouts.sizeCluster('spook', quantity)
     scouts.forEach(function (scout) {
       if (scout.room.name === center.roomName) {
@@ -255,7 +255,7 @@ class CityMine extends kernel.process {
           return
         }
       }
-      scout.travelTo(center, {range: 20})
+      scout.travelTo(center, { range: 20 })
     })
   }
 
@@ -267,7 +267,7 @@ class CityMine extends kernel.process {
       quantity = Math.min(this.room.getRoomSetting('RESERVER_COUNT'), controller.pos.getSteppableAdjacent().length)
     }
 
-    const reservists = this.getCluster(`reservists`, this.room)
+    const reservists = this.getCluster('reservists', this.room)
     reservists.sizeCluster('reservist', quantity)
     reservists.forEach(function (reservist) {
       if (!reservist.pos.isNearTo(controller)) {

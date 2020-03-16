@@ -51,15 +51,15 @@ Room.getCoordinates = function (name) {
   const coordinateRegex = /(E|W)(\d+)(N|S)(\d+)/g
   const match = coordinateRegex.exec(name)
   return {
-    'x': +match[2],
-    'y': +match[4],
-    'x_dir': match[1],
-    'y_dir': match[3]
+    x: +match[2],
+    y: +match[4],
+    x_dir: match[1],
+    y_dir: match[3]
   }
 }
 
 function getRoomRangeBounds (name, range) {
-  let worldsize = Game.map.getWorldSize()
+  const worldsize = Game.map.getWorldSize()
   let maxValue = worldsize
 
   // If this is the public server (or one emulating it) optimize to not look beyond edges.
@@ -120,7 +120,7 @@ Room.getRoomsInRange = function (name, range) {
     return []
   }
   const bounds = getRoomRangeBounds(name, range)
-  let rooms = []
+  const rooms = []
   for (var x = bounds.lowerX; x <= bounds.upperX; x++) {
     for (var y = bounds.lowerY; y <= bounds.upperY; y++) {
       rooms.push(convertToRoomname(x, y, bounds.startXdir, bounds.startYdir))
@@ -148,8 +148,8 @@ Room.isSourcekeeper = function (name) {
     return true
   }
   const coords = Room.getCoordinates(name)
-  let xMod = coords.x % 10
-  let yMod = coords.y % 10
+  const xMod = coords.x % 10
+  const yMod = coords.y % 10
   return xMod >= 4 && xMod <= 6 && yMod >= 4 && yMod <= 6
 }
 
@@ -158,8 +158,8 @@ Room.isHallway = function (name) {
     return false
   }
   const coords = Room.getCoordinates(name)
-  let xMod = coords.x % 10
-  let yMod = coords.y % 10
+  const xMod = coords.x % 10
+  const yMod = coords.y % 10
   return xMod === 0 || yMod === 0
 }
 
@@ -168,8 +168,8 @@ Room.isClaimable = function (name) {
     return false
   }
   const coords = Room.getCoordinates(name)
-  let xMod = coords.x % 10
-  let yMod = coords.y % 10
+  const xMod = coords.x % 10
+  const yMod = coords.y % 10
   if (xMod >= 4 && xMod <= 6 && yMod >= 4 && yMod <= 6) {
     return false
   }

@@ -22,9 +22,11 @@ class CityPublicWorks extends kernel.process {
     }
     this.room = Game.rooms[this.data.room]
 
-    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {'filter': function (structure) {
-      return maintainStructures.includes(structure)
-    }})
+    const sites = this.room.find(FIND_MY_CONSTRUCTION_SITES, {
+      filter: function (structure) {
+        return maintainStructures.includes(structure)
+      }
+    })
     if (sites.length > 0 && this.room.isEconomyCapable('BUILD_STRUCTURES')) {
       this.launchCreepProcess('builders', 'builder', this.data.room, 1)
     }

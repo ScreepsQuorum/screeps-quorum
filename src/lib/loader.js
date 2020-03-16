@@ -1,8 +1,8 @@
 'use strict'
 
-let target = {} // eslint-disable-line no-unused-vars
+const target = {} // eslint-disable-line no-unused-vars
 
-let loader = {
+const loader = {
   get (target, key, receiver) {
     var classname = 'lib_' + key.toLowerCase()
     if (!target[classname]) {

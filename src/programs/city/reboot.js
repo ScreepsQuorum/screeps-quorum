@@ -19,7 +19,7 @@ class CityReboot extends kernel.process {
       return this.suicide()
     }
     this.room = Game.rooms[this.data.room]
-    const fillers = this.room.find(FIND_MY_CREEPS, {filter: (creep) => creep.name.startsWith('filler')})
+    const fillers = this.room.find(FIND_MY_CREEPS, { filter: (creep) => creep.name.startsWith('filler') })
     if (fillers.length <= 0) {
       this.launchCreepProcess('rebooter', 'filler', this.data.room, 2, {
         priority: 1,

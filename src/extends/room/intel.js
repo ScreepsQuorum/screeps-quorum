@@ -39,7 +39,7 @@ Room.prototype.saveIntel = function (refresh = false) {
   if (refresh) {
     roominfo = {}
   } else {
-    roominfo = this.getIntel({'skipRequest': true})
+    roominfo = this.getIntel({ skipRequest: true })
     if (!roominfo) {
       roominfo = {}
     }
@@ -66,16 +66,16 @@ Room.prototype.saveIntel = function (refresh = false) {
     }
 
     // Detect blocked exits in rooms where walls or ramparts are built.
-    let blocked = []
+    const blocked = []
     if (this.structures[STRUCTURE_WALL] || this.structures[STRUCTURE_RAMPART]) {
-      let candidates = this.find(FIND_SOURCES)
+      const candidates = this.find(FIND_SOURCES)
       candidates.push(this.controller)
       const centerish = this.getPositionAt(25, 25).findClosestByRange(candidates).pos
       const exits = _.values(Game.map.describeExits(this.name))
       const name = this.name
-      for (let exit of exits) {
+      for (const exit of exits) {
         const targetPos = new RoomPosition(25, 25, exit)
-        const path = PathFinder.search(centerish, {pos: targetPos, range: 24},
+        const path = PathFinder.search(centerish, { pos: targetPos, range: 24 },
           {
             swampCost: 1,
             maxRooms: 2,
@@ -226,7 +226,7 @@ Room.getResourcesPositions = function (roomname) {
   if (!roominfo[INTEL_RESOURCE_POSITIONS]) {
     return false
   }
-  let positions = []
+  const positions = []
   let serializedPosition
   for (serializedPosition of roominfo[INTEL_RESOURCE_POSITIONS]) {
     positions.push(RoomPosition.deserialize(serializedPosition))

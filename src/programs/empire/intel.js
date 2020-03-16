@@ -81,7 +81,7 @@ class EmpireIntel extends kernel.process {
     const targets = Object.keys(Memory.intel.targets)
     if (targets.length > MAX_INTEL_TARGETS) {
       targets.sort((a, b) => Memory.intel.targets[a] - Memory.intel.targets[b])
-      for (let target of targets) {
+      for (const target of targets) {
         if (Object.keys(Memory.intel.targets).length <= MAX_INTEL_TARGETS) {
           break
         }

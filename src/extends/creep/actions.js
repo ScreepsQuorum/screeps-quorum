@@ -40,35 +40,37 @@ Creep.prototype.recharge = function () {
     return true
   }
   // Create a bigger scope for this variable ( used here and in the filter in containers )
-  let carryCap = this.carryCapacity
+  const carryCap = this.carryCapacity
 
   // Check for qualifying dropped energy.
-  const resources = this.room.find(FIND_DROPPED_RESOURCES, {filter: function (resource) {
-    if (resource.resourceType !== RESOURCE_ENERGY || resource.amount < carryCap) {
-      return false
-    }
+  const resources = this.room.find(FIND_DROPPED_RESOURCES, {
+    filter: function (resource) {
+      if (resource.resourceType !== RESOURCE_ENERGY || resource.amount < carryCap) {
+        return false
+      }
 
-    // Is resource on top of container?
-    const structures = resource.pos.lookFor(LOOK_STRUCTURES)
-    for (let structure of structures) {
-      if (structure.structureType === STRUCTURE_CONTAINER) {
+      // Is resource on top of container?
+      const structures = resource.pos.lookFor(LOOK_STRUCTURES)
+      for (const structure of structures) {
+        if (structure.structureType === STRUCTURE_CONTAINER) {
+          return true
+        }
+      }
+
+      // Is the resource near the room storage?
+      if (resource.room.storage && resource.room.storage.pos.getRangeTo(resource) <= 2) {
         return true
       }
-    }
 
-    // Is the resource near the room storage?
-    if (resource.room.storage && resource.room.storage.pos.getRangeTo(resource) <= 2) {
-      return true
-    }
+      // Is the resource on top of the suicide booth?
+      const suicideBooth = resource.room.getSuicideBooth()
+      if (suicideBooth && resource.pos.getRangeTo(suicideBooth) === 0) {
+        return true
+      }
 
-    // Is the resource on top of the suicide booth?
-    const suicideBooth = resource.room.getSuicideBooth()
-    if (suicideBooth && resource.pos.getRangeTo(suicideBooth) === 0) {
-      return true
+      return false
     }
-
-    return false
-  }})
+  })
 
   if (resources.length > 0) {
     const resource = this.pos.findClosestByRange(resources)
@@ -146,7 +148,7 @@ Creep.prototype.recycle = function () {
   if (this.pos.getRangeTo(suicideBooth) > 0) {
     this.travelTo(suicideBooth)
   } else {
-    let spawn = this.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
+    const spawn = this.pos.findClosestByRange(this.room.structures[STRUCTURE_SPAWN])
     spawn.recycleCreep(this)
   }
 }

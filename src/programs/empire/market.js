@@ -19,7 +19,7 @@ class EmpireMarket extends kernel.process {
 
     if (!this.data.lma || Game.time - this.data.lma > TERMINAL_COOLDOWN) {
       this.terminals = _.shuffle(Empire.terminals)
-      for (let terminal of this.terminals) {
+      for (const terminal of this.terminals) {
         this.manageTerminal(terminal)
       }
     }
@@ -40,14 +40,14 @@ class EmpireMarket extends kernel.process {
       if (energyTarget) {
         // Max cost of sending 1 energy is 1, for a total of two energy.
         const amount = Math.min(5000, terminal.store[RESOURCE_ENERGY] / 2)
-        terminal.send(RESOURCE_ENERGY, amount, energyTarget, `interempire energy transfer`)
+        terminal.send(RESOURCE_ENERGY, amount, energyTarget, 'interempire energy transfer')
         return
       }
     }
 
     // Sell any resources in terminal.
     const carrying = Object.keys(terminal.store)
-    for (let resource of carrying) {
+    for (const resource of carrying) {
       if (resource === RESOURCE_ENERGY) {
         continue
       }
@@ -68,7 +68,7 @@ class EmpireMarket extends kernel.process {
         continue
       }
 
-      let useableAmount = terminal.store[resource]
+      const useableAmount = terminal.store[resource]
 
       // Is it needed by storage?
       const storageNeed = terminal.room.storage.getResourceNeed(resource)
@@ -83,7 +83,7 @@ class EmpireMarket extends kernel.process {
           this.data.sent[target] = {}
         }
         this.data.sent[target][resource] = Game.time
-        terminal.send(resource, Math.min(1000, useableAmount), target, `interempire resource transfer`)
+        terminal.send(resource, Math.min(1000, useableAmount), target, 'interempire resource transfer')
         return
       }
 
@@ -177,7 +177,7 @@ class EmpireMarket extends kernel.process {
       RESOURCE_CATALYZED_GHODIUM_ACID,
       RESOURCE_CATALYZED_GHODIUM_ALKALIDE
     ]
-    for (let resource of resources) {
+    for (const resource of resources) {
       qlib.market.getAveragePrice(resource, ORDER_BUY)
       qlib.market.getAveragePrice(resource, ORDER_SELL)
     }

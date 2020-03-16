@@ -8,7 +8,7 @@ if (Game.cpu.bucket < 500) {
 
 /* Get Upload Version */
 require('version')
-require('constants')
+require('./constants')
 
 /* Enable QOS Logger */
 const QosLogger = require('qos_logger')
@@ -24,8 +24,8 @@ require('thirdparty_roomvisual')
 /* Add "creep talk" library - https://github.com/screepers/creeptalk */
 const language = require('thirdparty_creeptalk_emoji')
 require('thirdparty_creeptalk')({
-  'public': true,
-  'language': language
+  public: true,
+  language: language
 })
 
 /* Make the quorum library code available globally */

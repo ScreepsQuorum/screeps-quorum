@@ -55,8 +55,8 @@ class Dossier {
     }
     if (intel[PLAYER_RECENT_AGGRESSION][room]) {
       if (Game.time - intel[PLAYER_RECENT_AGGRESSION][room].t < AGGRESSION_TIMEOUT) {
-        let currentScore = AGGRESSION_SCORES[type]
-        let existingScore = AGGRESSION_SCORES[intel[PLAYER_RECENT_AGGRESSION][room].a]
+        const currentScore = AGGRESSION_SCORES[type]
+        const existingScore = AGGRESSION_SCORES[intel[PLAYER_RECENT_AGGRESSION][room].a]
         if (existingScore < currentScore) {
           intel[PLAYER_SCORE] += currentScore - existingScore
           intel[PLAYER_RECENT_AGGRESSION][room].a = type

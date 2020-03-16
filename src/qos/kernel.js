@@ -29,7 +29,7 @@ class QosKernel {
       Memory.qos = {}
     }
     this.newglobal = GLOBAL_LAST_RESET === Game.time
-    this.simulation = !!Game.rooms['sim']
+    this.simulation = !!Game.rooms.sim
     this.scheduler = new Scheduler()
     this.performance = new Performance()
     this.process = Process
@@ -51,14 +51,14 @@ class QosKernel {
     }
 
     if (this.newglobal) {
-      Logger.log(`New Global Detected`, LOG_INFO)
+      Logger.log('New Global Detected', LOG_INFO)
     }
 
     if (IVM && global.gc && (!Memory.qos.gc || Game.time - Memory.qos.gc >= MIN_TICKS_BETWEEN_GC)) {
       const heap = Game.cpu.getHeapStatistics()
       const heapPercent = heap.total_heap_size / heap.heap_size_limit
       if (heapPercent > GC_HEAP_TRIGGER) {
-        Logger.log(`Garbage Collection Initiated`, LOG_INFO, 'kernel')
+        Logger.log('Garbage Collection Initiated', LOG_INFO, 'kernel')
         Memory.qos.gc = Game.time
         global.gc()
       }
@@ -68,7 +68,7 @@ class QosKernel {
     sos.lib.stormtracker.track()
 
     if (sos.lib.stormtracker.isStorming()) {
-      Logger.log(`Reset Storm Detected`, LOG_INFO)
+      Logger.log('Reset Storm Detected', LOG_INFO)
     }
 
     if (Game.time % 7 === 0) {
@@ -122,7 +122,7 @@ class QosKernel {
       } catch (err) {
         const errorText = !!err && !!err.stack ? err.stack : err.toString()
         if (errorText.includes('RangeError: Array buffer allocation failed')) {
-          let message = 'RangeError: Array buffer allocation failed'
+          const message = 'RangeError: Array buffer allocation failed'
           Logger.log(message, LOG_ERROR, 'ivm')
         } else {
           let message = 'program error occurred\n'

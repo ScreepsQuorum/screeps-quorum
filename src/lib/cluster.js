@@ -26,7 +26,7 @@ class Cluster {
     }
     if (!Memory.clusters[name]) {
       Memory.clusters[name] = {
-        'creeps': []
+        creeps: []
       }
     }
     this.memory = Memory.clusters[name]
@@ -76,7 +76,7 @@ class Cluster {
 
   forEach (creepAction) {
     const creeps = this.getCreeps()
-    for (let creep of creeps) {
+    for (const creep of creeps) {
       try {
         if (creep.spawning) {
           continue

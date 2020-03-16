@@ -15,11 +15,11 @@ class Scheduler {
     this.processCache = {}
     if (!this.memory.processes) {
       this.memory.processes = {
-        'index': {},
-        'running': false,
-        'completed': [],
-        'queues': {},
-        'sleep': {}
+        index: {},
+        running: false,
+        completed: [],
+        queues: {},
+        sleep: {}
       }
     } else {
       // For upgrading
@@ -46,7 +46,7 @@ class Scheduler {
       // Resume the right processes
       for (let pid in this.memory.processes.sleep.list) {
         pid = Number(pid)
-        let tick = this.memory.processes.sleep.list[pid]
+        const tick = this.memory.processes.sleep.list[pid]
         if (tick <= Game.time) {
           this.wake(pid)
         } else {
@@ -218,7 +218,7 @@ class Scheduler {
       if (!self) {
         for (let i in this.memory.processes.queues) {
           i = Number(i)
-          let queue = this.memory.processes.queues[i]
+          const queue = this.memory.processes.queues[i]
           const index = queue.indexOf(pid)
           if (index > -1) {
             queue.splice(index, 1)

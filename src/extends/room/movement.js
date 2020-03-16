@@ -11,7 +11,7 @@ Room.getCostmatrix = function (roomname, opts = {}) {
 
     if (!opts.ignoreCreeps) {
       const creeps = room.find(FIND_CREEPS)
-      for (let creep of creeps) {
+      for (const creep of creeps) {
         cm.set(creep.pos.x, creep.pos.y, 255)
       }
     }
@@ -36,7 +36,7 @@ Room.getCostmatrix = function (roomname, opts = {}) {
 
   // Allow avoid ranges to be set by range
   if (opts.avoidRange) {
-    for (let avoid of opts.avoidRange) {
+    for (const avoid of opts.avoidRange) {
       const cost = avoid.value || 255
       setValuesInRange(cm, avoid.pos, avoid.range, cost)
     }
@@ -44,14 +44,14 @@ Room.getCostmatrix = function (roomname, opts = {}) {
 
   // Block all of these positions as unwalkable
   if (opts.avoid) {
-    for (let pos of opts.avoid) {
+    for (const pos of opts.avoid) {
       cm.set(pos.x, pos.y, 255)
     }
   }
 
   // Set these positions to just use terrain score
   if (opts.ignore) {
-    for (let pos of opts.ignore) {
+    for (const pos of opts.ignore) {
       cm.set(pos.x, pos.y, 0)
     }
   }
@@ -81,7 +81,7 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   const cacheLabel = `${Room.serializeName(roomname)}_${(flags >>> 0)}`
 
   if (!opts.noCache) {
-    let cmSerialized = sos.lib.cache.get(cacheLabel, {
+    const cmSerialized = sos.lib.cache.get(cacheLabel, {
       ttl: Game.rooms[roomname] ? 25 : false
     })
     if (cmSerialized) {
@@ -94,7 +94,7 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   if (!opts.ignoreSourceKeepers && Room.isSourcekeeper(roomname)) {
     const resourcePoses = Room.getResourcesPositions(roomname)
     if (resourcePoses) {
-      for (let pos of resourcePoses) {
+      for (const pos of resourcePoses) {
         setValuesInRange(cm, pos, 5, 15)
       }
     }
@@ -104,7 +104,7 @@ Room.getStructuresCostmatrix = function (roomname, opts) {
   if ((!opts.ignoreDestructibleStructures || !opts.ignoreRoads || !opts.ignorePortals) && Game.rooms[roomname]) {
     const room = Game.rooms[roomname]
     const structures = room.find(FIND_STRUCTURES)
-    for (let structure of structures) {
+    for (const structure of structures) {
       if (structure.structureType === STRUCTURE_ROAD) {
         if (opts.ignoreRoads) {
           continue
