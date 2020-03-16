@@ -30,7 +30,7 @@
     "gulp-insert": "^0.5.0",
     "gulp-rename": "^2.0.0",
     "gulp-screeps": "^1.0.8",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.2",
     "standard": "^14.3.2",
     "tap-xunit": "^2.4.1"
   },
