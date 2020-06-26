@@ -89,7 +89,7 @@ const PATH_WEIGHT_HOSTILE = 10
 const PATH_WEIGHT_HOSTILE_RESERVATION = 5
 
 module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
-  if (!Game.map.isRoomAvailable(toRoom)) {
+  if (!Room.isAvailable(toRoom)) {
     return Infinity
   }
   if (!module.exports.reachableFromEmpire(toRoom)) {

@@ -234,12 +234,20 @@ Room.getResourcesPositions = function (roomname) {
   return positions
 }
 
+Room.isAvailable = function(roomname) {
+  if (Game.gcl.level > GCL_NOVICE) {
+    return Game.map.getRoomStatus(roomname).status === 'normal'
+  } else {
+    return Game.mapp.getRoomStatus(roomname).status === 'novice'
+  }
+}
+
 Room.requestIntel = function (roomname) {
   if (Game.rooms[roomname]) {
     Game.rooms[roomname].saveIntel()
     return
   }
-  if (!Game.map.isRoomAvailable(roomname)) {
+  if (!Room.isAvailable(roomname)) {
     return
   }
   if (!qlib.map.reachableFromEmpire(roomname, 'manhattan')) {
@@ -279,7 +287,7 @@ Room.getScoutTarget = function (creep) {
     let testRoom
     for (testRoom of targetRooms) {
       // Filter out invalid rooms
-      if (!Game.map.isRoomAvailable(testRoom)) {
+      if (!Room.isAvailable(testRoom)) {
         continue
       }
 
@@ -311,7 +319,7 @@ Room.getScoutTarget = function (creep) {
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
-      if (!Game.map.isRoomAvailable(testRoom)) {
+      if (!Room.isAvailable(testRoom)) {
         continue
       }
       const roominfo = Room.getIntel(testRoom)
