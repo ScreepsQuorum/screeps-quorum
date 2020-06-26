@@ -234,7 +234,7 @@ Room.getResourcesPositions = function (roomname) {
   return positions
 }
 
-Room.isAvailable = function(roomname) {
+Room.isAvailable = function (roomname) {
   if (Game.gcl.level > GCL_NOVICE) {
     return Game.map.getRoomStatus(roomname).status === 'normal'
   } else {
