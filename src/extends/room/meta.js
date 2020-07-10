@@ -182,3 +182,11 @@ Room.isCuldesac = function (roomName, entrance) {
   // keeper room, or dead end appeared.
   return Object.keys(exits).length === 1
 }
+
+Room.isAvailable = function (name) {
+  if (Game.gcl.level > GCL_NOVICE) {
+    return Game.map.getRoomStatus(name).status === 'normal'
+  } else {
+    return Game.map.getRoomStatus(name).status === 'novice'
+  }
+}
