@@ -164,6 +164,12 @@ Room.isHallway = function (name) {
 }
 
 Room.isClaimable = function (name) {
+  if (Game.gcl.level >= GCL_NOVICE && Game.map.getRoomStatus(name).status !== 'normal') {
+    return false
+  }
+  if (Game.gcl.level < GCL_NOVICE && Game.map.getRoomStatus(name).status !== 'novice') {
+    return false
+  }
   if (!Room.isAvailable(name)) {
     return false
   }
@@ -184,9 +190,5 @@ Room.isCuldesac = function (roomName, entrance) {
 }
 
 Room.isAvailable = function (name) {
-  if (Game.gcl.level > GCL_NOVICE) {
-    return Game.map.getRoomStatus(name).status === 'normal'
-  } else {
-    return Game.map.getRoomStatus(name).status === 'novice'
-  }
+  return Game.map.getRoomStatus(name).status !== 'closed'
 }
