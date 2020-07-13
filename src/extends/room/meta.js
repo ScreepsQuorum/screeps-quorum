@@ -164,10 +164,10 @@ Room.isHallway = function (name) {
 }
 
 Room.isClaimable = function (name) {
-  if (Game.gcl.level >= GCL_NOVICE && Game.map.getRoomStatus(name).status !== 'normal') {
+  if (Game.gcl.level >= GCL_NOVICE && Game.map.getRoomStatus(name).status === 'novice') {
     return false
   }
-  if (Game.gcl.level < GCL_NOVICE && Game.map.getRoomStatus(name).status !== 'novice') {
+  if (Game.gcl.level < GCL_NOVICE && Game.map.getRoomStatus(name).status === 'normal') {
     return false
   }
   if (!Room.isAvailable(name)) {
