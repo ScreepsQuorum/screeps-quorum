@@ -239,7 +239,7 @@ Room.requestIntel = function (roomname) {
     Game.rooms[roomname].saveIntel()
     return
   }
-  if (!Game.map.isRoomAvailable(roomname)) {
+  if (!qlib.map.isRoomAvailable(roomname)) {
     return
   }
   if (!qlib.map.reachableFromEmpire(roomname, 'manhattan')) {
@@ -279,7 +279,7 @@ Room.getScoutTarget = function (creep) {
     let testRoom
     for (testRoom of targetRooms) {
       // Filter out invalid rooms
-      if (!Game.map.isRoomAvailable(testRoom)) {
+      if (!qlib.map.isRoomAvailable(testRoom)) {
         continue
       }
 
@@ -311,7 +311,7 @@ Room.getScoutTarget = function (creep) {
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
-      if (!Game.map.isRoomAvailable(testRoom)) {
+      if (!qlib.map.isRoomAvailable(testRoom)) {
         continue
       }
       const roominfo = Room.getIntel(testRoom)
