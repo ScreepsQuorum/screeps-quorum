@@ -125,10 +125,8 @@ module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
 }
 
 // Our own implementation of depricated function
-module.exports.isRoomAvailable = function(roomName) {
-  if (!global.homeRoomStatus) {
-      global.homeRoomStatus = Game.map.getRoomStatus(_.values(Game.spawns)[0].room.name).status;
-  }
+module.exports.isRoomAvailable = function (roomName) {
+  const homeRoomStatus = Game.map.getRoomStatus(_.values(Game.spawns)[0].room.name).status
   // Inside novice areas the only rooms available are novice rooms.
   // Same goes with respawn areas.
   // Home room can't be closed, so this case is also coverd.
