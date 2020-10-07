@@ -89,7 +89,7 @@ const PATH_WEIGHT_HOSTILE = 10
 const PATH_WEIGHT_HOSTILE_RESERVATION = 5
 
 module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
-  if (!Game.map.isRoomAvailable(toRoom)) {
+  if (!qlib.map.isRoomAvailableForCreeps(toRoom)) {
     return Infinity
   }
   if (!module.exports.reachableFromEmpire(toRoom)) {
@@ -122,4 +122,13 @@ module.exports.getRoomScore = function (toRoom, fromRoom, opts = {}) {
     }
   }
   return scores.WEIGHT_NEUTRAL ? scores.WEIGHT_NEUTRAL : PATH_WEIGHT_NEUTRAL
+}
+
+// Checks whether this room is available and our creeps can probably enter it
+module.exports.isRoomAvailableForCreeps = function (roomName) {
+  const ourZone = Game.map.getRoomStatus(Object.values(Game.creeps)[0].room.name).status
+  // Room is available if it's in the same zone with us ('normal', 'novice' or 'respawn'),
+  // as trespassing between these is not possible.
+  // Check againt 'closed' status is also coverd as out creeps can't be in closed areas.
+  return ourZone === Game.map.getRoomStatus(roomName).status
 }
