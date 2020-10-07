@@ -311,7 +311,7 @@ Room.getScoutTarget = function (creep) {
     let oldest = 0
     let testRoom
     for (testRoom of adjacent) {
-      if (Game.map.getRoomStatus(roomname) !== 'closed') {
+      if (Game.map.getRoomStatus(testRoom) !== 'closed') {
         continue
       }
       const roominfo = Room.getIntel(testRoom)
