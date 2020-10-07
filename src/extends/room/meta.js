@@ -164,7 +164,7 @@ Room.isHallway = function (name) {
 }
 
 Room.isClaimable = function (name) {
-  if (!qlib.map.isRoomAvailable(name)) {
+  if (!qlib.map.isRoomAvailableForCreeps(name)) {
     return false
   }
   const coords = Room.getCoordinates(name)
