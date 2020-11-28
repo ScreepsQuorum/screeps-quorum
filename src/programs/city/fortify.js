@@ -172,11 +172,11 @@ class CityFortify extends kernel.process {
       if (this.defenses.getStructureAt(missing[0].x, missing[0].y) === WALL_GATEWAY) {
         type = STRUCTURE_WALL
       }
-      
-      //Don't let misplaced fortifications block fortifying
+
+      // Don't let misplaced fortifications block fortifying
       let i = 0
-      while(i < missing.length && this.room.createConstructionSite(missing[i], type) != 0) {
-          i++
+      while (i < missing.length && this.room.createConstructionSite(missing[i], type) !== 0) {
+        i++
       }
       return false
     }
