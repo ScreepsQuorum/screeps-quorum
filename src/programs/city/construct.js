@@ -38,7 +38,7 @@ class CityConstruct extends kernel.process {
       this.data.hascleared = true
       for (const structure of structures) {
         // Skips things that can't be removed, I.E. Controllers, Novice area walls, SK lair (can break sim)
-        if (structure.hits === undefined) { 
+        if (structure.hits === undefined) {
           continue
         }
         if (structure.my) {
