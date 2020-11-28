@@ -52,7 +52,7 @@ class CityConstruct extends kernel.process {
           continue
         }
 
-        if (structure.hits === undefined) { //Skips things that can't be removed, I.E. Novice area walls, SK lair (can break sim)
+        if (structure.hits === undefined) { // Skips things that can't be removed, I.E. Novice area walls, SK lair (can break sim)
           continue
         }
 
