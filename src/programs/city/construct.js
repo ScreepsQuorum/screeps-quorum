@@ -52,6 +52,10 @@ class CityConstruct extends kernel.process {
           continue
         }
 
+        if (structure.hits == undefined) { //Skips things that can't be removed, I.E. Novice area walls, SK lair (can break sim)
+          continue
+        }
+
         this.data.hascleared = false
         Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
       }
