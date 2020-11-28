@@ -37,7 +37,7 @@ class CityConstruct extends kernel.process {
       const miningPositions = this.room.find(FIND_SOURCES).map(s => s.getMiningPosition())
       this.data.hascleared = true
       for (const structure of structures) {
-        if (structure.structureType === STRUCTURE_CONTROLLER) {
+        if (structure.hits === undefined) { // Skips things that can't be removed, I.E. Controllers, Novice area walls, SK lair (can break sim)
           continue
         }
         if (structure.my) {
@@ -52,9 +52,6 @@ class CityConstruct extends kernel.process {
           continue
         }
 
-        if (structure.hits === undefined) { // Skips things that can't be removed, I.E. Novice area walls, SK lair (can break sim)
-          continue
-        }
 
         this.data.hascleared = false
         Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
