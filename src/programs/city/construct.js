@@ -53,7 +53,6 @@ class CityConstruct extends kernel.process {
           continue
         }
 
-
         this.data.hascleared = false
         Logger.log(`Attempting to destroy structure ${structure.structureType}: ${structure.destroy()}`)
       }
