@@ -175,7 +175,7 @@ class CityFortify extends kernel.process {
       
       //Don't let misplaced fortifications block fortifying
       let i = 0
-      while(this.room.createConstructionSite(missing[i], type) != 0 && i < missing.length) {
+      while(i < missing.length && this.room.createConstructionSite(missing[i], type) != 0) {
           i++
       }
       return false
