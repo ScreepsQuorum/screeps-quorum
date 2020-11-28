@@ -37,7 +37,8 @@ class CityConstruct extends kernel.process {
       const miningPositions = this.room.find(FIND_SOURCES).map(s => s.getMiningPosition())
       this.data.hascleared = true
       for (const structure of structures) {
-        if (structure.structureType === STRUCTURE_CONTROLLER) {
+        // Skips things that can't be removed, I.E. Controllers, Novice area walls, SK lair (can break sim)
+        if (structure.hits === undefined) {
           continue
         }
         if (structure.my) {
