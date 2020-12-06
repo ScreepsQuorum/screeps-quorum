@@ -32,8 +32,8 @@ class Factotum extends MetaRole {
       return
     }
 
-    if (_.sum(creep.carry) > 0) {
-      if (creep.carry[RESOURCE_ENERGY]) {
+    if (creep.store.getUsedCapacity() > 0) {
+      if (creep.store[RESOURCE_ENERGY]) {
         this.emptyEnergy(creep)
       } else {
         this.emptyResources(creep)
@@ -57,7 +57,7 @@ class Factotum extends MetaRole {
 
     if (terminal && terminal.store[RESOURCE_ENERGY] > TERMINAL_ENERGY) {
       const overflow = terminal.store[RESOURCE_ENERGY] - TERMINAL_ENERGY
-      const transferAmount = overflow < creep.carryCapacity ? overflow : creep.carryCapacity
+      const transferAmount = overflow < creep.store.getCapacity() ? overflow : creep.store.getCapacity()
       creep.withdraw(terminal, RESOURCE_ENERGY, transferAmount)
       return
     }
@@ -96,13 +96,13 @@ class Factotum extends MetaRole {
         }
         const need = storage.getResourceNeed(resource)
         if (need > 0) {
-          const amount = Math.min(need, creep.carryCapacity - creep.carry, terminal.store[resource])
+          const amount = Math.min(need, creep.store.getFreeCapacity(), terminal.store[resource])
           creep.withdraw(terminal, resource, amount)
           return
         }
       }
 
-      // Does storage have terminal overflow?
+    // Does storage have terminal overflow?
       const storageResources = _.shuffle(Object.keys(storage.store))
       for (const resource of storageResources) {
         if (resource === RESOURCE_ENERGY) {
@@ -110,7 +110,7 @@ class Factotum extends MetaRole {
         }
         const need = storage.getResourceNeed(resource)
         if (need < 0) {
-          const amount = Math.min((-need), creep.carryCapacity - creep.carry, terminal.store[resource])
+          const amount = Math.min((-need), creep.store.getFreeCapacity(), terminal.store[resource])
           creep.withdraw(storage, resource, amount)
           return
         }
@@ -128,47 +128,47 @@ class Factotum extends MetaRole {
       delete creep.memory.filling
       return
     }
-
-    if (feeders[0].mineralAmount > 0 && feeders[0].mineralType !== reaction[0]) {
+    if (feeders[0].mineralType && feeders[0].mineralType !== reaction[0]) {
       creep.memory.labs = 'empty'
       return
     }
-    if (feeders[1].mineralAmount > 0 && feeders[1].mineralType !== reaction[1]) {
+    if (feeders[1].mineralType && feeders[1].mineralType !== reaction[1]) {
       creep.memory.labs = 'empty'
       return
     }
 
-    if (_.sum(creep.carry) <= 0) {
-      if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
-        if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
+    if (creep.store.getUsedCapacity() <= 0) {
+      if (feeders[0].store[feeders[0].mineralType] / feeders[0].store.getCapacity() >= 0.5) {
+        if (feeders[1].store[feeders[1].mineralType] / feeders[1].store.getCapacity() >= 0.5) {
           creep.memory.labs = 'empty'
+          return
         }
       }
     }
 
-    const carrying = Object.keys(creep.carry)
+    const carrying = Object.keys(creep.store)
     if (carrying.length > 3) {
       creep.memory.labs = 'empty'
       return
     }
 
-    const individualMax = creep.carryCapacity / 2
+    const individualMax = creep.store.getCapacity() / 2
     let reactionPrimaryAvailable = creep.room.storage.store[reaction[0]]
-    if (creep.carry[reaction[0]]) {
-      reactionPrimaryAvailable += creep.carry[reaction[0]]
+    if (creep.store[reaction[0]]) {
+      reactionPrimaryAvailable += creep.store[reaction[0]]
     }
     let reactionSecondaryAvailable = creep.room.storage.store[reaction[1]]
-    if (creep.carry[reaction[1]]) {
-      reactionSecondaryAvailable += creep.carry[reaction[1]]
+    if (creep.store[reaction[1]]) {
+      reactionSecondaryAvailable += creep.store[reaction[1]]
     }
-
+    
     let primaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
-    if (feeders[0].mineralAmount / feeders[0].mineralCapacity >= 0.5) {
+    if (feeders[0].store[feeders[0].mineralType] / feeders[0].store.getCapacity(feeders[0].mineralType) >= 0.5) {
       primaryTargetAmount = 0
     }
 
     let secondaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
-    if (feeders[1].mineralAmount / feeders[1].mineralCapacity >= 0.5) {
+    if (feeders[1].store[feeders[1].mineralType] / feeders[1].store.getCapacity(feeders[1].mineralType) >= 0.5) {
       secondaryTargetAmount = 0
     }
 
@@ -177,19 +177,18 @@ class Factotum extends MetaRole {
       return
     }
 
-    if (creep.carry[carrying[0]] > primaryTargetAmount || creep.carry[carrying[1]] > secondaryTargetAmount) {
+    if (creep.store[carrying[0]] > primaryTargetAmount || creep.store[carrying[1]] > secondaryTargetAmount) {
       creep.memory.labs = 'empty'
       return
     }
-
     if (creep.memory.filling) {
-      if (creep.carry[reaction[0]] && feeders[0].canFill()) {
+      if (creep.store[reaction[0]] && feeders[0].store.getFreeCapacity(reaction[0])) {
         if (creep.pos.isNearTo(feeders[0])) {
           creep.transfer(feeders[0], reaction[0])
         } else {
           creep.travelTo(feeders[0], { ignoreCore: true })
         }
-      } else if (creep.carry[reaction[1]] && feeders[1].canFill()) {
+      } else if (creep.store[reaction[1]] && feeders[1].store.getFreeCapacity(reaction[1])) {
         if (creep.pos.isNearTo(feeders[1])) {
           creep.transfer(feeders[1], reaction[1])
         } else {
@@ -205,17 +204,17 @@ class Factotum extends MetaRole {
         return
       }
 
-      if (creep.carryCapacity === _.sum(creep.carry)) {
+      if (creep.store.getFreeCapacity() <= 0) {
         creep.memory.filling = true
         return
       }
 
-      if (!creep.carry[reaction[0]] || creep.carry[reaction[0]] < primaryTargetAmount) {
-        const amount = creep.carry[reaction[0]] ? primaryTargetAmount - creep.carry[reaction[0]] : primaryTargetAmount
-        creep.withdraw(creep.room.storage, reaction[0], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
-      } else if (!creep.carry[reaction[1]] || creep.carry[reaction[1]] < secondaryTargetAmount) {
-        const amount = creep.carry[reaction[1]] ? secondaryTargetAmount - creep.carry[reaction[1]] : secondaryTargetAmount
-        creep.withdraw(creep.room.storage, reaction[1], Math.min(amount, creep.carryCapacity - _.sum(creep.carry)))
+      if (!creep.store.getUsedCapacity(reaction[0]) || creep.store.getUsedCapacity(reaction[0]) < primaryTargetAmount) {
+        const amount = creep.store[reaction[0]] ? primaryTargetAmount - creep.store[reaction[0]] : primaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[0], Math.min(amount, creep.store.getFreeCapacity()))
+      } else if (!creep.store[reaction[1]] || creep.store[reaction[1]] < secondaryTargetAmount) {
+        const amount = creep.store[reaction[1]] ? secondaryTargetAmount - creep.store[reaction[1]] : secondaryTargetAmount
+        creep.withdraw(creep.room.storage, reaction[1], Math.min(amount, creep.store.getFreeCapacity()))
       } else {
         creep.memory.filling = true
       }
@@ -223,7 +222,7 @@ class Factotum extends MetaRole {
   }
 
   emptyLabs (creep) {
-    if (creep.carryCapacity - _.sum(creep.carry) <= 0) {
+    if (creep.store.getFreeCapacity() <= 0) {
       delete creep.memory.labs
       return
     }
@@ -244,20 +243,20 @@ class Factotum extends MetaRole {
     const reaction = creep.room.getActiveReaction()
 
     // If one feeder doesn't have the right mineral and the other is empty then empty the first.
-    if (feeders[0].mineralAmount) {
-      if (feeders[1].mineralAmount < LAB_REACTION_AMOUNT && feeders[0].mineralType !== reaction[0]) {
+    if (feeders[0].store[feeders[0].mineralType]) {
+      if ((!feeders[1].mineralType || feeders[1].store.getUsedCapacity(feeders[1].mineralType) < LAB_REACTION_AMOUNT) && feeders[0].mineralType !== reaction[0]) {
         return feeders[0]
       }
     }
-    if (feeders[1].mineralAmount) {
-      if (feeders[0].mineralAmount < LAB_REACTION_AMOUNT && feeders[1].mineralType !== reaction[1]) {
+    if (feeders[1].store[feeders[1].mineralType]) {
+      if ((!feeders[0].mineralType || feeders[0].store.getUsedCapacity(feeders[0].mineralType) < LAB_REACTION_AMOUNT) && feeders[1].mineralType !== reaction[1]) {
         return feeders[1]
       }
     }
 
     // If feeders can not produce a reaction start emptying them.
     // Once one is empty the above code will finish the other.
-    if (feeders[0].mineralAmount > 0 && feeders[1].mineralAmount > 0) {
+    if (feeders[0].store[feeders[0].mineralType] > 0 && feeders[1].store[feeders[1].mineralType] > 0) {
       if (!REACTIONS[feeders[0].mineralType][feeders[1].mineralType]) {
         return feeders[0]
       }
@@ -266,10 +265,10 @@ class Factotum extends MetaRole {
     // Empty vats that don't have a boost that will work with the feeders, or that are filling up.
     const vats = creep.room.getVatLabs()
     let currentProduct = false
-    if (feeders[0].mineralAmount > 0 && feeders[1].mineralAmount > 0) {
+    if (feeders[0].store[feeders[0].mineralType] > 0 && feeders[1].store[feeders[1].mineralType] > 0) {
       currentProduct = REACTIONS[feeders[0].mineralType][feeders[1].mineralType]
     }
-    const desiredProduct = REACTIONS[reaction[0]][reaction[1]]
+    const desiredProduct = reaction ? REACTIONS[reaction[0]][reaction[1]] : false
     let target = false
     let amount = 150
     for (const vat of vats) {
@@ -279,8 +278,8 @@ class Factotum extends MetaRole {
       if ((!currentProduct || vat.mineralType !== currentProduct) && vat.mineralType !== desiredProduct) {
         return vat
       }
-      if (vat.mineralAmount > amount) {
-        amount = vat.mineralAmount
+      if (vat.store[vat.mineralType] > amount) {
+        amount = vat.store[vat.mineralType]
         target = vat
       }
     }
@@ -292,7 +291,7 @@ class Factotum extends MetaRole {
     if (creep.room.terminal && creep.room.terminal.store[RESOURCE_ENERGY] < TERMINAL_ENERGY) {
       if (creep.pos.isNearTo(creep.room.terminal)) {
         const need = TERMINAL_ENERGY - creep.room.terminal.store[RESOURCE_ENERGY]
-        const amount = need > creep.carry[RESOURCE_ENERGY] ? creep.carry[RESOURCE_ENERGY] : need
+        const amount = need > creep.store[RESOURCE_ENERGY] ? creep.store[RESOURCE_ENERGY] : need
         creep.transfer(creep.room.terminal, RESOURCE_ENERGY, amount)
       } else {
         this.goHome(creep)
@@ -335,7 +334,7 @@ class Factotum extends MetaRole {
       return
     }
 
-    const resources = _.filter(Object.keys(creep.carry), a => a !== RESOURCE_ENERGY)
+    const resources = _.filter(Object.keys(creep.store), a => a !== RESOURCE_ENERGY)
     if (resources.length < 1) {
       return false
     }
@@ -357,7 +356,7 @@ class Factotum extends MetaRole {
     // Put needed resources into storage and excess into terminal.
     const currentNeed = creep.room.storage.getResourceNeed(resource)
     if (currentNeed > 0) {
-      const amount = creep.carry[resource] < currentNeed ? creep.carry[resource] : currentNeed
+      const amount = creep.store[resource] < currentNeed ? creep.store[resource] : currentNeed
       creep.transfer(creep.room.storage, resource, amount)
     } else {
       if (creep.pos.isNearTo(creep.room.terminal)) {
