@@ -192,7 +192,7 @@ class CityMine extends kernel.process {
     }
     if (!this.data.ssp[source.id]) {
       if (this.room.storage) {
-        this.data.ssp[source.id] = this.room.findPath(this.room.storage.pos, source.pos, {
+        this.data.ssp[source.id] = this.room.findPath(this.room.storage.pos, source.getMiningPosition(), {
           ignoreCreeps: true,
           maxOps: 6000
         }).length
