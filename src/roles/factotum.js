@@ -102,7 +102,7 @@ class Factotum extends MetaRole {
         }
       }
 
-    // Does storage have terminal overflow?
+      // Does storage have terminal overflow?
       const storageResources = _.shuffle(Object.keys(storage.store))
       for (const resource of storageResources) {
         if (resource === RESOURCE_ENERGY) {
@@ -161,7 +161,7 @@ class Factotum extends MetaRole {
     if (creep.store[reaction[1]]) {
       reactionSecondaryAvailable += creep.store[reaction[1]]
     }
-    
+
     let primaryTargetAmount = Math.min(individualMax, reactionPrimaryAvailable, reactionSecondaryAvailable)
     if (feeders[0].store[feeders[0].mineralType] / feeders[0].store.getCapacity(feeders[0].mineralType) >= 0.5) {
       primaryTargetAmount = 0
