@@ -92,7 +92,7 @@ Room.prototype.getEconomyLevel = function () {
   }
 
   // Need to ditch energy as we have way too much in storage
-  if (_.sum(this.storage.storage) > this.storage.storeCapacity * 0.9) {
+  if (this.storage.store.getUsedCapacity() > this.storage.storeCapacity * 0.9) {
     return ECONOMY_BURSTING
   }
 
