@@ -133,7 +133,7 @@ class CityFortify extends kernel.process {
       }
       for (const position of structures[type]) {
         // Don't build structure ramparts unless there's a structure.
-        if (type === RAMPART_PRIMARY_STRUCTURES || type === RAMPART_SECONDARY_STRUCTURES) {
+        if (type == RAMPART_PRIMARY_STRUCTURES || type == RAMPART_SECONDARY_STRUCTURES) {
           if (position.lookFor(LOOK_STRUCTURES).length <= 0) {
             continue
           }
