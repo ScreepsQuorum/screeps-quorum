@@ -132,8 +132,8 @@ class CityFortify extends kernel.process {
         continue
       }
       for (const position of structures[type]) {
-        // Don't build structure ramparts unless there's a structure.
-        if (type === RAMPART_PRIMARY_STRUCTURES || type === RAMPART_SECONDARY_STRUCTURES) {
+        // Don't build structure ramparts unless there's a structure. Object keys are strings, so convert them to int for comparison sake
+        if (Number(type) === RAMPART_PRIMARY_STRUCTURES || Number(type) === RAMPART_SECONDARY_STRUCTURES) {
           if (position.lookFor(LOOK_STRUCTURES).length <= 0) {
             continue
           }
