@@ -156,6 +156,7 @@ class CityFortify extends kernel.process {
       }
     }
 
+
     let target
     if (decaying.length > 0) {
       decaying.sort((a, b) => a.hits - b.hits)
@@ -166,16 +167,14 @@ class CityFortify extends kernel.process {
       })
       target = potentialTargets.length > 0 ? Game.getObjectById(potentialTargets[0]) : false
     }
+    
     if (missing.length > 0 && (!target || target.hits > DECAY_LIMIT)) {
-      // Don't let misplaced fortifications block fortifying
+
+      //Don't let misplaced fortifications block fortifying
       let i = 0
-      while( i < missing.length && 
-            this.room.createConstructionSite(missing[i], this.defenses.getStructureAt(missing[i].x, missing[i].y) === WALL_GATEWAY ? STRUCTURE_WALL : STRUCTURE_RAMPART) != 0
-           ) {
+      while( i < missing.length && this.room.createConstructionSite(missing[i], this.defenses.getStructureAt(missing[i].x, missing[i].y) === WALL_GATEWAY ? STRUCTURE_WALL : STRUCTURE_RAMPART) != 0) {
           i++
       }
-      return false
-    }
       return false
     }
     if (!target) {
