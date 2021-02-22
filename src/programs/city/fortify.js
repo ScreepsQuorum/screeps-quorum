@@ -167,17 +167,15 @@ class CityFortify extends kernel.process {
       target = potentialTargets.length > 0 ? Game.getObjectById(potentialTargets[0]) : false
     }
     if (missing.length > 0 && (!target || target.hits > DECAY_LIMIT)) {
-      // Add structure
-      let type = STRUCTURE_RAMPART
-      if (this.defenses.getStructureAt(missing[0].x, missing[0].y) === WALL_GATEWAY) {
-        type = STRUCTURE_WALL
-      }
-
       // Don't let misplaced fortifications block fortifying
       let i = 0
-      while (i < missing.length && this.room.createConstructionSite(missing[i], type) !== 0) {
-        i++
+      while( i < missing.length && 
+            this.room.createConstructionSite(missing[i], this.defenses.getStructureAt(missing[i].x, missing[i].y) === WALL_GATEWAY ? STRUCTURE_WALL : STRUCTURE_RAMPART) != 0
+           ) {
+          i++
       }
+      return false
+    }
       return false
     }
     if (!target) {
